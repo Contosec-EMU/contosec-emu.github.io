@@ -20,18 +20,31 @@
         .item p { font-size: 13px; color: #999; line-height: 1.5; font-family: 'Segoe UI', -apple-system, sans-serif; }
         .footer { text-align: center; padding: 40px 24px; font-size: 12px; color: #ccc; font-family: 'Segoe UI', -apple-system, sans-serif; }
         @media (prefers-color-scheme: dark) {
-            body { background: #111; color: #e0e0e0; }
-            .hero p { color: #555; }
-            .divider { background: #333; }
-            .section-label { color: #444; }
-            .item { border-bottom-color: #1e1e1e; }
-            .item h2 { color: #e0e0e0; }
-            .item p { color: #666; }
-            .footer { color: #333; }
+            html:not([data-theme="light"]) body { background: #111; color: #e0e0e0; }
+            html:not([data-theme="light"]) .hero p { color: #555; }
+            html:not([data-theme="light"]) .divider { background: #333; }
+            html:not([data-theme="light"]) .section-label { color: #444; }
+            html:not([data-theme="light"]) .item { border-bottom-color: #1e1e1e; }
+            html:not([data-theme="light"]) .item h2 { color: #e0e0e0; }
+            html:not([data-theme="light"]) .item p { color: #666; }
+            html:not([data-theme="light"]) .footer { color: #333; }
         }
+        html[data-theme="dark"] body { background: #111; color: #e0e0e0; }
+        html[data-theme="dark"] .hero p { color: #555; }
+        html[data-theme="dark"] .divider { background: #333; }
+        html[data-theme="dark"] .section-label { color: #444; }
+        html[data-theme="dark"] .item { border-bottom-color: #1e1e1e; }
+        html[data-theme="dark"] .item h2 { color: #e0e0e0; }
+        html[data-theme="dark"] .item p { color: #666; }
+        html[data-theme="dark"] .footer { color: #333; }
+        .theme-toggle { position: fixed; top: 20px; right: 20px; background: none; border: 1px solid #ddd; border-radius: 20px; padding: 6px 12px; cursor: pointer; font-size: 14px; color: #999; font-family: 'Segoe UI', -apple-system, sans-serif; transition: all 0.2s; }
+        .theme-toggle:hover { border-color: #aaa; color: #666; }
+        html[data-theme="dark"] .theme-toggle, html:not([data-theme="light"]) .theme-toggle { border-color: #333; color: #555; }
+        html[data-theme="dark"] .theme-toggle:hover, html:not([data-theme="light"]) .theme-toggle:hover { border-color: #555; color: #888; }
     </style>
 </head>
 <body>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#9789;</button>
     <div class="hero">
         <h1>Contosec</h1>
         <p>Security research and tools by Carlos Suarez</p>
@@ -51,5 +64,21 @@
         </a>
     </div>
     <div class="footer">Carlos Suarez</div>
+    <script>
+        function getTheme(){return localStorage.getItem('theme')}
+        function applyTheme(){
+            const t=getTheme();
+            if(t){document.documentElement.setAttribute('data-theme',t)}
+            else{document.documentElement.removeAttribute('data-theme')}
+            document.querySelector('.theme-toggle').textContent=
+                (t==='dark'||(! t&&window.matchMedia('(prefers-color-scheme:dark)').matches))?'☀':'☽';
+        }
+        function toggleTheme(){
+            const isDark=getTheme()==='dark'||(!getTheme()&&window.matchMedia('(prefers-color-scheme:dark)').matches);
+            localStorage.setItem('theme',isDark?'light':'dark');
+            applyTheme();
+        }
+        applyTheme();
+    </script>
 </body>
 </html>
