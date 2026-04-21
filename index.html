@@ -13,14 +13,10 @@
         .content { max-width: 720px; margin: 0 auto; padding: 0 24px 80px; flex: 1; }
         .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #999; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
         .section-label:first-of-type { margin-top: 0; }
-        .card { background: #fff; border: 1px solid #e8e8e8; border-radius: 10px; padding: 28px; margin-bottom: 14px; text-decoration: none; color: inherit; display: flex; align-items: flex-start; gap: 20px; transition: all 0.2s ease; }
+        .card { background: #fff; border: 1px solid #e8e8e8; border-radius: 10px; padding: 28px; margin-bottom: 14px; text-decoration: none; color: inherit; display: block; transition: all 0.2s ease; }
         .card:hover { border-color: #ccc; box-shadow: 0 4px 16px rgba(0,0,0,0.06); transform: translateY(-1px); }
-        .card-icon { width: 44px; height: 44px; border-radius: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 20px; }
-        .card-body { flex: 1; min-width: 0; }
-        .card-body h2 { font-size: 17px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-        .card-body p { font-size: 14px; color: #666; line-height: 1.5; }
-        .card-arrow { color: #ccc; font-size: 18px; align-self: center; transition: all 0.2s; }
-        .card:hover .card-arrow { color: #999; transform: translateX(3px); }
+        .card h2 { font-size: 17px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
+        .card p { font-size: 14px; color: #666; line-height: 1.5; }
         .footer { text-align: center; padding: 24px; font-size: 12px; color: #bbb; }
         @media (prefers-color-scheme: dark) {
             body { background: #111; color: #e0e0e0; }
@@ -29,10 +25,8 @@
             .section-label { color: #555; border-bottom-color: #222; }
             .card { background: #1a1a1a; border-color: #262626; }
             .card:hover { border-color: #333; box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
-            .card-body h2 { color: #e8e8e8; }
-            .card-body p { color: #888; }
-            .card-arrow { color: #444; }
-            .card:hover .card-arrow { color: #777; }
+            .card h2 { color: #e8e8e8; }
+            .card p { color: #888; }
             .footer { color: #444; }
         }
         @media (max-width: 600px) {
@@ -50,22 +44,14 @@
     <div class="content">
         <div class="section-label">Articles</div>
         <a href="/articles/EntraAgentID/" class="card">
-            <div class="card-icon" style="background: #E8F0FE; color: #0078D4;">&#9671;</div>
-            <div class="card-body">
-                <h2>Microsoft Entra Agent ID</h2>
-                <p>Interactive guide to agent identity in Microsoft Entra. Covers identity hierarchy, authentication flows, and security controls.</p>
-            </div>
-            <span class="card-arrow">&#8250;</span>
+            <h2>Microsoft Entra Agent ID</h2>
+            <p>Interactive guide to agent identity in Microsoft Entra. Covers identity hierarchy, authentication flows, and security controls.</p>
         </a>
 
         <div class="section-label">Projects</div>
         <a href="/projects/MDOAttackSimulation-PowerBI/" class="card">
-            <div class="card-icon" style="background: #E6F7ED; color: #107C10;">&#9638;</div>
-            <div class="card-body">
-                <h2>MDO Attack Simulation for Power BI</h2>
-                <p>Data pipeline that brings Defender for Office 365 Attack Simulation Training data into Power BI for custom reporting and analytics.</p>
-            </div>
-            <span class="card-arrow">&#8250;</span>
+            <h2>MDO Attack Simulation for Power BI</h2>
+            <p>Data pipeline that brings Defender for Office 365 Attack Simulation Training data into Power BI for custom reporting and analytics.</p>
         </a>
     </div>
     <div class="footer">Carlos Suarez</div>
