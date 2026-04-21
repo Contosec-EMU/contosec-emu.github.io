@@ -6,62 +6,71 @@
     <title>Contosec</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Courier New', Courier, monospace; background: #fff; color: #1a1a1a; min-height: 100vh; }
-        .hero { padding: 140px 24px 100px; text-align: center; }
-        .hero h1 { font-size: 42px; font-weight: 700; letter-spacing: 0.02em; }
-        .hero p { font-size: 16px; color: #888; margin-top: 12px; font-family: 'Segoe UI', -apple-system, sans-serif; }
-        .divider { width: 40px; height: 1px; background: #ddd; margin: 0 auto 60px; }
-        .content { max-width: 600px; margin: 0 auto; padding: 0 24px 100px; }
-        .section-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #bbb; margin: 48px 0 20px; }
-        .section-label:first-of-type { margin-top: 0; }
-        .item { display: block; text-decoration: none; color: inherit; padding: 16px 0; border-bottom: 1px solid #f0f0f0; transition: padding-left 0.2s; }
-        .item:hover { padding-left: 8px; }
-        .item h2 { font-size: 18px; font-weight: 600; color: #1a1a1a; margin-bottom: 6px; font-family: 'Segoe UI', -apple-system, sans-serif; }
-        .item p { font-size: 15px; color: #999; line-height: 1.5; font-family: 'Segoe UI', -apple-system, sans-serif; }
-        .footer { text-align: center; padding: 40px 24px; font-size: 13px; color: #ccc; font-family: 'Segoe UI', -apple-system, sans-serif; }
+        body { font-family: 'Segoe UI', -apple-system, sans-serif; background: #fafafa; color: #1a1a1a; min-height: 100vh; }
+        .topbar { display: flex; align-items: center; justify-content: space-between; padding: 20px 32px; border-bottom: 1px solid #eee; }
+        .topbar h1 { font-family: 'Courier New', Courier, monospace; font-size: 22px; font-weight: 700; letter-spacing: 0.02em; }
+        .theme-toggle { background: none; border: 1px solid #ddd; border-radius: 20px; padding: 5px 11px; cursor: pointer; font-size: 14px; color: #999; transition: all 0.2s; }
+        .theme-toggle:hover { border-color: #aaa; color: #666; }
+        .content { max-width: 960px; margin: 0 auto; padding: 40px 32px 80px; }
+        .section-label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #aaa; margin: 0 0 16px; }
+        .section-label + .grid { margin-bottom: 48px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 16px; }
+        .card { display: block; text-decoration: none; color: inherit; padding: 24px; border: 1px solid #e8e8e8; border-radius: 10px; background: #fff; transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s; }
+        .card:hover { border-color: #ccc; box-shadow: 0 2px 12px rgba(0,0,0,0.06); transform: translateY(-2px); }
+        .card h2 { font-size: 17px; font-weight: 600; margin-bottom: 8px; }
+        .card p { font-size: 14px; color: #777; line-height: 1.55; }
+        .footer { text-align: center; padding: 32px 24px; font-size: 13px; color: #ccc; }
+        @media (max-width: 640px) {
+            .content { padding: 24px 16px 60px; }
+            .topbar { padding: 16px; }
+            .grid { grid-template-columns: 1fr; }
+        }
+        /* Dark theme */
         @media (prefers-color-scheme: dark) {
             html:not([data-theme="light"]) body { background: #111; color: #e0e0e0; }
-            html:not([data-theme="light"]) .hero p { color: #888; }
-            html:not([data-theme="light"]) .divider { background: #333; }
-            html:not([data-theme="light"]) .section-label { color: #777; }
-            html:not([data-theme="light"]) .item { border-bottom-color: #252525; }
-            html:not([data-theme="light"]) .item h2 { color: #e8e8e8; }
-            html:not([data-theme="light"]) .item p { color: #999; }
-            html:not([data-theme="light"]) .footer { color: #555; }
+            html:not([data-theme="light"]) .topbar { border-bottom-color: #252525; }
+            html:not([data-theme="light"]) .section-label { color: #666; }
+            html:not([data-theme="light"]) .card { background: #1a1a1a; border-color: #2a2a2a; }
+            html:not([data-theme="light"]) .card:hover { border-color: #444; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+            html:not([data-theme="light"]) .card h2 { color: #e8e8e8; }
+            html:not([data-theme="light"]) .card p { color: #888; }
+            html:not([data-theme="light"]) .footer { color: #444; }
+            html:not([data-theme="light"]) .theme-toggle { border-color: #555; color: #aaa; }
+            html:not([data-theme="light"]) .theme-toggle:hover { border-color: #888; color: #ddd; }
         }
         html[data-theme="dark"] body { background: #111; color: #e0e0e0; }
-        html[data-theme="dark"] .hero p { color: #888; }
-        html[data-theme="dark"] .divider { background: #333; }
-        html[data-theme="dark"] .section-label { color: #777; }
-        html[data-theme="dark"] .item { border-bottom-color: #252525; }
-        html[data-theme="dark"] .item h2 { color: #e8e8e8; }
-        html[data-theme="dark"] .item p { color: #999; }
-        html[data-theme="dark"] .footer { color: #555; }
-        .theme-toggle { position: fixed; top: 20px; right: 20px; background: none; border: 1px solid #ddd; border-radius: 20px; padding: 6px 12px; cursor: pointer; font-size: 14px; color: #999; font-family: 'Segoe UI', -apple-system, sans-serif; transition: all 0.2s; }
-        .theme-toggle:hover { border-color: #aaa; color: #666; }
-        html[data-theme="dark"] .theme-toggle, html:not([data-theme="light"]) .theme-toggle { border-color: #666; color: #aaa; }
-        html[data-theme="dark"] .theme-toggle:hover, html:not([data-theme="light"]) .theme-toggle:hover { border-color: #999; color: #ddd; }
+        html[data-theme="dark"] .topbar { border-bottom-color: #252525; }
+        html[data-theme="dark"] .section-label { color: #666; }
+        html[data-theme="dark"] .card { background: #1a1a1a; border-color: #2a2a2a; }
+        html[data-theme="dark"] .card:hover { border-color: #444; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+        html[data-theme="dark"] .card h2 { color: #e8e8e8; }
+        html[data-theme="dark"] .card p { color: #888; }
+        html[data-theme="dark"] .footer { color: #444; }
+        html[data-theme="dark"] .theme-toggle { border-color: #555; color: #aaa; }
+        html[data-theme="dark"] .theme-toggle:hover { border-color: #888; color: #ddd; }
     </style>
 </head>
 <body>
-    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#9789;</button>
-    <div class="hero">
-        <h1>Contosec</h1>
-
+    <div class="topbar">
+        <h1>contosec</h1>
+        <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">&#9789;</button>
     </div>
-    <div class="divider"></div>
     <div class="content">
         <div class="section-label">Articles</div>
-        <a href="/articles/EntraAgentID/" class="item">
-            <h2>Microsoft Entra Agent ID</h2>
-            <p>Interactive guide to agent identity in Microsoft Entra. Covers identity hierarchy, authentication flows, and security controls.</p>
-        </a>
+        <div class="grid">
+            <a href="/articles/EntraAgentID/" class="card">
+                <h2>Microsoft Entra Agent ID</h2>
+                <p>Interactive guide to agent identity in Microsoft Entra. Covers identity hierarchy, authentication flows, and security controls.</p>
+            </a>
+        </div>
 
-        <div class="section-label">Projects</div>
-        <a href="/projects/MDOAttackSimulation-PowerBI/" class="item">
-            <h2>MDO Attack Simulation for Power BI</h2>
-            <p>Data pipeline that brings Defender for Office 365 Attack Simulation Training data into Power BI for custom reporting and analytics.</p>
-        </a>
+        <div class="section-label" style="margin-top:48px">Projects</div>
+        <div class="grid">
+            <a href="/projects/MDOAttackSimulation-PowerBI/" class="card">
+                <h2>MDO Attack Simulation for Power BI</h2>
+                <p>Data pipeline that brings Defender for Office 365 Attack Simulation Training data into Power BI for custom reporting and analytics.</p>
+            </a>
+        </div>
     </div>
     <div class="footer">Carlos Suarez</div>
     <script>
