@@ -6,33 +6,28 @@
     <title>Contosec</title>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        body { font-family: 'Segoe UI', -apple-system, sans-serif; background: #fafafa; color: #333; min-height: 100vh; display: flex; flex-direction: column; }
-        .hero { padding: 80px 24px 48px; text-align: center; }
-        .hero h1 { font-size: 32px; font-weight: 700; color: #1a1a1a; letter-spacing: -0.02em; }
-        .hero p { font-size: 15px; color: #777; margin-top: 8px; }
-        .content { max-width: 720px; margin: 0 auto; padding: 0 24px 80px; flex: 1; }
-        .section-label { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: #999; margin: 40px 0 16px; padding-bottom: 8px; border-bottom: 1px solid #eee; }
+        body { font-family: 'Courier New', Courier, monospace; background: #fff; color: #1a1a1a; min-height: 100vh; }
+        .hero { padding: 140px 24px 100px; text-align: center; }
+        .hero h1 { font-size: 42px; font-weight: 700; letter-spacing: 0.02em; }
+        .hero p { font-size: 15px; color: #888; margin-top: 12px; font-family: 'Segoe UI', -apple-system, sans-serif; }
+        .divider { width: 40px; height: 1px; background: #ddd; margin: 0 auto 60px; }
+        .content { max-width: 600px; margin: 0 auto; padding: 0 24px 100px; }
+        .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.12em; color: #bbb; margin: 48px 0 20px; }
         .section-label:first-of-type { margin-top: 0; }
-        .card { background: #fff; border: 1px solid #e8e8e8; border-radius: 10px; padding: 28px; margin-bottom: 14px; text-decoration: none; color: inherit; display: block; transition: all 0.2s ease; }
-        .card:hover { border-color: #ccc; box-shadow: 0 4px 16px rgba(0,0,0,0.06); transform: translateY(-1px); }
-        .card h2 { font-size: 17px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; }
-        .card p { font-size: 14px; color: #666; line-height: 1.5; }
-        .footer { text-align: center; padding: 24px; font-size: 12px; color: #bbb; }
+        .item { display: block; text-decoration: none; color: inherit; padding: 16px 0; border-bottom: 1px solid #f0f0f0; transition: padding-left 0.2s; }
+        .item:hover { padding-left: 8px; }
+        .item h2 { font-size: 16px; font-weight: 600; color: #1a1a1a; margin-bottom: 4px; font-family: 'Segoe UI', -apple-system, sans-serif; }
+        .item p { font-size: 13px; color: #999; line-height: 1.5; font-family: 'Segoe UI', -apple-system, sans-serif; }
+        .footer { text-align: center; padding: 40px 24px; font-size: 12px; color: #ccc; font-family: 'Segoe UI', -apple-system, sans-serif; }
         @media (prefers-color-scheme: dark) {
             body { background: #111; color: #e0e0e0; }
-            .hero h1 { color: #f0f0f0; }
-            .hero p { color: #666; }
-            .section-label { color: #555; border-bottom-color: #222; }
-            .card { background: #1a1a1a; border-color: #262626; }
-            .card:hover { border-color: #333; box-shadow: 0 4px 16px rgba(0,0,0,0.3); }
-            .card h2 { color: #e8e8e8; }
-            .card p { color: #888; }
-            .footer { color: #444; }
-        }
-        @media (max-width: 600px) {
-            .hero { padding: 48px 24px 32px; }
-            .hero h1 { font-size: 26px; }
-            .card { padding: 20px; gap: 14px; }
+            .hero p { color: #555; }
+            .divider { background: #333; }
+            .section-label { color: #444; }
+            .item { border-bottom-color: #1e1e1e; }
+            .item h2 { color: #e0e0e0; }
+            .item p { color: #666; }
+            .footer { color: #333; }
         }
     </style>
 </head>
@@ -41,15 +36,16 @@
         <h1>Contosec</h1>
         <p>Security research and tools by Carlos Suarez</p>
     </div>
+    <div class="divider"></div>
     <div class="content">
         <div class="section-label">Articles</div>
-        <a href="/articles/EntraAgentID/" class="card">
+        <a href="/articles/EntraAgentID/" class="item">
             <h2>Microsoft Entra Agent ID</h2>
             <p>Interactive guide to agent identity in Microsoft Entra. Covers identity hierarchy, authentication flows, and security controls.</p>
         </a>
 
         <div class="section-label">Projects</div>
-        <a href="/projects/MDOAttackSimulation-PowerBI/" class="card">
+        <a href="/projects/MDOAttackSimulation-PowerBI/" class="item">
             <h2>MDO Attack Simulation for Power BI</h2>
             <p>Data pipeline that brings Defender for Office 365 Attack Simulation Training data into Power BI for custom reporting and analytics.</p>
         </a>
