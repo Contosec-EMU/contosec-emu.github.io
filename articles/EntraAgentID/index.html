@@ -451,19 +451,19 @@ const C = {
     relationships: [{ target: 'principal', label: 'Instantiated as an agent identity blueprint principal per tenant' },{ target: 'identity', label: 'Creates agent identities (one-to-many)' }] },
   identity: { name: 'Agent Identity', icon: 'fluent:bot-24-regular', category: 'Core', color: '#50E6FF', initial: 'A',
     definition: 'The primary identity an AI agent uses to authenticate. Has no credentials of its own and authenticates via tokens from its parent blueprint.',
-    keyFacts: ['No credentials of its own','Always single-tenant regardless of blueprint tenancy','Belongs to exactly one parent blueprint','Can operate as interactive or autonomous'],
+    keyFacts: ['No credentials of its own','Always single-tenant regardless of blueprint tenancy','Belongs to exactly one parent blueprint','Can operate with delegated access or own access'],
     relationships: [{ target: 'blueprint', label: 'Child of one blueprint' },{ target: 'useraccount', label: 'Optionally paired with a user account (1:1)' }] },
-  interactive: { name: 'Interactive Agents', icon: 'fluent:chat-24-regular', category: 'Pattern', color: '#10B981', initial: 'I',
-    definition: 'Agents that sign in a user and act on their behalf using delegated permissions.',
-    keyFacts: ['Granted delegated permissions','Act on behalf of the signed-in user','Tokens called \u201cuser tokens\u201d','Use the agent on-behalf-of flow','\u201cInteractive\u201d refers to the user relationship, not browser sign-in'],
+  interactive: { name: 'Agents with Delegated Access', icon: 'fluent:chat-24-regular', category: 'Pattern', color: '#10B981', initial: 'I',
+    definition: 'Agents that sign in a user and act on their behalf using delegated permissions. Formerly known as "OBO agents."',
+    keyFacts: ['Granted delegated permissions','Act on behalf of the signed-in user','Tokens called \u201cuser tokens\u201d','Use the delegated access (OBO) flow','\u201cDelegated access\u201d means the agent acts with user-scoped permissions, not browser sign-in'],
     relationships: [{ target: 'identity', label: 'An operational mode of agent identities' }] },
   useraccount: { name: 'Agent\u2019s User Account', icon: 'fluent:bot-sparkle-24-regular', category: 'Optional', color: '#F59E0B', initial: 'U',
     definition: 'A specialized nonhuman user identity (not a regular human account) paired 1:1 with an agent identity. Created when the agent needs to act as a digital worker in systems that require a user object, such as Exchange mailboxes, Teams channels, or HR systems. Has no passwords and cannot sign in interactively; it authenticates only through its parent agent identity. Can be assigned Microsoft 365 licenses for resource provisioning. Permissions are similar to guest users and cannot include privileged admin roles.',
     keyFacts: ['Paired 1:1 with an agent identity','Both the identity and account must exist','Required only for user-object systems','Can be impersonated by only one identity'],
     relationships: [{ target: 'identity', label: 'Paired with an agent identity' }] },
-  autonomous: { name: 'Autonomous Agents', icon: 'fluent:bot-sparkle-24-regular', category: 'Pattern', color: '#EC4899', initial: 'X',
-    definition: 'Agents that perform actions using their own identity. They run in the background, make autonomous decisions, and use app-only permissions.',
-    keyFacts: ['Use app-only permissions','Often run as background processes','Tokens called \u201cagent tokens\u201d','Use the autonomous app flow or user account flow'],
+  autonomous: { name: 'Agents with Own Access', icon: 'fluent:bot-sparkle-24-regular', category: 'Pattern', color: '#EC4899', initial: 'X',
+    definition: 'Agents that perform actions using their own identity. They run in the background, make autonomous decisions, and use app-only permissions. Formerly known as "non-OBO agents."',
+    keyFacts: ['Use app-only permissions','Often run as background processes','Tokens called \u201cagent tokens\u201d','Use the own access (autonomous) flow or user account flow'],
     relationships: [{ target: 'identity', label: 'An operational mode of agent identities' }] },
 };
 
@@ -506,9 +506,9 @@ const RESOURCES = {
 };
 
 const FLOWS = {
-  obo: { name: 'Agent On-Behalf-Of', accent: '#0078D4', icon: 'fluent:people-swap-24-regular',
-    card: 'Agents operating on behalf of signed-in users using OAuth 2.0 OBO flows with agent-specific impersonation.',
-    summary: 'User delegation via standard OAuth 2.0 OBO flows with agent-specific impersonation. The agent identity uses delegated permissions and requires user consent. Supported grant types: client_credentials, jwt-bearer, refresh_token.',
+  obo: { name: 'Delegated Access (OBO)', accent: '#0078D4', icon: 'fluent:people-swap-24-regular',
+    card: 'Agents with delegated access operating on behalf of signed-in users using OAuth 2.0 OBO flows with agent-specific impersonation.',
+    summary: 'Delegated access via standard OAuth 2.0 On-Behalf-Of flows with agent-specific impersonation. The agent identity uses delegated permissions and requires user consent. Supported grant types: client_credentials, jwt-bearer, refresh_token.',
     participants: [
       { label: 'User', icon: 'person-24-filled', color: '#0078D4' },
       { label: 'Client', icon: 'window-apps-24-filled', color: '#0078D4' },
@@ -524,9 +524,9 @@ const FLOWS = {
       { f:3, t:4, label: 'OBO Token Exchange (T1 + Tc)', detail: 'Agent identity sends OBO request with T1 (client assertion) and Tc (user token).' },
       { f:4, t:3, label: 'Return Resource Token (TR)', detail: 'Entra ID validates T1(aud) and Tc(aud) match the blueprint client ID, returns resource token.' },
       { f:3, t:5, label: 'Access Resource with TR', detail: 'Agent identity accesses the resource on behalf of the user.' }]},
-  autonomous: { name: 'Autonomous App', accent: '#E3008C', icon: 'fluent:bot-sparkle-24-regular',
-    card: 'App-only operations where agent identities act autonomously without user context.',
-    summary: 'App-only operations without user context. The blueprint impersonates the agent identity to obtain a token for itself. Only app-only permissions apply, granted by tenant administrators. Agent identities are always single-tenant.',
+  autonomous: { name: 'Own Access (Autonomous)', accent: '#E3008C', icon: 'fluent:bot-sparkle-24-regular',
+    card: 'Agents with own access acting autonomously without user context using app-only permissions.',
+    summary: 'Own access (app-only) operations without user context. The blueprint impersonates the agent identity to obtain a token for itself. Only app-only permissions apply, granted by tenant administrators. Agent identities are always single-tenant.',
     participants: [
       { label: 'Agent\nBlueprint', icon: 'document-copy-24-filled', color: '#E3008C' },
       { label: 'Agent\nIdentity', icon: 'bot-sparkle-24-filled', color: '#E3008C' },
@@ -638,38 +638,38 @@ function riskSignalsSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" v
 
 /* ══════ UNIFIED GRAPH DATA ══════ */
 const UC = {...C,
-  flow_obo:{name:'On-Behalf-Of Flow',icon:'fluent:people-swap-24-regular',category:'Flow',color:'#0078D4',initial:'O',
+  flow_obo:{name:'Delegated Access Flow',icon:'fluent:people-swap-24-regular',category:'Flow',color:'#0078D4',initial:'D',
     definition:FLOWS.obo.summary,
     keyFacts:FLOWS.obo.steps.map((s,i)=>`Step ${i+1} - ${s.label}: ${s.detail}`),
-    relationships:[{target:'interactive',label:'Used by interactive agents'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
-  flow_auto:{name:'Autonomous App Flow',icon:'fluent:bot-sparkle-24-regular',category:'Flow',color:'#EC4899',initial:'A',
+    relationships:[{target:'interactive',label:'Used by agents with delegated access'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
+  flow_auto:{name:'Own Access Flow',icon:'fluent:bot-sparkle-24-regular',category:'Flow',color:'#EC4899',initial:'O',
     definition:FLOWS.autonomous.summary,
     keyFacts:FLOWS.autonomous.steps.map((s,i)=>`Step ${i+1} - ${s.label}: ${s.detail}`),
-    relationships:[{target:'autonomous',label:'Used by autonomous agents'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
+    relationships:[{target:'autonomous',label:'Used by agents with own access'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
   flow_ua:{name:'User Account Flow',icon:'fluent:bot-sparkle-24-regular',category:'Flow',color:'#7B5EA7',initial:'U',
     definition:FLOWS.useraccount.summary,
     keyFacts:FLOWS.useraccount.steps.map((s,i)=>`Step ${i+1} - ${s.label}: ${s.detail}`),
     relationships:[{target:'useraccount',label:'Used with agent user accounts'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
   auth_rbac:{name:'RBAC',icon:'fluent:people-settings-24-regular',category:'Authorization',color:'#FF8C00',initial:'R',
     definition:'Role-Based Access Control assigns directory and custom roles to agent identities, granting permissions to manage Entra ID resources and perform administrative actions within defined scopes.',
-    keyFacts:['Directory roles scope administrative permissions for agent identities','Custom roles can be created for fine-grained agent access control','Roles can be assigned directly or inherited through group membership','Applies to all agent operation patterns: interactive, autonomous, and user account'],
-    relationships:[{target:'gov_ca',label:'CA evaluates role-based access'},{target:'flow_obo',label:'Scopes interactive agent permissions'},{target:'flow_auto',label:'Scopes autonomous agent permissions'},{target:'flow_ua',label:'Scopes user account permissions'}]},
+    keyFacts:['Directory roles scope administrative permissions for agent identities','Custom roles can be created for fine-grained agent access control','Roles can be assigned directly or inherited through group membership','Applies to all agent access patterns: delegated access, own access, and user account'],
+    relationships:[{target:'gov_ca',label:'CA evaluates role-based access'},{target:'flow_obo',label:'Scopes delegated access permissions'},{target:'flow_auto',label:'Scopes own access permissions'},{target:'flow_ua',label:'Scopes user account permissions'}]},
   auth_api:{name:'API Permissions',icon:'fluent:key-24-regular',category:'Authorization',color:'#00B7C3',initial:'A',
     definition:'Delegated (API) permissions define what an agent can do on behalf of a signed-in user. The effective permissions are the intersection of what the app is granted and what the user is allowed to do.',
-    keyFacts:['Delegated permissions require user context and user consent','Effective access is the intersection of app permissions and user privileges','Used by interactive agents operating via the On-Behalf-Of flow','Used by agents with user accounts that need user-object-scoped access','Scopes are defined on the agent identity blueprint (app registration)'],
-    relationships:[{target:'gov_ca',label:'CA evaluates delegated access'},{target:'flow_obo',label:'OBO flow uses delegated permissions'},{target:'flow_ua',label:'User account flow uses delegated permissions'}]},
+    keyFacts:['Delegated permissions require user context and user consent','Effective access is the intersection of app permissions and user privileges','Used by agents with delegated access operating via the OBO flow','Used by agents with user accounts that need user-object-scoped access','Scopes are defined on the agent identity blueprint (app registration)'],
+    relationships:[{target:'gov_ca',label:'CA evaluates delegated access'},{target:'flow_obo',label:'Delegated access flow uses delegated permissions'},{target:'flow_ua',label:'User account flow uses delegated permissions'}]},
   auth_app:{name:'App Permissions',icon:'fluent:shield-keyhole-24-regular',category:'Authorization',color:'#8661C5',initial:'P',
     definition:'Application permissions grant an agent identity direct access to resources without user context. These are consented by an administrator and apply when the agent operates autonomously.',
-    keyFacts:['App-only permissions do not require user context','Granted by tenant administrators via admin consent','Used by autonomous agents running background operations','Permissions are configured on the agent identity blueprint','Higher privilege level requires stronger governance controls'],
-    relationships:[{target:'gov_ca',label:'CA evaluates app-only access'},{target:'flow_auto',label:'Autonomous flow uses app permissions'}]},
+    keyFacts:['App-only permissions do not require user context','Granted by tenant administrators via admin consent','Used by agents with own access running background operations','Permissions are configured on the agent identity blueprint','Higher privilege level requires stronger governance controls'],
+    relationships:[{target:'gov_ca',label:'CA evaluates app-only access'},{target:'flow_auto',label:'Own access flow uses app permissions'}]},
   risk_signals:{name:'Risk Signals',icon:'fluent:shield-task-24-regular',category:'Authorization',color:'#FF8C00',initial:'S',
     definition:'Risk signals are conditions and threat intelligence evaluated during token issuance and enforcement. They feed into Conditional Access policies to make real-time grant or block decisions for agent identities.',
-    keyFacts:['Anomalous sign-in patterns — unusual login behavior detected for the agent identity (all flows)','Leaked credentials — agent credentials found exposed in public repositories or dark web (all flows)','Suspicious sign-ins — sign-ins from unfamiliar locations, impossible travel, or malware-linked IPs (all flows)','Named locations — IP ranges and geographic regions defined as trusted or blocked (all flows)','Compliant network — traffic routed through Global Secure Access verified as compliant (all flows)','Authentication context — step-up requirements for sensitive operations like role activation (all flows)','Insider risk level — risk score from Adaptive Protection based on user behavior; applies only in delegated flows (OBO and User Account) where user context exists'],
+    keyFacts:['Anomalous sign-in patterns — unusual login behavior detected for the agent identity (all flows)','Leaked credentials — agent credentials found exposed in public repositories or dark web (all flows)','Suspicious sign-ins — sign-ins from unfamiliar locations, impossible travel, or malware-linked IPs (all flows)','Named locations — IP ranges and geographic regions defined as trusted or blocked (all flows)','Compliant network — traffic routed through Global Secure Access verified as compliant (all flows)','Authentication context — step-up requirements for sensitive operations like role activation (all flows)','Insider risk level — risk score from Adaptive Protection based on user behavior; applies only in delegated access flows (OBO and User Account) where user context exists'],
     relationships:[{target:'gov_ca',label:'Feeds signals into Conditional Access evaluation'},{target:'auth_rbac',label:'Evaluates risk before granting role-based access'},{target:'auth_api',label:'Evaluates risk before granting delegated permissions'},{target:'auth_app',label:'Evaluates risk before granting app-only permissions'}]},
   gov_ca:{name:'Conditional Access',icon:GOV.ca.icon,category:'Security Controls',color:GOV.ca.accent,initial:'C',
     definition:GOV.ca.summary,keyFacts:[...GOV.ca.points,
       'Evaluation signals for agent identities: anomalous sign-in patterns, leaked credentials, suspicious sign-ins, named locations, compliant network, authentication context',
-      'Insider risk from Adaptive Protection applies as a CA condition in delegated flows (OBO and User Account) where user context exists; does not apply to autonomous agents',
+      'Insider risk from Adaptive Protection applies as a CA condition in delegated access flows (OBO and User Account) where user context exists; does not apply to agents with own access',
     ],relationships:[{target:'identity',label:'Evaluates agent token requests'},{target:'risk_signals',label:'Evaluates risk signals for grant/block decisions'}],
     licensing:{title:'Conditional Access',plans:[
       {name:'Microsoft Entra ID P1',includes:['Conditional Access policies','MFA enforcement','Location-based access','Device-based conditions','Session controls','Authentication context','Token protection'],note:'Included with M365 E3/A3/F1/F3, Business Premium, EMS E3 (and all higher tiers)'},
@@ -717,7 +717,7 @@ const UC = {...C,
   res_graph:{name:'Microsoft Graph',icon:'fluent:code-24-regular',category:'Resource',color:'#0078D4',initial:'G',
     definition:'The primary API surface for accessing Microsoft 365 services. Agents use Graph to interact with organizational data, users, mail, calendars, and files.',
     keyFacts:['Unified REST API endpoint for Microsoft 365','Supports delegated and app-only permissions','Central hub for agent resource access'],
-    relationships:[{target:'flow_obo',label:'Accessed via OBO flow'},{target:'flow_auto',label:'Accessed via autonomous flow'}]},
+    relationships:[{target:'flow_obo',label:'Accessed via delegated access flow'},{target:'flow_auto',label:'Accessed via own access flow'}]},
   res_teams:{name:'Microsoft Teams',icon:'fluent:people-team-24-regular',category:'Resource',color:'#6264A7',initial:'T',
     definition:'Collaboration platform. Agents interact with Teams through user-context flows for chat, channels, and meetings.',
     keyFacts:['Requires user object context','Chat, channels, and meeting capabilities'],
@@ -729,7 +729,7 @@ const UC = {...C,
   res_sharepoint:{name:'SharePoint',icon:'fluent:document-24-regular',category:'Resource',color:'#038387',initial:'S',
     definition:'Document management and collaboration platform. Agents access sites, lists, and files.',
     keyFacts:['Supports both delegated and app-only access','File and content management'],
-    relationships:[{target:'flow_obo',label:'Accessed via OBO flow'},{target:'flow_ua',label:'Accessed via user account flow'}]},
+    relationships:[{target:'flow_obo',label:'Accessed via delegated access flow'},{target:'flow_ua',label:'Accessed via user account flow'}]},
   res_calendar:{name:'Calendar',icon:'fluent:calendar-24-regular',category:'Resource',color:'#0078D4',initial:'C',
     definition:'Calendar services through Exchange Online. Agents manage events and scheduling with user context.',
     keyFacts:['Exchange Online integration','Scheduling and event management'],
@@ -737,23 +737,23 @@ const UC = {...C,
   res_apps:{name:'Apps',icon:'fluent:apps-24-regular',category:'Resource',color:'#50E6FF',initial:'A',
     definition:'Line-of-business applications and third-party services that agents access with proper permissions.',
     keyFacts:['Custom line-of-business APIs','Third-party service integrations'],
-    relationships:[{target:'flow_obo',label:'Accessed via OBO flow'}]},
+    relationships:[{target:'flow_obo',label:'Accessed via delegated access flow'}]},
   res_apis:{name:'Custom APIs',icon:'fluent:globe-24-regular',category:'Resource',color:'#50E6FF',initial:'P',
     definition:'Organization-specific APIs protected by OAuth 2.0 that agents can access.',
     keyFacts:['Custom APIs and integrations','Protected by OAuth 2.0'],
-    relationships:[{target:'flow_obo',label:'Accessed via OBO flow'},{target:'flow_auto',label:'Accessed via autonomous flow'}]},
+    relationships:[{target:'flow_obo',label:'Accessed via delegated access flow'},{target:'flow_auto',label:'Accessed via own access flow'}]},
   res_cloud:{name:'Cloud Services',icon:'fluent:cloud-24-regular',category:'Resource',color:'#0078D4',initial:'C',
-    definition:'Azure and cloud infrastructure resources accessed autonomously with app-only permissions.',
+    definition:'Azure and cloud infrastructure resources accessed by agents with own access using app-only permissions.',
     keyFacts:['Cloud infrastructure resources','App-only permission access'],
-    relationships:[{target:'flow_auto',label:'Accessed via autonomous flow'}]},
+    relationships:[{target:'flow_auto',label:'Accessed via own access flow'}]},
   res_data:{name:'Data Stores',icon:'fluent:database-24-regular',category:'Resource',color:'#F59E0B',initial:'D',
-    definition:'Backend databases and storage services that autonomous agents access with app-only permissions.',
+    definition:'Backend databases and storage services that agents with own access connect to using app-only permissions.',
     keyFacts:['Databases and storage services','App-only permission access'],
-    relationships:[{target:'flow_auto',label:'Accessed via autonomous flow'}]},
+    relationships:[{target:'flow_auto',label:'Accessed via own access flow'}]},
   res_security:{name:'Security',icon:'fluent:shield-24-regular',category:'Resource',color:'#E3008C',initial:'S',
-    definition:'Security services and APIs accessed by autonomous agents for monitoring and response.',
+    definition:'Security services and APIs accessed by agents with own access for monitoring and response.',
     keyFacts:['Security monitoring and response','Threat intelligence APIs'],
-    relationships:[{target:'flow_auto',label:'Accessed via autonomous flow'}]},
+    relationships:[{target:'flow_auto',label:'Accessed via own access flow'}]},
 };
 const UNIFIED_NODES = [
   /* ── Identity Model ── */
@@ -1140,7 +1140,7 @@ function ConceptGraph({ selected, onSelect, dedicated, unified }) {
       ctx.setLineDash([4,4]);ctx.lineWidth=1;rrect(ctx,gx,gy,gw,gh,6);ctx.stroke();ctx.restore();
       /* ── signal ellipse (full ring around Risk Signals) ── */
       const leftSignals=['Anomalous sign-in','Leaked credentials','Suspicious sign-ins','Named locations'];
-      const rightSignals=['Compliant network','Auth context','IRM / Adaptive Protection (OBO only)'];
+      const rightSignals=['Compliant network','Auth context','IRM / Adaptive Protection (delegated only)'];
       const fs=dedicated?9:7;
       const pillH=fs+5, pillR=pillH/2;
       const fillAlpha=dim?0.04:0.12, textAlpha=dim?0.15:0.75;
@@ -1482,10 +1482,10 @@ function App(){const[sel,setSel]=useState(null);
         <p>On the other side, the blueprint creates one or more <strong>agent identities</strong>. Each agent identity represents an individual operating instance of an agent. It does not hold credentials of its own; it authenticates through tokens issued by its parent blueprint. Administrators manage credentials and policies at the blueprint level while scaling out many identities underneath. Every agent identity belongs to exactly one blueprint and is always single-tenant, regardless of whether its parent blueprint supports multi-tenancy.</p>
 
         <h3>How agents operate</h3>
-        <p>Depending on the scenario, an agent identity can operate in different ways.</p>
+        <p>Depending on the scenario, an agent identity can operate with different access models.</p>
         <ul>
-          <li><strong>Interactive agents</strong> sign in a user and act in response to user prompts, typically through a chat interface. They use delegated permissions scoped to what the user has consented to, and their tokens are commonly called user tokens.</li>
-          <li><strong>Autonomous agents</strong> perform actions under their own identity without user context. They run in the background, use app-only permissions granted by tenant administrators, and their tokens are called agent tokens.</li>
+          <li><strong>Agents with delegated access</strong> (formerly "OBO agents") sign in a user and act in response to user prompts, typically through a chat interface. They use delegated permissions scoped to what the user has consented to, and their tokens are commonly called user tokens.</li>
+          <li><strong>Agents with own access</strong> (formerly "non-OBO agents") perform actions under their own identity without user context. They run in the background, use app-only permissions granted by tenant administrators, and their tokens are called agent tokens.</li>
           <li><strong>Agent\u2019s user account</strong> pairs one-to-one with an agent identity and is used when the agent must access systems that require a user object, like an Exchange Online mailbox or a Teams channel. The user account does not replace the agent identity; both exist side by side, and the account can be impersonated by only the single agent identity it is paired with.</li>
         </ul>
       </div>
@@ -1496,7 +1496,7 @@ function App(){const[sel,setSel]=useState(null);
         <div className="section-head"><span className="section-num">02</span><h2>Agent ID Authentication Flows</h2></div>
         <p className="section-desc">How agents acquire tokens through multi-stage exchanges.</p>
         <p>Microsoft Entra Agent ID supports three authentication flow patterns. All three rely on multi-stage token exchanges where the agent identity blueprint impersonates the agent identity to perform operations. None use redirect URIs or the /authorize endpoint. All agent entities authenticate as confidential clients. Managed identities are the preferred credential type: the managed identity token serves as the credential for the parent agent identity blueprint, while standard MSI protocols apply for credential acquisition.</p>
-        <p>The <strong>Agent On-Behalf-Of</strong> flow enables user delegation: the agent identity operates on behalf of a signed-in user using standard OAuth 2.0 On-Behalf-Of flows with agent-specific impersonation. The <strong>Autonomous App</strong> flow enables app-only operations without user context, where the agent identity blueprint impersonates the agent identity to obtain a token for itself. The <strong>Agent\u2019s User Account</strong> flow uses credential chaining (blueprint \u2192 identity \u2192 user account) for agents that need to operate with a user object such as an Exchange Online mailbox.</p>
+        <p>The <strong>Delegated Access (OBO)</strong> flow enables user delegation: the agent identity operates on behalf of a signed-in user using standard OAuth 2.0 On-Behalf-Of flows with agent-specific impersonation. The <strong>Own Access (Autonomous)</strong> flow enables app-only operations without user context, where the agent identity blueprint impersonates the agent identity to obtain a token for itself. The <strong>Agent\u2019s User Account</strong> flow uses credential chaining (blueprint \u2192 identity \u2192 user account) for agents that need to operate with a user object such as an Exchange Online mailbox.</p>
         <p>Select a flow below to explore the step-by-step sequence diagram. Click any arrow to see details for that step.</p>
       </div>
       <div className="graph-section" style=${{maxWidth:'1000px'}}><${FlowSection} /></div>
