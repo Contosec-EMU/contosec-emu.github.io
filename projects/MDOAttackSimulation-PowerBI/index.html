@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Bringing Microsoft Defender Attack Simulation Data to Power BI</title>
     <meta name="description" content="An open-source Azure pipeline that brings Microsoft Defender for Office 365 attack simulation data into Power BI for custom reporting and analytics.">
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -395,15 +396,13 @@
 
         /* Disclaimer */
         .disclaimer {
-            background: #fafafa;
-            border: 1px solid #e5e5e5;
-            border-radius: 4px;
+            background: #eef2f7;
+            border-left: 3px solid #2a446f;
             padding: 16px 20px;
             margin: 28px 0;
-            font-size: 13px;
-            color: #616161;
-            line-height: 1.6;
+            font-size: 15px;
         }
+        .disclaimer p { margin-bottom: 0; }
 
         /* Footer */
         .footer {
@@ -428,14 +427,16 @@
 
         @media (prefers-color-scheme: dark) {
             body { background: #1a1a1a; color: #e0e0e0; }
+            .topbar { background: #111; }
+            .hero { background: linear-gradient(135deg, #111827 0%, #1a2744 50%, #1e304f 100%); }
             .article h2, .article h3 { color: #e0e0e0; }
             .article p { color: #d0d0d0; }
             .article a { color: #7eb8e0; }
             .article strong { color: #e0e0e0; }
             .article code { background: #2a2a2a; color: #d0d0d0; }
-            .disclaimer { background: #222; border-color: #333; color: #aaa; }
+            .disclaimer { background: #1a2233; border-left-color: #3a6a9f; color: #d0d0d0; }
             .disclaimer strong { color: #d0d0d0; }
-            .diagram { background: #222; border-color: #333; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+            .diagram { background: #222; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
             .flow-node { background: #2a2a2a; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
             .flow-node-label { color: #999; }
             .flow-node-title { color: #e0e0e0; }
@@ -460,13 +461,75 @@
             .footer { border-top-color: #333; color: #777; }
             .footer a { color: #7eb8e0; }
         }
+        /* Explicit dark mode for toggle */
+        html[data-theme="dark"] body { background: #1a1a1a; color: #e0e0e0; }
+        html[data-theme="dark"] .topbar { background: #111; }
+        html[data-theme="dark"] .hero { background: linear-gradient(135deg, #111827 0%, #1a2744 50%, #1e304f 100%); }
+        html[data-theme="dark"] .article h2, html[data-theme="dark"] .article h3 { color: #e0e0e0; }
+        html[data-theme="dark"] .article p { color: #d0d0d0; }
+        html[data-theme="dark"] .article a { color: #7eb8e0; }
+        html[data-theme="dark"] .article strong { color: #e0e0e0; }
+        html[data-theme="dark"] .article code { background: #2a2a2a; color: #d0d0d0; }
+        html[data-theme="dark"] .disclaimer { background: #1a2233; border-left-color: #3a6a9f; color: #d0d0d0; }
+        html[data-theme="dark"] .disclaimer strong { color: #d0d0d0; }
+        html[data-theme="dark"] .diagram { background: #222; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+        html[data-theme="dark"] .flow-node { background: #2a2a2a; box-shadow: 0 1px 3px rgba(0,0,0,0.3); }
+        html[data-theme="dark"] .flow-node-label { color: #999; }
+        html[data-theme="dark"] .flow-node-title { color: #e0e0e0; }
+        html[data-theme="dark"] .flow-node-detail { color: #999; }
+        html[data-theme="dark"] th { background: #222; border-bottom-color: #444; color: #e0e0e0; }
+        html[data-theme="dark"] td { border-bottom-color: #333; color: #d0d0d0; }
+        html[data-theme="dark"] .tag-stable { background: #1a3a24; color: #6fcf7f; }
+        html[data-theme="dark"] .tag-beta { background: #3a3018; color: #e8c84a; }
+        html[data-theme="dark"] .step-item { border-bottom-color: #333; }
+        html[data-theme="dark"] .step-text h4 { color: #e0e0e0; }
+        html[data-theme="dark"] .step-text p { color: #999; }
+        html[data-theme="dark"] .tech-tag { background: #2a2a2a; color: #bbb; }
+        html[data-theme="dark"] .note { background: #1a2233; border-left-color: #3a6a9f; }
+        html[data-theme="dark"] .note p { color: #d0d0d0; }
+        html[data-theme="dark"] .cta { background: #222; border-color: #333; }
+        html[data-theme="dark"] .cta h3 { color: #e0e0e0; }
+        html[data-theme="dark"] .cta p { color: #999; }
+        html[data-theme="dark"] .gallery-item { box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        html[data-theme="dark"] .gallery-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+        html[data-theme="dark"] .btn { background: #3a5a8f; }
+        html[data-theme="dark"] .btn:hover { background: #2a446f; }
+        html[data-theme="dark"] .footer { border-top-color: #333; color: #777; }
+        html[data-theme="dark"] .footer a { color: #7eb8e0; }
+        /* Explicit light mode override */
+        html[data-theme="light"] body { background: #fff; color: #1a1a1a; }
+        /* Theme toggle */
+        .theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: transparent; border: 1px solid #555; border-radius: 4px; color: #fff; cursor: pointer; transition: all .2s; margin-right: 8px; }
+        .theme-toggle:hover { background: #222; border-color: #888; }
+        html[data-theme="dark"] .theme-toggle { border-color: #444; color: #fff; }
+        html[data-theme="dark"] .theme-toggle:hover { background: #222; border-color: #666; }
     </style>
+<script>
+(function(){
+  var saved = localStorage.getItem('entra-theme');
+  var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme') || 'light';
+  var next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('entra-theme', next);
+  var icon = document.querySelector('.theme-toggle iconify-icon');
+  if(icon) icon.setAttribute('icon', next === 'light' ? 'fluent:weather-moon-24-regular' : 'fluent:weather-sunny-24-regular');
+}
+</script>
 </head>
 <body>
 
-    <div class="topbar">
+    <div class="topbar" id="site-topbar">
+        <button class="theme-toggle" onclick="toggleTheme()" title="Toggle light/dark mode"><iconify-icon icon="fluent:weather-moon-24-regular" width="16"></iconify-icon></button>
         <a href="https://github.com/Contosec-EMU/MDOAttackSimulation-PowerBI" class="topbar-link" target="_blank"><svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg> View on GitHub</a>
     </div>
+    <script>
+    (function(){var t=document.documentElement.getAttribute('data-theme');var i=document.querySelector('#site-topbar .theme-toggle iconify-icon');if(i)i.setAttribute('icon',t==='dark'?'fluent:weather-sunny-24-regular':'fluent:weather-moon-24-regular');})();
+    </script>
 
     <div class="hero">
         <div class="hero-inner">
