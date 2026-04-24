@@ -662,7 +662,7 @@ const UC = {...C,
     definition:'Application permissions grant an agent identity direct access to resources without user context. These are consented by an administrator and apply when the agent operates autonomously.',
     keyFacts:['App-only permissions do not require user context','Granted by tenant administrators via admin consent','Used by agents with own access running background operations','Permissions are configured on the agent identity blueprint','Higher privilege level requires stronger governance controls'],
     relationships:[{target:'gov_ca',label:'CA evaluates app-only access'},{target:'flow_auto',label:'Own access flow uses app permissions'}]},
-  risk_signals:{name:'Risk Signals',icon:'fluent:shield-task-24-regular',category:'Authorization',color:'#FF8C00',initial:'S',
+  risk_signals:{name:'Risk Signals',icon:'fluent:shield-task-24-regular',category:'Authentication',color:'#FF8C00',initial:'S',
     definition:'Risk signals are conditions and threat intelligence evaluated during token issuance and enforcement. They feed into Conditional Access policies to make real-time grant or block decisions for agent identities.',
     keyFacts:['Anomalous sign-in patterns — unusual login behavior detected for the agent identity (all flows)','Leaked credentials — agent credentials found exposed in public repositories or dark web (all flows)','Suspicious sign-ins — sign-ins from unfamiliar locations, impossible travel, or malware-linked IPs (all flows)','Named locations — IP ranges and geographic regions defined as trusted or blocked (all flows)','Compliant network — traffic routed through Global Secure Access verified as compliant (all flows)','Authentication context — step-up requirements for sensitive operations like role activation (all flows)','Insider risk level — risk score from Adaptive Protection based on user behavior; applies only in delegated access flows (OBO and User Account) where user context exists'],
     relationships:[{target:'gov_ca',label:'Feeds signals into Conditional Access evaluation'},{target:'auth_rbac',label:'Evaluates risk before granting role-based access'},{target:'auth_api',label:'Evaluates risk before granting delegated permissions'},{target:'auth_app',label:'Evaluates risk before granting app-only permissions'}]},
@@ -764,8 +764,8 @@ const UNIFIED_NODES = [
   /* ── Authentication Flows ── */
   {id:'flow_obo',x:0.36,y:0.49,s:1.0},{id:'flow_ua',x:0.57,y:0.49,s:1.0},{id:'flow_auto',x:0.78,y:0.49,s:1.0},
   /* ── Authorization ── */
-  {id:'risk_signals',x:0.57,y:0.65,s:1.0,shape:'square'},
-  {id:'auth_rbac',x:0.47,y:0.73,s:1.0,shape:'square'},{id:'auth_api',x:0.57,y:0.73,s:1.0,shape:'square'},{id:'auth_app',x:0.67,y:0.73,s:1.0,shape:'square'},
+  {id:'risk_signals',x:0.57,y:0.62,s:1.0,shape:'square'},
+  {id:'auth_rbac',x:0.47,y:0.75,s:1.0,shape:'square'},{id:'auth_api',x:0.57,y:0.75,s:1.0,shape:'square'},{id:'auth_app',x:0.67,y:0.75,s:1.0,shape:'square'},
   /* ── Resources & Services (clustered below each flow) ── */
   {id:'res_apis',x:0.23,y:0.89,s:1.0},{id:'res_apps',x:0.29,y:0.91,s:1.0},{id:'res_graph',x:0.35,y:0.89,s:1.0},
   {id:'res_teams',x:0.51,y:0.86,s:1.0},{id:'res_outlook',x:0.57,y:0.84,s:1.0},{id:'res_calendar',x:0.63,y:0.86,s:1.0},{id:'res_sharepoint',x:0.57,y:0.91,s:1.0},
@@ -787,11 +787,11 @@ const UNIFIED_EDGES = [
   {source:'identity',target:'useraccount',label:'Operates as',lt:0.5,lo:-18},
   {source:'identity',target:'autonomous',label:'Operates as',lt:0.65,lo:-36},
   {source:'interactive',target:'flow_obo',label:'Authenticates via',lt:0.72,lo:14},
-  {source:'useraccount',target:'flow_ua',label:'Authenticates via',lt:0.72,lo:14},
+  {source:'useraccount',target:'flow_ua',label:'Authenticates via',lt:0.35,lo:50},
   {source:'autonomous',target:'flow_auto',label:'Authenticates via',lt:0.72,lo:-14},
   /* ── Flows → Risk Signals ── */
   {source:'flow_obo',target:'risk_signals',label:'Delegated',lt:0.35,lo:14},
-  {source:'flow_ua',target:'risk_signals',label:'Delegated',lt:0.5,lo:-14},
+  {source:'flow_ua',target:'risk_signals',label:'Delegated',lt:0.5,lo:30},
   {source:'flow_auto',target:'risk_signals',label:'App-only',lt:0.5,lo:-14},
   /* ── Risk Signals → Permissions ── */
   {source:'risk_signals',target:'auth_rbac',label:'',lt:0.5,lo:8},
@@ -963,16 +963,16 @@ const THEME = {
 const LAYERS_DARK = [
   {x0:0.005,x1:0.15,y0:0.01,y1:0.96,label:'GOVERNANCE &\nSECURITY',vertical:true,from:'rgba(227,0,140,0.05)',to:'rgba(227,0,140,0.02)',border:'rgba(227,0,140,0.20)',labelColor:'rgba(227,100,180,0.70)'},
   {x0:0.15,y0:0.01,y1:0.43,label:'AGENT IDENTITY MODEL',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.22)',labelColor:'rgba(120,180,255,0.70)'},
-  {x0:0.15,y0:0.43,y1:0.59,label:'AGENT AUTHENTICATION FLOWS',from:'rgba(80,230,255,0.06)',to:'rgba(80,230,255,0.02)',border:'rgba(80,230,255,0.22)',labelColor:'rgba(80,230,255,0.70)'},
-  {x0:0.15,y0:0.59,y1:0.80,label:'AUTHORIZATION',from:'rgba(255,140,0,0.06)',to:'rgba(255,140,0,0.02)',border:'rgba(255,140,0,0.22)',labelColor:'rgba(255,180,80,0.70)'},
+  {x0:0.15,y0:0.43,y1:0.70,label:'AUTHENTICATION & RISK EVALUATION',from:'rgba(80,230,255,0.06)',to:'rgba(80,230,255,0.02)',border:'rgba(80,230,255,0.22)',labelColor:'rgba(80,230,255,0.70)'},
+  {x0:0.15,y0:0.70,y1:0.80,label:'AUTHORIZATION',from:'rgba(255,140,0,0.06)',to:'rgba(255,140,0,0.02)',border:'rgba(255,140,0,0.22)',labelColor:'rgba(255,180,80,0.70)'},
   {x0:0.15,y0:0.80,y1:0.96,label:'RESOURCES AGENTS MAY CONSUME',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.22)',labelColor:'rgba(120,180,255,0.70)'},
 ];
 
 const LAYERS_LIGHT = [
   {x0:0.005,x1:0.15,y0:0.01,y1:0.96,label:'GOVERNANCE &\nSECURITY',vertical:true,from:'rgba(227,0,140,0.04)',to:'rgba(227,0,140,0.01)',border:'rgba(227,0,140,0.12)',labelColor:'rgba(180,0,110,0.60)'},
   {x0:0.15,y0:0.01,y1:0.43,label:'AGENT IDENTITY MODEL',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.18)',labelColor:'rgba(0,80,160,0.65)'},
-  {x0:0.15,y0:0.43,y1:0.59,label:'AGENT AUTHENTICATION FLOWS',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.18)',labelColor:'rgba(0,80,160,0.65)'},
-  {x0:0.15,y0:0.59,y1:0.80,label:'AUTHORIZATION',from:'rgba(255,140,0,0.05)',to:'rgba(255,140,0,0.01)',border:'rgba(255,140,0,0.18)',labelColor:'rgba(180,100,0,0.65)'},
+  {x0:0.15,y0:0.43,y1:0.70,label:'AUTHENTICATION & RISK EVALUATION',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.18)',labelColor:'rgba(0,80,160,0.65)'},
+  {x0:0.15,y0:0.70,y1:0.80,label:'AUTHORIZATION',from:'rgba(255,140,0,0.05)',to:'rgba(255,140,0,0.01)',border:'rgba(255,140,0,0.18)',labelColor:'rgba(180,100,0,0.65)'},
   {x0:0.15,y0:0.80,y1:0.96,label:'RESOURCES AGENTS MAY CONSUME',from:'rgba(0,120,212,0.04)',to:'rgba(0,120,212,0.01)',border:'rgba(0,120,212,0.15)',labelColor:'rgba(0,80,160,0.60)'},
 ];
 
