@@ -1,0 +1,1199 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Carlos Suarez">
+    <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1a1815" media="(prefers-color-scheme: dark)">
+    <link rel="alternate" type="application/rss+xml" title="Contosec RSS" href="/feed.xml">
+    <link rel="canonical" href="https://contosec.com/projects/red-tide/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+    <title>RedTide: Automated Attack Simulations for Endpoint Security Validation</title>
+    <meta name="description" content="An open-source PowerShell toolkit that automates 13 attack simulations for endpoint security validation. No malware, real alerts, full cleanup.">
+    <meta property="og:title" content="RedTide: Automated Attack Simulations for Endpoint Security Validation">
+    <meta property="og:description" content="A PowerShell toolkit that automates 13 attack simulations across Next-Gen Protection, Attack Surface Reduction, and EDR. No malware, real alerts, full cleanup.">
+<meta property="og:image" content="https://contosec.com/projects/red-tide/og-image.png">
+    <meta property="og:url" content="https://contosec.com/projects/red-tide/">
+    <meta property="og:type" content="article">
+        <meta name="twitter:card" content="summary_large_image">
+    <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+            color: #1a1a1a;
+            line-height: 1.75;
+            -webkit-font-smoothing: antialiased;
+            background: #fff;
+            font-size: 16px;
+        }
+
+        /* Sticky top bar */
+        .topbar {
+            background: #000;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            padding: 8px 24px;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+        }
+        .topbar-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 16px;
+            background: transparent;
+            color: #fff !important;
+            border: 1px solid #444;
+            border-radius: 4px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .topbar-link:hover { background: #222; border-color: #666; text-decoration: none; }
+        .topbar-link svg { fill: #fff; }
+
+        /* Hero banner */
+        .hero {
+            background: linear-gradient(135deg, #1e304f 0%, #263e65 50%, #2a446f 100%);
+            padding: 48px 24px 44px;
+            color: #fff;
+        }
+        .hero-inner {
+            max-width: 860px;
+            margin: 0 auto;
+            position: relative;
+        }
+        .hero-label {
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #8fabc8;
+            margin-bottom: 16px;
+            font-weight: 600;
+        }
+        .hero h1 {
+            font-size: 34px;
+            font-weight: 600;
+            line-height: 1.25;
+            color: #fff;
+            margin-bottom: 20px;
+        }
+        .hero .meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 14px;
+            color: #b0c4de;
+            margin-bottom: 2px;
+        }
+        .hero .meta-author {
+            font-weight: 600;
+            color: #fff;
+            text-decoration: none;
+        }
+        .hero .meta-author:hover { text-decoration: underline; color: #fff; }
+        .hero .meta-sep { color: #5a7a9e; }
+        .hero .meta-role {
+            font-size: 13px;
+            color: #8fabc8;
+            margin-top: 0;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .hero .meta-role .ms-logo {
+            width: 16px;
+            height: 16px;
+            vertical-align: middle;
+        }
+
+        /* Article container */
+        .article {
+            max-width: 860px;
+            margin: 0 auto;
+            padding: 32px 24px 60px;
+        }
+
+        /* Content */
+        .article h2 {
+            font-size: 24px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 36px 0 16px;
+        }
+        .article h3 {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin: 28px 0 12px;
+        }
+        .article p {
+            margin-bottom: 16px;
+            color: #1a1a1a;
+        }
+        .article ul, .article ol {
+            margin: 0 0 16px 24px;
+        }
+        .article li {
+            margin-bottom: 8px;
+        }
+        .article a {
+            color: #2a446f;
+            text-decoration: none;
+        }
+        .article a:hover { text-decoration: underline; }
+        .article code {
+            background: #f5f5f5;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-size: 14px;
+            font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+        }
+        .article strong { font-weight: 600; }
+        .article pre {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 16px 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            word-wrap: break-word;
+            white-space: pre-wrap;
+            margin: 16px 0;
+            font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+        .article pre code {
+            background: none;
+            padding: 0;
+            border-radius: 0;
+            color: inherit;
+            font-size: inherit;
+        }
+
+        /* Note callout */
+        .note {
+            background: #eef2f7;
+            border-left: 3px solid #2a446f;
+            padding: 16px 20px;
+            margin: 20px 0;
+            font-size: 15px;
+        }
+        .note p { margin-bottom: 0; }
+
+        /* Diagram */
+        /* Pipeline diagram */
+        .diagram {
+            background: #f8f9fa;
+            border: none;
+            border-radius: 16px;
+            padding: 40px 24px 36px;
+            margin: 28px 0;
+            overflow: hidden;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            position: relative;
+        }
+        .pipeline {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            position: relative;
+            max-width: 760px;
+            margin: 0 auto;
+        }
+        .pipeline::before {
+            content: '';
+            position: absolute;
+            top: 28px;
+            left: 32px;
+            right: 32px;
+            height: 4px;
+            background: linear-gradient(90deg, #0078D4 0%, #5B4FCF 30%, #C84B31 55%, #76bc2d 100%);
+            border-radius: 2px;
+            z-index: 0;
+        }
+        .phase {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            min-width: 0;
+        }
+        .phase-dot {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+            position: relative;
+        }
+        .phase-dot iconify-icon { font-size: 26px; color: #fff; }
+        .phase-dot-1 { background: #0078D4; }
+        .phase-dot-2 { background: #5B4FCF; }
+        .phase-dot-3 { background: #C84B31; }
+        .phase-dot-4 { background: #D4A017; }
+        .phase-dot-5 { background: #76bc2d; }
+        .phase-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: #1a1a1a;
+            margin-bottom: 4px;
+        }
+        .phase-detail {
+            font-size: 12px;
+            color: #767676;
+            line-height: 1.4;
+            max-width: 120px;
+        }
+
+        /* Screenshot gallery */
+        .gallery {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            margin: 24px 0;
+        }
+        .gallery-item {
+            position: relative;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: box-shadow 0.2s ease, transform 0.2s ease;
+        }
+        .gallery-item:hover {
+            box-shadow: 0 4px 16px rgba(0,0,0,0.18);
+            transform: translateY(-2px);
+        }
+        .gallery-item img {
+            width: 100%;
+            display: block;
+        }
+        .gallery-caption {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(transparent, rgba(0,0,0,0.7));
+            color: #fff;
+            padding: 24px 12px 10px;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        .gallery-item-wide {
+            grid-column: 1 / -1;
+        }
+        .gallery-overlay {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(0,0,0,0.85);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .gallery-overlay.active { display: flex; }
+        .gallery-overlay img {
+            max-width: 92%;
+            max-height: 92vh;
+            border-radius: 8px;
+            box-shadow: 0 4px 32px rgba(0,0,0,0.5);
+        }
+
+        /* Table */
+        .table-wrap {
+            overflow-x: auto;
+            margin: 20px 0;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        th {
+            text-align: left;
+            padding: 10px 12px;
+            background: #fafafa;
+            border-bottom: 2px solid #e5e5e5;
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+        td {
+            padding: 10px 12px;
+            border-bottom: 1px solid #e5e5e5;
+            color: #1a1a1a;
+        }
+        .tag {
+            display: inline-block;
+            padding: 1px 8px;
+            border-radius: 3px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        .tag-p1 { background: #e6f4ea; color: #1e7e34; }
+        .tag-p2 { background: #fff3cd; color: #856404; }
+        .tag-edr { background: #e8eaf6; color: #3949ab; }
+
+        /* Tags row */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 6px;
+            margin: 16px 0;
+        }
+        .tech-tag {
+            padding: 4px 10px;
+            border-radius: 3px;
+            background: #f5f5f5;
+            font-size: 13px;
+            color: #424242;
+        }
+
+        /* CTA box */
+        .cta {
+            background: #fafafa;
+            border: 1px solid #e5e5e5;
+            border-radius: 4px;
+            padding: 28px;
+            text-align: center;
+            margin: 36px 0;
+        }
+        .cta h3 { margin: 0 0 8px; font-size: 18px; }
+        .cta p { font-size: 14px; color: #616161; margin-bottom: 16px; }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: #2a446f;
+            color: #fff !important;
+            border-radius: 4px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+        }
+        .btn:hover { background: #1e304f; color: #fff !important; text-decoration: none; }
+        .btn svg { fill: #fff; }
+
+        /* Disclaimer */
+        .disclaimer {
+            background: #eef2f7;
+            border-left: 3px solid #2a446f;
+            padding: 16px 20px;
+            margin: 28px 0;
+            font-size: 15px;
+        }
+        .disclaimer p { margin-bottom: 0; }
+
+        /* Footer */
+        .footer {
+            border-top: 1px solid #e5e5e5;
+            padding: 20px 24px;
+            text-align: center;
+            font-size: 13px;
+            color: #767676;
+        }
+        .footer a { color: #2a446f; text-decoration: none; }
+        .footer a:hover { text-decoration: underline; }
+
+        @media (max-width: 768px) {
+            .hero h1 { font-size: 24px; }
+            .article { padding: 24px 16px 40px; }
+            .pipeline { flex-direction: column; align-items: center; gap: 20px; }
+            .pipeline::before { top: 0; bottom: 0; left: 50%; width: 4px; height: auto; right: auto; transform: translateX(-2px); }
+            .phase-detail { max-width: 200px; }
+            .gallery { grid-template-columns: 1fr; }
+            .gallery-item-wide { grid-column: auto; }
+        }
+
+        @media (prefers-color-scheme: dark) {
+            body { background: #1a1a1a; color: #e0e0e0; }
+            .topbar { background: #111; }
+            .hero { background: linear-gradient(135deg, #111827 0%, #1a2744 50%, #1e304f 100%); }
+            .article h2, .article h3 { color: #e0e0e0; }
+            .article p { color: #d0d0d0; }
+            .article a { color: #7eb8e0; }
+            .article strong { color: #e0e0e0; }
+            .article code { background: #2a2a2a; color: #d0d0d0; }
+            .article pre { background: #111; }
+            .disclaimer { background: #1a2233; border-left-color: #3a6a9f; color: #d0d0d0; }
+            .disclaimer strong { color: #d0d0d0; }
+            .diagram { background: #222; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+            .phase-title { color: #e0e0e0; }
+            .phase-detail { color: #999; }
+            th { background: #222; border-bottom-color: #444; color: #e0e0e0; }
+            td { border-bottom-color: #333; color: #d0d0d0; }
+            .tag-p1 { background: #1a3a24; color: #6fcf7f; }
+            .tag-p2 { background: #3a3018; color: #e8c84a; }
+            .tag-edr { background: #1a1a3a; color: #8c9eff; }
+            .note { background: #1a2233; border-left-color: #3a6a9f; }
+            .note p { color: #d0d0d0; }
+            .tech-tag { background: #2a2a2a; color: #bbb; }
+            .cta { background: #222; border-color: #333; }
+            .cta h3 { color: #e0e0e0; }
+            .cta p { color: #999; }
+            .gallery-item { box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+            .gallery-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+            .btn { background: #3a5a8f; }
+            .btn:hover { background: #2a446f; }
+            .footer { border-top-color: #333; color: #777; }
+            .footer a { color: #7eb8e0; }
+        }
+        /* Explicit dark mode for toggle */
+        html[data-theme="dark"] body { background: #1a1a1a; color: #e0e0e0; }
+        html[data-theme="dark"] .topbar { background: #111; }
+        html[data-theme="dark"] .hero { background: linear-gradient(135deg, #111827 0%, #1a2744 50%, #1e304f 100%); }
+        html[data-theme="dark"] .article h2, html[data-theme="dark"] .article h3 { color: #e0e0e0; }
+        html[data-theme="dark"] .article p { color: #d0d0d0; }
+        html[data-theme="dark"] .article a { color: #7eb8e0; }
+        html[data-theme="dark"] .article strong { color: #e0e0e0; }
+        html[data-theme="dark"] .article code { background: #2a2a2a; color: #d0d0d0; }
+        html[data-theme="dark"] .article pre { background: #111; }
+        html[data-theme="dark"] .disclaimer { background: #1a2233; border-left-color: #3a6a9f; color: #d0d0d0; }
+        html[data-theme="dark"] .disclaimer strong { color: #d0d0d0; }
+        html[data-theme="dark"] .diagram { background: #222; box-shadow: 0 2px 12px rgba(0,0,0,0.3); }
+        html[data-theme="dark"] .phase-title { color: #e0e0e0; }
+        html[data-theme="dark"] .phase-detail { color: #999; }
+        html[data-theme="dark"] th { background: #222; border-bottom-color: #444; color: #e0e0e0; }
+        html[data-theme="dark"] td { border-bottom-color: #333; color: #d0d0d0; }
+        html[data-theme="dark"] .tag-p1 { background: #1a3a24; color: #6fcf7f; }
+        html[data-theme="dark"] .tag-p2 { background: #3a3018; color: #e8c84a; }
+        html[data-theme="dark"] .tag-edr { background: #1a1a3a; color: #8c9eff; }
+        html[data-theme="dark"] .note { background: #1a2233; border-left-color: #3a6a9f; }
+        html[data-theme="dark"] .note p { color: #d0d0d0; }
+        html[data-theme="dark"] .tech-tag { background: #2a2a2a; color: #bbb; }
+        html[data-theme="dark"] .cta { background: #222; border-color: #333; }
+        html[data-theme="dark"] .cta h3 { color: #e0e0e0; }
+        html[data-theme="dark"] .cta p { color: #999; }
+        html[data-theme="dark"] .gallery-item { box-shadow: 0 2px 8px rgba(0,0,0,0.3); }
+        html[data-theme="dark"] .gallery-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.4); }
+        html[data-theme="dark"] .btn { background: #3a5a8f; }
+        html[data-theme="dark"] .btn:hover { background: #2a446f; }
+        html[data-theme="dark"] .footer { border-top-color: #333; color: #777; }
+        html[data-theme="dark"] .footer a { color: #7eb8e0; }
+        /* Explicit light mode override */
+        html[data-theme="light"] body { background: #fff; color: #1a1a1a; }
+        html[data-theme="light"] .article h2, html[data-theme="light"] .article h3 { color: #1a1a1a; }
+        html[data-theme="light"] .article p { color: #1a1a1a; }
+        html[data-theme="light"] .article a { color: #2a446f; }
+        html[data-theme="light"] .article strong { color: inherit; }
+        html[data-theme="light"] .article code { background: #f5f5f5; color: inherit; }
+        html[data-theme="light"] .article pre { background: #1e1e1e; }
+        html[data-theme="light"] .disclaimer { background: #eef2f7; border-left-color: #2a446f; color: inherit; }
+        html[data-theme="light"] .disclaimer strong { color: inherit; }
+        html[data-theme="light"] .diagram { background: #f8f9fa; box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+        html[data-theme="light"] .phase-title { color: #1a1a1a; }
+        html[data-theme="light"] .phase-detail { color: #767676; }
+        html[data-theme="light"] th { background: #fafafa; border-bottom-color: #e5e5e5; color: #1a1a1a; }
+        html[data-theme="light"] td { border-bottom-color: #e5e5e5; color: #1a1a1a; }
+        html[data-theme="light"] .tag-p1 { background: #e6f4ea; color: #1e7e34; }
+        html[data-theme="light"] .tag-p2 { background: #fff3cd; color: #856404; }
+        html[data-theme="light"] .tag-edr { background: #e8eaf6; color: #3949ab; }
+        html[data-theme="light"] .note { background: #eef2f7; border-left-color: #2a446f; }
+        html[data-theme="light"] .note p { color: #1a1a1a; }
+        html[data-theme="light"] .tech-tag { background: #f5f5f5; color: #424242; }
+        html[data-theme="light"] .cta { background: #fafafa; border-color: #e5e5e5; }
+        html[data-theme="light"] .cta h3 { color: #1a1a1a; }
+        html[data-theme="light"] .cta p { color: #616161; }
+        html[data-theme="light"] .gallery-item { box-shadow: 0 2px 8px rgba(0,0,0,0.08); }
+        html[data-theme="light"] .gallery-item:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.12); }
+        html[data-theme="light"] .btn { background: #2a446f; }
+        html[data-theme="light"] .btn:hover { background: #1e304f; }
+        html[data-theme="light"] .footer { border-top-color: #e5e5e5; color: #767676; }
+        html[data-theme="light"] .footer a { color: #2a446f; }
+        /* Theme toggle */
+        .theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: transparent; border: 1px solid #555; border-radius: 4px; color: #fff; cursor: pointer; transition: all .2s; margin-right: 8px; }
+        .theme-toggle:hover { background: #222; border-color: #888; }
+        html[data-theme="dark"] .theme-toggle { border-color: #444; color: #fff; }
+        html[data-theme="dark"] .theme-toggle:hover { background: #222; border-color: #666; }
+    
+/* ============================================================
+   ============== EDITORIAL OVERRIDES (draft) =================
+   Override the original chrome/prose styles to match the
+   homepage editorial design system (index.draft.html).
+   ============================================================ */
+
+:root {
+  --bg:           oklch(0.985 0.005 80);
+  --bg-elev:      oklch(0.965 0.006 80);
+  --bg-sunk:      oklch(0.945 0.007 80);
+  --ink:          oklch(0.20 0.012 70);
+  --ink-soft:     oklch(0.32 0.012 70);
+  --muted:        oklch(0.46 0.012 70);
+  --muted-soft:   oklch(0.60 0.012 70);
+  --hairline:     oklch(0.88 0.008 70);
+  --hairline-soft:oklch(0.93 0.008 70);
+  --accent:       oklch(0.55 0.18 245);
+  --accent-soft:  oklch(0.55 0.18 245 / 0.12);
+  --accent-ink:   oklch(0.45 0.18 245);
+  --focus:        oklch(0.55 0.18 245 / 0.45);
+  --font-display: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --font-sans:    'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --font-mono:    'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --ease-out:     cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    --bg:           oklch(0.16 0.012 70);
+    --bg-elev:      oklch(0.20 0.012 70);
+    --bg-sunk:      oklch(0.13 0.012 70);
+    --ink:          oklch(0.94 0.008 80);
+    --ink-soft:     oklch(0.84 0.008 80);
+    --muted:        oklch(0.66 0.012 70);
+    --muted-soft:   oklch(0.52 0.012 70);
+    --hairline:     oklch(0.28 0.012 70);
+    --hairline-soft:oklch(0.23 0.012 70);
+    --accent:       oklch(0.75 0.15 235);
+    --accent-soft:  oklch(0.75 0.15 235 / 0.15);
+    --accent-ink:   oklch(0.82 0.13 235);
+    --focus:        oklch(0.75 0.15 235 / 0.55);
+  }
+}
+html[data-theme="dark"] {
+  --bg:           oklch(0.16 0.012 70);
+  --bg-elev:      oklch(0.20 0.012 70);
+  --bg-sunk:      oklch(0.13 0.012 70);
+  --ink:          oklch(0.94 0.008 80);
+  --ink-soft:     oklch(0.84 0.008 80);
+  --muted:        oklch(0.66 0.012 70);
+  --muted-soft:   oklch(0.52 0.012 70);
+  --hairline:     oklch(0.28 0.012 70);
+  --hairline-soft:oklch(0.23 0.012 70);
+  --accent:       oklch(0.75 0.15 235);
+  --accent-soft:  oklch(0.75 0.15 235 / 0.15);
+  --accent-ink:   oklch(0.82 0.13 235);
+  --focus:        oklch(0.75 0.15 235 / 0.55);
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.7;
+  min-height: 100dvh;
+  font-feature-settings: 'kern', 'liga', 'calt';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+html[data-theme="dark"] body { background: var(--bg); color: var(--ink); }
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: absolute; left: -9999px; top: 8px;
+  background: var(--ink); color: var(--bg);
+  padding: 8px 14px; border-radius: 4px;
+  font-size: 13px; font-weight: 500; z-index: 1000; text-decoration: none;
+}
+.skip-link:focus { left: 16px; }
+
+.shell { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+/* --- Masthead --- */
+header.masthead {
+  padding: 28px 0 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+}
+.wordmark {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  display: inline-flex; align-items: baseline; gap: 4px;
+}
+.wordmark::after {
+  content: '';
+  display: inline-block;
+  width: 8px; height: 14px;
+  background: var(--accent);
+  transform: translateY(2px);
+}
+.masthead .theme-toggle {
+  background: transparent !important;
+  border: 1px solid var(--hairline) !important;
+  color: var(--muted) !important;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  transition: color 240ms var(--ease-out), border-color 240ms var(--ease-out), background 240ms var(--ease-out);
+}
+.masthead .theme-toggle:hover { color: var(--ink) !important; border-color: var(--muted) !important; background: var(--bg-elev) !important; }
+.masthead .theme-toggle svg { width: 16px; height: 16px; }
+.masthead .theme-toggle .icon-sun  { display: none; }
+.masthead .theme-toggle .icon-moon { display: block; }
+html[data-theme="dark"] .masthead .theme-toggle .icon-sun  { display: block; }
+html[data-theme="dark"] .masthead .theme-toggle .icon-moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .masthead .theme-toggle .icon-sun  { display: block; }
+  html:not([data-theme="light"]) .masthead .theme-toggle .icon-moon { display: none; }
+}
+
+/* --- Editorial article header --- */
+.article-header {
+  padding: 56px 0 36px;
+  max-width: 760px;
+  margin: 0 auto;
+  border-bottom: 1px solid var(--hairline);
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin-bottom: 28px;
+  display: flex; align-items: center; gap: 8px;
+}
+.eyebrow a { color: var(--muted); text-decoration: none; transition: color 220ms var(--ease-out); }
+.eyebrow a:hover { color: var(--accent); }
+.eyebrow .crumb-sep { opacity: 0.5; }
+
+.article-meta {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px; color: var(--muted);
+  margin-bottom: 14px;
+}
+.article-meta .sep {
+  display: inline-block; width: 4px; height: 4px;
+  border-radius: 50%; background: var(--muted); opacity: 0.5;
+}
+.article-meta .tag {
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+h1.article-title {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 96, 'wght' 500;
+  font-size: clamp(30px, 4.5vw, 44px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-bottom: 18px;
+  font-weight: 500;
+}
+.article-dek {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 18, 'wght' 400;
+  font-style: italic;
+  font-size: clamp(17px, 1.8vw, 19px);
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 60ch;
+  margin-bottom: 32px;
+}
+
+.byline {
+  display: flex; align-items: center; gap: 14px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+.byline .avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+.byline-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.byline-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+.byline-name a { color: var(--ink); text-decoration: none; border-bottom: 1px solid var(--hairline); transition: border-color 220ms var(--ease-out), color 220ms var(--ease-out); }
+.byline-name a:hover { color: var(--accent); border-color: var(--accent); }
+.byline-role {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.byline-action {
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--accent);
+  text-decoration: none;
+  padding: 6px 12px;
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  display: inline-flex; align-items: center; gap: 6px;
+  transition: background 220ms var(--ease-out), color 220ms var(--ease-out);
+}
+.byline-action:hover { background: var(--accent); color: var(--bg); }
+.byline-action svg { width: 14px; height: 14px; }
+@media (max-width: 560px) {
+  .byline-action { margin-left: 0; }
+}
+
+/* --- Article body --- */
+article#main { display: block; }
+
+div.article, article.article {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 0 64px;
+}
+.article h2 {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 48, 'wght' 500;
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-weight: 500;
+  margin: 48px 0 16px;
+}
+.article h3 {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 24, 'wght' 500;
+  font-size: 19px;
+  line-height: 1.3;
+  color: var(--ink);
+  font-weight: 500;
+  margin: 32px 0 10px;
+}
+.article p, .article li {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.72;
+  color: var(--ink-soft);
+}
+.article p { margin-bottom: 22px; max-width: 64ch; }
+.article ul, .article ol { color: var(--ink-soft); }
+.article a {
+  color: var(--accent);
+  text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  padding-bottom: 1px;
+  transition: opacity 220ms var(--ease-out);
+}
+.article a:hover { opacity: 0.75; }
+.article strong { font-weight: 600; color: var(--ink); }
+.article code {
+  font-family: var(--font-mono);
+  background: var(--bg-elev);
+  border: 1px solid var(--hairline);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  color: var(--ink);
+}
+.article pre {
+  background: var(--bg-sunk);
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  padding: 16px 18px;
+  overflow-x: auto;
+  font-family: var(--font-mono);
+  font-size: 13.5px;
+  line-height: 1.55;
+  color: var(--ink);
+  margin: 20px 0 28px;
+}
+.article pre code { background: none; border: none; padding: 0; color: inherit; font-size: inherit; }
+html[data-theme="dark"] .article code,
+html[data-theme="dark"] .article pre { background: var(--bg-elev); color: var(--ink); }
+
+/* --- Footer (rewrite) --- */
+footer.site-footer {
+  border-top: 1px solid var(--hairline);
+  padding: 28px 0 40px;
+  font-family: var(--font-sans);
+  font-size: 13.5px;
+  line-height: 1.65;
+  color: var(--muted);
+}
+footer.site-footer p { margin: 0 0 8px; color: var(--muted); max-width: 70ch; }
+footer.site-footer a { color: var(--muted); text-decoration: underline; text-decoration-color: var(--hairline); text-underline-offset: 3px; }
+footer.site-footer a:hover { color: var(--accent); text-decoration-color: var(--accent); }
+.site-footer-meta {
+  margin-top: 14px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  display: flex; gap: 14px; align-items: center; flex-wrap: wrap;
+}
+
+/* --- Mobile --- */
+@media (max-width: 760px) {
+  .shell { padding: 0 20px; }
+  .article-header { padding: 40px 0 28px; }
+  h1.article-title { font-size: 28px; }
+  div.article, article.article { padding: 32px 0 56px; }
+}
+
+.primary-nav { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-left: auto; margin-right: 12px; font-family: var(--font-mono, 'IBM Plex Mono', monospace); font-size: 12px; }
+.primary-nav a { color: var(--muted, #767676); text-decoration: none; }
+.primary-nav a:hover, .primary-nav a:focus-visible { color: var(--accent, #2a446f); }
+.article-byline { font-family: var(--font-mono, 'IBM Plex Mono', monospace); font-size: 13px; color: var(--muted, #767676); margin: 8px 0 24px; line-height: 1.5; }
+.article-byline a { color: inherit; text-decoration: underline; text-decoration-color: var(--hairline, #e5e5e5); text-underline-offset: 3px; }
+.article-byline a:hover { color: var(--accent, #2a446f); text-decoration-color: currentColor; }
+@media (max-width: 760px) { .primary-nav { order: 3; width: 100%; margin: 8px 0 0; } }
+
+</style>
+<script>
+(function(){
+  var saved = localStorage.getItem('theme');
+  var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme') || 'light';
+  var next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  var icon = document.querySelector('.theme-toggle iconify-icon');
+  if(icon) icon.setAttribute('icon', next === 'light' ? 'fluent:weather-moon-24-regular' : 'fluent:weather-sunny-24-regular');
+}
+</script>
+<meta name="twitter:image" content="https://contosec.com/projects/red-tide/og-image.png">
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareSourceCode",
+  "name": "RedTide",
+  "description": "An open-source PowerShell toolkit that automates 13 attack simulations for endpoint security validation. No malware, real alerts, full cleanup.",
+  "url": "https://contosec.com/projects/red-tide/",
+  "author": {
+    "@type": "Person",
+    "name": "Carlos Suarez"
+  },
+  "codeRepository": "https://github.com/Contosec-EMU/RedTide",
+  "programmingLanguage": "PowerShell",
+  "datePublished": "2026-04-01",
+  "dateModified": "2026-06-02"
+}
+</script>
+</head>
+<body>
+
+    <a href="#main" class="skip-link">Skip to content</a>
+
+<div class="shell">
+  <header class="masthead">
+    <a class="wordmark" href="/" aria-label="Contosec home">contosec</a>
+    <nav class="primary-nav" aria-label="Primary navigation">
+      <a href="/">Home</a>
+      <a href="/#articles">Articles</a>
+      <a href="/#projects">Projects</a>
+      <a href="/about/">About</a>
+    </nav>
+    <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle color theme">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+      </svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>
+    </button>
+  </header>
+
+    <article id="main">
+    <header class="article-header">
+      <div class="eyebrow">
+        <a href="/">contosec</a>
+        <span class="crumb-sep">/</span>
+        <span>Projects</span>
+      </div>
+
+      <div class="article-meta">
+        <time datetime="2026-04">April 2026</time>
+        <span class="sep" aria-hidden="true"></span>
+        <span class="tag">Open Source · Endpoint Security</span>
+      </div>
+
+      <h1 class="article-title">RedTide: Automated Attack Simulations for Endpoint Security Validation</h1>
+
+      <p class="article-dek">A community-driven simulation harness that exercises endpoint detection across realistic attack scenarios. Repeatable, scriptable, and designed to validate any properly configured EDR.</p>
+
+      <div class="article-byline">By <a href="/about/">Carlos Suarez</a> &middot; Published April 2026 &middot; Updated June 2 2026 &middot; 8 min read</div>
+
+      <div class="byline">
+        <div class="avatar" aria-hidden="true">CS</div>
+        <div class="byline-text">
+          <span class="byline-name"><a href="https://github.com/carlossuarez-msft" target="_blank" rel="noopener">Carlos Suarez</a></span>
+          <span class="byline-role">Sr. Security Solution Engineer &middot; Microsoft</span>
+        </div>
+        <a class="byline-action" href="https://github.com/Contosec-EMU/redtide" target="_blank" rel="noopener" aria-label="View RedTide on GitHub">
+          <svg viewBox="0 0 16 16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+          View on GitHub
+        </a>
+      </div>
+    </header>
+
+    <div class="article">
+
+        <div class="disclaimer">
+            <p><strong>Disclaimer:</strong> This is a personal open-source project. Not an official Microsoft product or supported by Microsoft. Use at your own risk.</p>
+        </div>
+
+        <p>Modern endpoint security platforms pack a serious amount of capability into a single agent. Antivirus, behavior monitoring, exploit protection, network filtering, EDR behavioral alerts, and more. And for every one of those capabilities, there is a documented way to test it. The test procedures exist. The problem is actually going through them.</p>
+
+        <p>If you have ever tried to validate endpoint protection on a VM, you know the drill. Download a test file, tweak a security setting, run the test, open your EDR console, wait for the alert to show up, then undo the setting so the VM is back to normal. Now repeat that for the next capability. And the next one. Thirteen times total if you want decent coverage. If you forget to restore a setting along the way, the VM ends up in an inconsistent state, and you might not realize it until the next validation run gives you unexpected results.</p>
+
+        <p>I kept running into this. Every time I needed to validate endpoint security configurations on a VM, it was the same manual loop. It was not hard, just slow and repetitive, the kind of work where you inevitably skip a step or forget to undo something. So I built a tool to automate it.</p>
+
+        <p>The name comes from the ocean. A red tide is a natural phenomenon where algae bloom and release toxins into the water, invisible until the damage is done. It felt like the right metaphor: the simulations look like real threats to your endpoint security stack, they trigger the same detection logic, but there is nothing actually harmful in the water. And if you spend enough time diving, the way I do, you learn to respect anything that tests whether your environment can handle what is coming.</p>
+
+        <h2>What RedTide does</h2>
+
+        <p>RedTide is a PowerShell toolkit that automates 13 attack simulations for endpoint security validation. It targets a Windows Azure VM and uses <code>Invoke-AzVMRunCommand</code> to deploy each simulation remotely. You can run it from your own workstation, from a jump box, from another VM in the same network, or directly on the target VM itself. No agent to install, no special setup on the source machine.</p>
+
+        <p>Before running any simulation, it checks that everything is in place: Azure PowerShell modules installed, Azure login active, target VM exists and is running, Windows OS confirmed, endpoint agent onboarded, Run Command permissions verified. If anything is missing, it offers to fix it.</p>
+
+        <p>Each simulation comes with a briefing card. It tells you what the test does, what files it creates on the VM, what security alert to expect, and how long the alert typically takes to appear. Some simulations are fully automated. Others deploy artifacts and then tell you to complete a manual step via RDP, for example opening a URL in Edge to trigger SmartScreen.</p>
+
+        <p>When you are done, a single cleanup command restores every security setting to its pre-simulation state using a baseline snapshot captured at the start of the session.</p>
+
+        <div class="note">
+            <p>The screenshots in this article show Microsoft Defender for Endpoint, but the simulations produce standard artifacts and behaviors (EICAR, AMSI test patterns, suspicious process chains) that any properly configured EDR solution should detect.</p>
+        </div>
+
+        <!-- Architecture diagram -->
+        <div class="diagram">
+            <div class="pipeline">
+                <div class="phase">
+                    <div class="phase-dot phase-dot-1">
+                        <iconify-icon icon="fluent:checkmark-circle-24-regular"></iconify-icon>
+                    </div>
+                    <div class="phase-title">Preflight</div>
+                    <div class="phase-detail">Az module, subscription, VM reachability</div>
+                </div>
+                <div class="phase">
+                    <div class="phase-dot phase-dot-2">
+                        <iconify-icon icon="fluent:document-search-24-regular"></iconify-icon>
+                    </div>
+                    <div class="phase-title">Baseline</div>
+                    <div class="phase-detail">Snapshot current security settings on VM</div>
+                </div>
+                <div class="phase">
+                    <div class="phase-dot phase-dot-3">
+                        <iconify-icon icon="fluent:flash-24-regular"></iconify-icon>
+                    </div>
+                    <div class="phase-title">Simulate</div>
+                    <div class="phase-detail">Deploy 13 attack scenarios via Run Command</div>
+                </div>
+                <div class="phase">
+                    <div class="phase-dot phase-dot-4">
+                        <iconify-icon icon="fluent:shield-checkmark-24-regular"></iconify-icon>
+                    </div>
+                    <div class="phase-title">Validate</div>
+                    <div class="phase-detail">Check EDR console for expected alerts</div>
+                </div>
+                <div class="phase">
+                    <div class="phase-dot phase-dot-5">
+                        <iconify-icon icon="fluent:arrow-reset-24-regular"></iconify-icon>
+                    </div>
+                    <div class="phase-title">Cleanup</div>
+                    <div class="phase-detail">Restore all settings from baseline snapshot</div>
+                </div>
+            </div>
+        </div>
+
+        <h2>The 13 simulations</h2>
+
+        <p>I organized the simulations into three capability areas:</p>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr><th>#</th><th>Simulation</th><th>Area</th><th>What it tests</th></tr>
+                </thead>
+                <tbody>
+                    <tr><td>1</td><td><strong>Cloud-Delivered Protection</strong></td><td><span class="tag tag-p1">Next-Gen</span></td><td>Cloud lookup blocks a known threat within seconds</td></tr>
+                    <tr><td>2</td><td><strong>AMSI Detection</strong></td><td><span class="tag tag-p1">Next-Gen</span></td><td>AMSI intercepts a malicious script pattern in memory</td></tr>
+                    <tr><td>3</td><td><strong>Antivirus (EICAR)</strong></td><td><span class="tag tag-p1">Next-Gen</span></td><td>AV engine detects the standard EICAR test string</td></tr>
+                    <tr><td>4</td><td><strong>Behavior Monitoring</strong></td><td><span class="tag tag-p1">Next-Gen</span></td><td>Behavioral engine flags suspicious process activity</td></tr>
+                    <tr><td>5</td><td><strong>PUA Detection</strong></td><td><span class="tag tag-p1">Next-Gen</span></td><td>PUA protection blocks a potentially unwanted application</td></tr>
+                    <tr><td>6</td><td><strong>SmartScreen (App)</strong></td><td><span class="tag tag-p1">Next-Gen</span></td><td>SmartScreen blocks download of an untrusted application</td></tr>
+                    <tr><td>7</td><td><strong>SmartScreen (URL)</strong></td><td><span class="tag tag-p1">Next-Gen</span></td><td>SmartScreen blocks navigation to a known malicious URL</td></tr>
+                    <tr><td>8</td><td><strong>Controlled Folder Access</strong></td><td><span class="tag tag-p2">ASR</span></td><td>CFA blocks unauthorized write to a protected folder</td></tr>
+                    <tr><td>9</td><td><strong>ASR Rules</strong></td><td><span class="tag tag-p2">ASR</span></td><td>ASR rule blocks Office macro from creating child process</td></tr>
+                    <tr><td>10</td><td><strong>CFA Test Tool</strong></td><td><span class="tag tag-p2">ASR</span></td><td>Microsoft CFA test tool validates folder protection</td></tr>
+                    <tr><td>11</td><td><strong>Exploit Protection</strong></td><td><span class="tag tag-p2">ASR</span></td><td>Exploit mitigations (DEP, ASLR, CFG, SEHOP) are active</td></tr>
+                    <tr><td>12</td><td><strong>Network Protection</strong></td><td><span class="tag tag-p2">ASR</span></td><td>Network protection blocks connection to a malicious domain</td></tr>
+                    <tr><td>13</td><td><strong>EDR Detection</strong></td><td><span class="tag tag-edr">EDR</span></td><td>Suspicious process chain triggers behavioral alert with full process tree</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <h2>How it works</h2>
+
+        <!-- Screenshots: these will be replaced with actual images -->
+        <div class="gallery">
+            <div class="gallery-item gallery-item-wide" onclick="openGallery(this)">
+                <img src="images/welcome-screen.png" alt="RedTide welcome screen with ASCII art banner and pre-flight prompt">
+                <div class="gallery-caption">Welcome Screen</div>
+            </div>
+            <div class="gallery-item" onclick="openGallery(this)">
+                <img src="images/preflight-checks.png" alt="Pre-flight checks showing nine validation items all passing">
+                <div class="gallery-caption">Pre-flight Checks</div>
+            </div>
+            <div class="gallery-item" onclick="openGallery(this)">
+                <img src="images/vm-readiness.png" alt="VM readiness checks validating endpoint agent health on the target VM">
+                <div class="gallery-caption">VM Readiness</div>
+            </div>
+            <div class="gallery-item" onclick="openGallery(this)">
+                <img src="images/connection-card.png" alt="Connection verified card showing VM details, RBAC role, and subscription">
+                <div class="gallery-caption">Connection Verified</div>
+            </div>
+            <div class="gallery-item" onclick="openGallery(this)">
+                <img src="images/simulation-menu.png" alt="Simulation menu with tree-style layout organized by capability area">
+                <div class="gallery-caption">Simulation Menu</div>
+            </div>
+            <div class="gallery-item" onclick="openGallery(this)">
+                <img src="images/scenario-briefing.png" alt="Scenario briefing card showing expected alert, files created, and wait time">
+                <div class="gallery-caption">Scenario Briefing</div>
+            </div>
+            <div class="gallery-item" onclick="openGallery(this)">
+                <img src="images/deployment-progress.png" alt="Deployment in progress with spinner showing elapsed time per step">
+                <div class="gallery-caption">Deployment Progress</div>
+            </div>
+            <div class="gallery-item" onclick="openGallery(this)">
+                <img src="images/next-steps.png" alt="Results card with expected alert name, KQL query, and navigation options">
+                <div class="gallery-caption">Next Steps</div>
+            </div>
+            <div class="gallery-item gallery-item-wide" onclick="openGallery(this)">
+                <img src="images/cleanup.png" alt="Cleanup completion showing baseline restore confirmation">
+                <div class="gallery-caption">Cleanup and Baseline Restore</div>
+            </div>
+        </div>
+
+        <div class="gallery-overlay" id="galleryOverlay" onclick="closeGallery()">
+            <img id="galleryFullImg" src="" alt="">
+        </div>
+
+        <p>When you launch RedTide, the welcome screen gives you two paths: run pre-flight checks (recommended for first use) or skip straight to simulations.</p>
+
+        <p>Pre-flight checks validate nine things: Az PowerShell modules, Azure login, subscription context, resource group, VM existence, VM power state, VM agent status, Windows OS, and Run Command permissions (RBAC). Each check shows a pass/fail indicator. If something is wrong, it tells you what to do about it.</p>
+
+        <p>VM readiness checks run on the target VM itself: antivirus service running, real-time protection enabled, behavior monitoring enabled, antivirus signature age, and EDR sensor running.</p>
+
+        <p>Once everything passes, a connection card summarizes the target: VM name, resource group, subscription, location, OS type, power state, signed-in user, and RBAC role. This is designed so you can confirm at a glance that you are pointed at the right VM before running anything.</p>
+
+        <p>The simulation menu uses a tree-style layout organized by capability area. Arrow keys to navigate, number keys to jump, Esc to go back. I wanted this to feel fast, not like clicking through a wizard.</p>
+
+        <p>Before each simulation runs, a briefing card explains what will happen: what the test does, what files it creates on the VM, what security configuration it changes, what alert to expect, and how long to wait. For scenarios that require manual steps (like opening a URL in Edge), the card lists the exact steps. I included these because I wanted someone to be able to use the tool without reading any external documentation.</p>
+
+        <p>During deployment, each step shows a spinner with elapsed time. When a step completes, the spinner is replaced with a pass/fail indicator.</p>
+
+        <p>After deployment, a results card shows the expected alert name, where to find it in your EDR console, a KQL query for Advanced Hunting (if applicable), and navigation options: run another simulation, go back to the main menu, or exit.</p>
+
+        <h2>CLI mode</h2>
+
+        <p>You do not have to use the interactive menu. RedTide supports direct invocation for automation scenarios:</p>
+
+        <pre><code>.\Start-RedTide.ps1 `
+  -Scenario CloudProtection `
+  -ResourceGroup "security-lab-rg" `
+  -VMName "test-win11"</code></pre>
+
+        <p>Use <code>-WhatIf</code> to preview what the tool would do without actually executing on the VM. Use <code>-SkipChecks</code> to bypass pre-flight validation when you know the environment is ready. These make it practical to integrate into CI/CD pipelines or scheduled validation runs.</p>
+
+        <h2>Design decisions</h2>
+
+        <p>A few things that shaped how this was built:</p>
+
+        <p><strong>No real malware.</strong> Every simulation relies on industry-standard test techniques: EICAR test strings, the documented AMSI test GUID, Microsoft test URLs from <code>demo.smartscreen.msft.net</code>, Microsoft test files from <code>go.microsoft.com</code> and <code>demo.wd.microsoft.com</code>, and suspicious command patterns that trigger behavioral detection. Nothing that puts a real payload on the VM.</p>
+
+        <p><strong>Baseline and restore.</strong> Before any simulation runs, RedTide captures a snapshot of the VM's security configuration. The cleanup command restores every modified setting from this baseline. This was important to me. I did not want a tool that changed things and left you guessing about what was different afterward.</p>
+
+        <p><strong>One file per simulation.</strong> Each of the 13 simulations lives in its own strike module file. They all follow the same pattern: a single exported function, a standard parameter set, and structured output. If you want to add a 14th simulation, you copy one of the existing ones and modify it.</p>
+
+        <p><strong>Background jobs with context serialization.</strong> Run Command calls can take 30 to 60 seconds. Rather than freezing the console, the tool serializes the Azure context, passes it into a background job, and shows a spinner with elapsed time. When the job completes, it deserializes the result and continues. This keeps the UX responsive without requiring async PowerShell.</p>
+
+        <h2>Tech stack</h2>
+
+        <div class="tags">
+            <span class="tech-tag">PowerShell 5.1+</span>
+            <span class="tech-tag">Az.Compute</span>
+            <span class="tech-tag">Az.Accounts</span>
+            <span class="tech-tag">Az.Resources</span>
+            <span class="tech-tag">Pester 5.0+</span>
+            <span class="tech-tag">Invoke-AzVMRunCommand</span>
+        </div>
+
+        <div class="note">
+            <p>This is an open-source project released under the MIT license. Contributions, issues, and feature requests are welcome on <a href="https://github.com/Contosec-EMU/redtide" target="_blank">GitHub</a>.</p>
+        </div>
+
+        <div class="cta">
+            <h3>Get the source code</h3>
+            <p>Full documentation, source code, and contribution guidelines are on GitHub.</p>
+            <a href="https://github.com/Contosec-EMU/redtide" class="btn" target="_blank">
+                <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.013 8.013 0 0016 8c0-4.42-3.58-8-8-8z"/></svg>
+                View on GitHub
+            </a>
+        </div>
+
+    </div></article>
+
+      <footer class="site-footer">
+    <p>The views and opinions expressed here are my own and do not represent Microsoft. This is a personal project, not an official Microsoft product, and is not supported by Microsoft. Screenshots show Microsoft Defender for Endpoint; the simulations are designed to work with any properly configured endpoint security solution.</p>
+    <div class="site-footer-meta">
+      <span>© <span id="year"></span> Contosec</span>
+      <span>·</span>
+      <a href="https://github.com/Contosec-EMU/redtide/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+      <span>·</span>
+      <a href="https://github.com/Contosec-EMU/redtide" target="_blank" rel="noopener">Source</a>
+    </div>
+  </footer>
+</div>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+
+    <script>
+        function openGallery(el) {
+            var src = el.querySelector('img').src;
+            document.getElementById('galleryFullImg').src = src;
+            document.getElementById('galleryOverlay').classList.add('active');
+        }
+        function closeGallery() {
+            document.getElementById('galleryOverlay').classList.remove('active');
+            document.getElementById('galleryFullImg').src = '';
+        }
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') closeGallery();
+        });
+    </script>
+
+</body>
+</html>

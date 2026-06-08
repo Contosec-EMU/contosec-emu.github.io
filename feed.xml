@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+<title>contosec</title>
+<link>https://contosec.com/</link>
+<description>A working journal on cybersecurity. Practitioner notes on Microsoft Entra, AI agents, and Defender.</description>
+<language>en</language>
+<lastBuildDate>Sat, 06 Jun 2026 00:00:00 GMT</lastBuildDate>
+<atom:link href="https://contosec.com/feed.xml" rel="self" type="application/rss+xml" />
+<item>
+<title>Closing the Desktop AI Gap with Global Secure Access</title>
+<link>https://contosec.com/articles/gsa-desktop-ai/</link>
+<guid isPermaLink="true">https://contosec.com/articles/gsa-desktop-ai/</guid>
+<pubDate>Sat, 06 Jun 2026 00:00:00 GMT</pubDate>
+<description>Prompt injection visibility for Claude Desktop and other native AI apps, using Microsoft Entra Global Secure Access Internet Access. A lab-validated walkthrough by Carlos Suarez.</description>
+</item>
+<item>
+<title>Microsoft Agent 365: How It Fits Into Your Operating Model</title>
+<link>https://contosec.com/articles/agent-365/</link>
+<guid isPermaLink="true">https://contosec.com/articles/agent-365/</guid>
+<pubDate>Fri, 01 May 2026 00:00:00 GMT</pubDate>
+<description>A walkthrough of the Microsoft Agent 365 lifecycle showing who owns what at every step: Builder, AI/IT Admin, Security Admin, and Compliance.</description>
+</item>
+<item>
+<title>Microsoft Entra Agent ID: How Identity Works for AI Agents</title>
+<link>https://contosec.com/articles/entra-agent-id/</link>
+<guid isPermaLink="true">https://contosec.com/articles/entra-agent-id/</guid>
+<pubDate>Wed, 01 Apr 2026 00:00:00 GMT</pubDate>
+<description>An interactive visual reference for Microsoft Entra Agent ID: the hierarchical identity model and authentication flows that power AI agents in Microsoft Entra ID.</description>
+</item>
+<item>
+<title>RedTide: Automated Attack Simulations for Endpoint Security Validation</title>
+<link>https://contosec.com/projects/red-tide/</link>
+<guid isPermaLink="true">https://contosec.com/projects/red-tide/</guid>
+<pubDate>Wed, 01 Apr 2026 00:00:00 GMT</pubDate>
+<description>An open-source PowerShell toolkit that automates 13 attack simulations for endpoint security validation. No malware, real alerts, full cleanup.</description>
+</item>
+<item>
+<title>Bringing Microsoft Defender Attack Simulation Data to Power BI</title>
+<link>https://contosec.com/projects/mdo-attack-simulation-power-bi/</link>
+<guid isPermaLink="true">https://contosec.com/projects/mdo-attack-simulation-power-bi/</guid>
+<pubDate>Sun, 01 Mar 2026 00:00:00 GMT</pubDate>
+<description>An open-source Azure pipeline that brings Microsoft Defender for Office 365 attack simulation data into Power BI for custom reporting and analytics.</description>
+</item>
+</channel>
+</rss>

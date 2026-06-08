@@ -1,0 +1,1994 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Carlos Suarez">
+    <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1a1815" media="(prefers-color-scheme: dark)">
+    <link rel="alternate" type="application/rss+xml" title="Contosec RSS" href="/feed.xml">
+    <link rel="canonical" href="https://contosec.com/articles/entra-agent-id/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<title>Microsoft Entra Agent ID: How Identity Works for AI Agents</title>
+<meta name="description" content="An interactive visual reference for Microsoft Entra Agent ID: the hierarchical identity model and authentication flows that power AI agents in Microsoft Entra ID.">
+<meta property="og:title" content="Microsoft Entra Agent ID: How Identity Works for AI Agents">
+<meta property="og:description" content="Interactive visual breakdown of Microsoft Entra Agent ID: identity hierarchy, authentication flows, and security controls for AI agents.">
+<meta property="og:image" content="https://contosec.com/articles/entra-agent-id/unified-view-full.png">
+<meta property="og:url" content="https://contosec.com/articles/entra-agent-id/">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://contosec.com/articles/entra-agent-id/unified-view-full.png">
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+    color: #1a1a1a; line-height: 1.75; -webkit-font-smoothing: antialiased; background: #fff; font-size: 16px;
+}
+:root {
+    --page-bg: #fff;
+    --text: #1a1a1a;
+    --text-secondary: #767676;
+    --accent: #2a446f;
+    --canvas-bg: #0a0e1a;
+    --canvas-panel: #0f1424;
+    --canvas-border: rgba(80,230,255,0.08);
+    --canvas-text: rgba(255,255,255,0.9);
+    --canvas-text-dim: rgba(255,255,255,0.5);
+    --flow-bg: #0a0e1a;
+    --flow-panel: #0f1424;
+    --flow-border: #1e293b;
+    --flow-text: #8896a8;
+    --flow-text-bright: #e0e0e0;
+    --flow-text-detail: #c0c8d4;
+    --flow-btn-bg: #0d1321;
+    --dedicated-bg: #0a0e1a;
+    --dedicated-border: rgba(255,255,255,0.15);
+    --dedicated-text: rgba(255,255,255,0.7);
+    --dedicated-title: #fff;
+    --sel-stroke: #50E6FF;
+}
+html[data-theme="light"] {
+    --canvas-bg: #f0f4f8;
+    --canvas-panel: #ffffff;
+    --canvas-border: rgba(0,120,212,0.12);
+    --canvas-text: rgba(0,0,0,0.85);
+    --canvas-text-dim: rgba(0,0,0,0.4);
+    --flow-bg: #f0f4f8;
+    --flow-panel: #ffffff;
+    --flow-border: #e0e4e8;
+    --flow-text: #555;
+    --flow-text-bright: #1a1a1a;
+    --flow-text-detail: #333;
+    --flow-btn-bg: #f5f7fa;
+    --dedicated-bg: #f0f4f8;
+    --dedicated-border: rgba(0,0,0,0.15);
+    --dedicated-text: rgba(0,0,0,0.6);
+    --dedicated-title: #1a1a1a;
+    --sel-stroke: #0078D4;
+}
+.topbar { background: #000; position: sticky; top: 0; z-index: 100; padding: 8px 24px; display: flex; justify-content: flex-end; align-items: center; }
+.topbar-link { display: inline-flex; align-items: center; gap: 8px; padding: 6px 16px; background: transparent; color: #fff !important; border: 1px solid #444; border-radius: 4px; font-size: 13px; font-weight: 600; text-decoration: none; }
+.topbar-link:hover { background: #222; border-color: #666; text-decoration: none; }
+.hero { background: linear-gradient(135deg, #1e304f 0%, #263e65 50%, #2a446f 100%); padding: 48px 24px 44px; color: #fff; }
+.hero-inner { max-width: 720px; margin: 0 auto; }
+.hero-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: #8fabc8; margin-bottom: 16px; font-weight: 600; }
+.hero h1 { font-size: 34px; font-weight: 600; line-height: 1.25; margin-bottom: 20px; }
+.hero .meta { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #b0c4de; }
+.hero .meta-author { font-weight: 600; color: #fff; text-decoration: none; }
+.hero .meta-author:hover { text-decoration: underline; }
+.hero .meta-sep { color: #5a7a9e; }
+.hero .meta-role { font-size: 13px; color: #8fabc8; margin-top: 0; display: inline-flex; align-items: center; gap: 6px; }
+.hero .meta-role .ms-logo { width: 16px; height: 16px; vertical-align: middle; }
+
+.article { max-width: 860px; margin: 0 auto; padding: 0 24px; }
+.article h2 { font-size: 24px; font-weight: 600; color: #1a1a1a; margin: 36px 0 16px; }
+.article h3 { font-size: 18px; font-weight: 600; color: #1a1a1a; margin: 28px 0 12px; }
+.article p { margin-bottom: 16px; color: #1a1a1a; }
+.article ul { margin: 0 0 16px 20px; padding: 0; }
+.article li { font-size: inherit; line-height: 1.75; color: #1a1a1a; margin-bottom: 4px; }
+.article a { color: #2a446f; text-decoration: none; }
+.article a:hover { text-decoration: underline; }
+.article strong { font-weight: 600; }
+.article code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 14px; font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace; }
+
+.disclaimer { background: #eef2f7; border-left: 3px solid #2a446f; padding: 16px 20px; margin: 20px 0; font-size: 15px; }
+.disclaimer p { margin-bottom: 0; }
+.note { background: #eef2f7; border-left: 3px solid #2a446f; padding: 16px 20px; margin: 20px 0; font-size: 16px; }
+.note p { margin-bottom: 0; }
+
+/* ── Section blocks ── */
+.section-block { padding: 40px 0 32px; }
+.section-block + .section-block { border-top: 1px solid #e5e5e5; }
+.section-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 8px; }
+.section-num { font-size: 24px; font-weight: 700; color: #0078D4; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+.section-head h2 { font-size: 24px; font-weight: 600; color: #1a1a1a; margin: 0; }
+.section-desc { font-size: 16px; color: #008272; margin-bottom: 24px; font-weight: 500; }
+
+/* ── Section nav cards ── */
+.section-nav-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin: 16px 0 8px; }
+.section-nav-hero { margin: 28px 0 16px; }
+.section-nav-card {
+  position: relative; display: flex; align-items: flex-start; gap: 14px;
+  padding: 20px 20px 20px 20px;
+  background: #ffffff; border: 1px solid #e0e0e0; border-radius: 8px;
+  cursor: pointer; text-decoration: none; color: inherit;
+  transition: background .15s, border-color .15s, box-shadow .15s, transform .15s;
+  overflow: hidden;
+}
+.section-nav-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+  background: var(--card-accent); border-radius: 8px 8px 0 0;
+}
+.section-nav-card:hover {
+  background: #f5f5f5; border-color: #c0c0c0;
+  transform: translateY(-2px); box-shadow: 0 4px 16px rgba(0,0,0,0.08);
+}
+.section-nav-card:active { transform: translateY(0); box-shadow: none; }
+.section-nav-card-icon {
+  flex-shrink: 0; display: flex; align-items: center; justify-content: center;
+  width: 40px; height: 40px; border-radius: 8px;
+  background: color-mix(in srgb, var(--card-accent) 10%, transparent);
+}
+.section-nav-card-icon iconify-icon { font-size: 22px; color: var(--card-accent); }
+.section-nav-card-body { flex: 1; min-width: 0; }
+.section-nav-card-num {
+  font-size: 11px; font-weight: 600; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--card-accent); margin-bottom: 4px; line-height: 1;
+}
+.section-nav-card-title {
+  font-size: 14px; font-weight: 600; color: #242424;
+  line-height: 1.35; margin-bottom: 4px;
+}
+.section-nav-card-desc {
+  font-size: 12.5px; color: #616161; line-height: 1.45; margin: 0;
+}
+.section-nav-card-arrow {
+  flex-shrink: 0; align-self: center; color: #c0c0c0;
+  transition: transform .15s, color .15s;
+}
+.section-nav-card:hover .section-nav-card-arrow { color: var(--card-accent); transform: translateX(3px); }
+
+/* Hero card overrides */
+.section-nav-hero .section-nav-card {
+  background: linear-gradient(135deg, #f0f6ff 0%, #f9fbff 100%);
+  border-color: color-mix(in srgb, var(--card-accent) 35%, transparent);
+  padding: 24px 24px 24px 24px;
+}
+.section-nav-hero .section-nav-card::before { height: 4px; }
+.section-nav-hero .section-nav-card-icon { width: 48px; height: 48px; border-radius: 10px; }
+.section-nav-hero .section-nav-card-icon iconify-icon { font-size: 26px; }
+.section-nav-hero .section-nav-card-title { font-size: 16px; }
+.section-nav-hero .section-nav-card-desc { font-size: 13px; }
+.section-nav-hero .section-nav-card:hover {
+  background: linear-gradient(135deg, #e5efff 0%, #f0f6ff 100%);
+  border-color: var(--card-accent);
+}
+
+/* ── Graph section (breaks out of article width) ── */
+.graph-section { max-width: 1500px; margin: 28px auto; padding: 0 24px; transition: margin-left .3s ease; }
+.graph-section.shifted { margin-left: 320px; }
+.diagram-graph {
+    background: var(--canvas-bg); border-radius: 12px; overflow: hidden;
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+    flex: 1; min-width: 0;
+}
+.diagram-graph.has-detail { }
+.graph-with-detail { display: flex; gap: 16px; align-items: stretch; position: relative; }
+.graph-canvas-wrap { position: relative; overflow: hidden; width: 100%; }
+.diagram-graph canvas { display: block; cursor: default; }
+.graph-hint { position: absolute; bottom: 14px; left: 50%; transform: translateX(-50%); font-size: 12px; color: var(--canvas-text-dim); pointer-events: none; font-family: 'Segoe UI', system-ui, sans-serif; }
+
+/* ── Detail side panel (outside graph) ── */
+.graph-detail {
+    width: 380px; flex-shrink: 0;
+    background: var(--canvas-panel); border: 1px solid var(--canvas-border); border-radius: 12px;
+    padding: 28px 24px; overflow-y: auto; box-sizing: border-box;
+    animation: slideIn .3s ease; font-family: 'Segoe UI', system-ui, sans-serif; color: var(--canvas-text);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.12);
+}
+/* Overlay variant: panels are pinned to the viewport edges so the diagram never resizes or gets covered. */
+.graph-with-detail.has-overlay .graph-detail {
+    position: fixed; right: 16px; top: 88px;
+    width: 360px; max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 110px);
+    z-index: 60; box-shadow: 0 8px 32px rgba(0,0,0,0.22);
+}
+.graph-with-detail.has-overlay .license-panel {
+    position: fixed; left: 16px; top: 88px; right: auto; margin-right: 0;
+    width: 300px; max-width: calc(100vw - 32px);
+    max-height: calc(100vh - 110px);
+    z-index: 60;
+}
+.graph-detail h3 { font-size: 18px; font-weight: 600; color: var(--dedicated-title); margin-bottom: 4px; }
+.graph-detail .gd-cat { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px; border-radius: 100px; display: inline-block; margin-bottom: 12px; }
+.graph-detail p { font-size: 14px; color: var(--dedicated-text); line-height: 1.65; margin-bottom: 12px; }
+.graph-detail h4 { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.08em; color: var(--canvas-text-dim); margin: 12px 0 6px; }
+.graph-detail ul { list-style: none; padding: 0; margin: 0 0 12px; }
+.graph-detail li { font-size: 13px; color: var(--dedicated-text); padding: 3px 0 3px 14px; position: relative; }
+.graph-detail li::before { content: ''; position: absolute; left: 0; top: 10px; width: 5px; height: 5px; border-radius: 50%; }
+.graph-detail .gd-rel { font-size: 13px; color: var(--dedicated-text); padding: 2px 0; }
+.graph-detail .gd-icon { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+.gd-back { display: inline-flex; align-items: center; gap: 6px; background: none; border: 1px solid var(--canvas-border); color: var(--canvas-text-dim); cursor: pointer; font-size: 12px; padding: 5px 12px; border-radius: 4px; font-family: inherit; margin-bottom: 16px; transition: all .2s; }
+.gd-back:hover { border-color: var(--sel-stroke); color: var(--sel-stroke); }
+.gd-back iconify-icon { font-size: 14px; }
+
+/* ── License panel (positioned left of graph) ── */
+.license-panel {
+    position: absolute; top: 0; right: 100%; margin-right: 16px; z-index: 50;
+    width: 300px; max-height: 100%;
+    background: var(--canvas-panel); border: 1px solid var(--canvas-border); border-radius: 12px;
+    padding: 24px 20px; overflow-y: auto; box-sizing: border-box;
+    animation: slideInLeft .3s ease; font-family: 'Segoe UI', system-ui, sans-serif; color: var(--canvas-text);
+    box-shadow: 0 4px 24px rgba(0,0,0,0.15);
+}
+.license-panel h3 { font-size: 15px; font-weight: 600; color: var(--dedicated-title); margin: 0 0 4px; display: flex; align-items: center; gap: 8px; }
+.license-panel .lp-badge { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; padding: 2px 8px; border-radius: 100px; background: rgba(0,120,212,0.15); color: #0078D4; }
+.license-panel .lp-plan { margin-top: 16px; }
+.license-panel .lp-plan-name { font-size: 13px; font-weight: 700; color: var(--dedicated-title); margin-bottom: 6px; }
+.license-panel .lp-plan-note { font-size: 11px; font-weight: 600; color: #0078D4; margin-top: 6px; padding: 4px 8px; border-radius: 6px; background: rgba(0,120,212,0.08); border-left: 2px solid #0078D4; }
+.license-panel .lp-plan-bundle { font-size: 11px; font-weight: 600; color: #50E6FF; margin-top: 4px; padding: 4px 8px; border-radius: 6px; background: rgba(80,230,255,0.08); border-left: 2px solid #50E6FF; }
+.license-panel .lp-tool-header { display: flex; align-items: center; gap: 8px; margin-top: 16px; margin-bottom: 8px; padding: 8px 10px; border-radius: 8px; border: 1px solid var(--canvas-border); background: rgba(0,120,212,0.06); }
+.license-panel .lp-tool-header iconify-icon { flex-shrink: 0; }
+.license-panel .lp-tool-name { font-size: 13px; font-weight: 700; color: var(--dedicated-title); }
+.license-panel .lp-connector { width: 2px; height: 12px; background: rgba(0,120,212,0.4); margin: 0 auto; border-radius: 1px; }
+.license-panel ul { list-style: none; padding: 0; margin: 0; }
+.license-panel li { font-size: 12px; color: var(--dedicated-text); padding: 3px 0 3px 16px; position: relative; line-height: 1.5; }
+.license-panel li::before { content: '\2713'; position: absolute; left: 0; color: #4CAF50; font-size: 11px; font-weight: 700; }
+@keyframes slideInLeft { from { opacity: 0; transform: translateX(-20px); } to { opacity: 1; transform: translateX(0); } }
+/* ── Flow selector + diagram ── */
+.flow-tabs { display: flex; gap: 8px; justify-content: flex-start; padding: 20px 20px 0; }
+.flow-tab { padding: 9px 20px; border-radius: 6px; border: 1px solid var(--flow-border); background: var(--flow-btn-bg); color: var(--flow-text); cursor: pointer; font-size: 13px; font-family: inherit; font-weight: 500; transition: all .2s; }
+.flow-tab:hover { border-color: #4da6ff; color: var(--flow-text-detail); }
+.flow-tab.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+.flow-diagram-wrap { background: var(--flow-bg); border-radius: 12px; overflow: hidden; }
+.flow-body { display: flex; align-items: stretch; height: 480px; }
+.flow-diagram-svg { flex: 1; min-width: 0; padding: 24px 12px 16px 16px; display: flex; align-items: flex-start; justify-content: center; overflow: hidden; }
+.flow-diagram-svg svg { width: 100%; max-height: 100%; }
+.flow-diagram-svg svg text { font-family: 'Segoe UI', system-ui, sans-serif; }
+.flow-detail-panel { width: 320px; flex-shrink: 0; padding: 20px 24px; border-left: 1px solid var(--flow-border); background: var(--flow-panel); display: flex; flex-direction: column; overflow-y: auto; }
+.fdp-summary { font-size: 12px; color: var(--flow-text); line-height: 1.5; padding-bottom: 12px; margin-bottom: 12px; border-bottom: 1px solid; }
+.fdp-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+.fdp-num { width: 26px; height: 26px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: #fff; flex-shrink: 0; }
+.fdp-label { font-size: 14px; font-weight: 600; color: var(--flow-text-bright); }
+.fdp-from { font-size: 11px; color: var(--flow-text); font-style: italic; margin-bottom: 8px; }
+.fdp-detail { font-size: 12.5px; color: var(--flow-text-detail); line-height: 1.5; flex: 1; }
+.fdp-nav { display: flex; gap: 8px; margin-top: 16px; }
+.fdp-nav button { flex: 1; padding: 8px 14px; border-radius: 6px; border: 1px solid var(--flow-border); background: var(--flow-btn-bg); color: var(--flow-text); cursor: pointer; font-size: 12px; font-family: inherit; transition: all .2s; }
+.fdp-nav button:hover:not(:disabled) { border-color: #4da6ff; color: #4da6ff; }
+.fdp-nav button:disabled { opacity: .3; cursor: default; }
+
+/* ── Governance section ── */
+.gov-body { display: flex; height: 480px; }
+.gov-nav { width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 2px; padding: 16px 12px; border-right: 1px solid var(--flow-border); overflow-y: auto; }
+.gov-btn { display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 6px; border: none; background: transparent; color: var(--flow-text); cursor: pointer; font-size: 14px; font-family: inherit; font-weight: 500; text-align: left; transition: all .2s; }
+.gov-btn:hover { background: rgba(255,255,255,0.04); color: var(--flow-text-detail); }
+.gov-btn.active { background: var(--accent); color: #fff; font-weight: 600; }
+.gov-btn iconify-icon { font-size: 18px; flex-shrink: 0; }
+.gov-detail { flex: 1; min-width: 0; padding: 16px 24px; overflow-y: auto; }
+.gov-title { font-size: 20px; font-weight: 700; color: var(--flow-text-bright); margin-bottom: 4px; }
+.gov-subtitle { font-size: 14px; color: var(--flow-text); margin-bottom: 10px; }
+.gov-summary { font-size: 15px; color: var(--flow-text-detail); line-height: 1.55; margin-bottom: 10px; }
+.gov-points { list-style: none; padding: 0; margin: 0; }
+.gov-points li { font-size: 14px; color: var(--flow-text); line-height: 1.5; padding: 4px 0 4px 18px; position: relative; }
+.gov-points li::before { content: '\25B8'; position: absolute; left: 0; color: var(--accent); font-size: 11px; }
+
+/* ── Coming soon placeholder ── */
+.coming-soon { background: #f5f5f5; border-radius: 12px; padding: 48px 32px; text-align: center; margin: 8px 0 0; }
+.coming-soon iconify-icon { font-size: 36px; color: #b0b0b0; margin-bottom: 12px; display: block; }
+.coming-soon h3 { font-size: 18px; font-weight: 600; color: #424242; margin-bottom: 8px; }
+.coming-soon p { font-size: 14px; color: #767676; margin-bottom: 0; max-width: 420px; margin-left: auto; margin-right: auto; }
+
+.concept-tag { display: inline-flex; align-items: center; gap: 4px; padding: 2px 8px; background: #f5f5f5; border-radius: 3px; font-size: 13px; font-weight: 500; white-space: nowrap; }
+
+.sources { border-top: 2px solid #0078D4; padding: 24px 0 0; margin: 32px 0 0; }
+.sources h3 { font-size: 14px; font-weight: 600; color: #0078D4; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.sources > p { font-size: 13px; color: #616161; margin-bottom: 16px; }
+.sources-grid { display: flex; flex-wrap: wrap; gap: 6px 24px; }
+.sources-grid a { font-size: 12.5px; color: #0078D4; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 3px 0; transition: color .15s; }
+.sources-grid a:hover { color: #005a9e; text-decoration: underline; }
+.sources-grid a::after { content: '\2197'; font-size: 10px; opacity: 0.6; }
+.sources .src-note { font-size: 11px; color: #999; margin-top: 14px; }
+
+.footer { border-top: 1px solid #e5e5e5; padding: 20px 24px; text-align: center; font-size: 13px; color: #767676; }
+.footer a { color: #2a446f; text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+@keyframes slideIn { from { opacity: 0; transform: translateX(20px); } to { opacity: 1; transform: translateX(0); } }
+
+/* ── Dedicated view mode ── */
+.dedicated-view { min-height: 100vh; background: var(--dedicated-bg); }
+.dedicated-header { background: #000; position: sticky; top: 0; z-index: 100; padding: 8px 24px; display: flex; align-items: center; gap: 16px; }
+.dedicated-back { display: inline-flex; align-items: center; gap: 6px; background: none; border: 1px solid #555; color: rgba(255,255,255,0.7); cursor: pointer; font-size: 13px; padding: 7px 14px; border-radius: 6px; font-family: inherit; transition: all .2s; text-decoration: none; }
+.dedicated-back:hover { border-color: #888; color: #fff; }
+.dedicated-title { font-size: 16px; font-weight: 600; color: #fff; }
+.dedicated-body { padding: 0 24px 48px; }
+.dedicated-body .graph-section { max-width: 1500px; }
+.dedicated-body .gov-title { font-size: 24px; }
+.dedicated-body .gov-subtitle { font-size: 16px; }
+.dedicated-body .gov-summary { font-size: 16px; line-height: 1.65; }
+.dedicated-body .gov-points li { font-size: 15px; line-height: 1.55; }
+.dedicated-body .gov-btn { font-size: 15px; }
+
+@media (max-width: 900px) {
+    .graph-with-detail { flex-direction: column; }
+    .graph-detail { width: 100%; border-left: none; border-top: 1px solid var(--canvas-border); max-height: none; }
+    /* On narrow viewports, drop the overlay and let the detail panel stack below the canvas. */
+    .graph-with-detail.has-overlay .graph-detail { position: static; width: 100%; max-width: none; }
+    .license-panel { position: relative; top: auto; left: auto; width: 100%; max-height: none; margin-bottom: 12px; border-radius: 12px; box-shadow: 0 4px 24px rgba(0,0,0,0.12); }
+}
+@media (max-width: 768px) {
+    .hero h1 { font-size: 24px; }
+    .article { padding: 0 16px; }
+    .graph-section { padding: 0 16px; }
+    .flow-body { flex-direction: column; }
+    .flow-detail-panel { width: auto; border-left: none; border-top: 1px solid var(--flow-border); }
+    .flow-tabs { flex-wrap: wrap; }
+    .section-head { flex-direction: column; gap: 4px; }
+    .section-nav-grid { grid-template-columns: 1fr; }
+}
+html[data-theme="dark"] body { background: #1a1a1a; color: #e0e0e0; }
+html[data-theme="dark"] .article h2, html[data-theme="dark"] .article h3, html[data-theme="dark"] .section-head h2 { color: #e0e0e0; }
+html[data-theme="dark"] .article p { color: #d0d0d0; }
+html[data-theme="dark"] .article li { color: #d0d0d0; }
+html[data-theme="dark"] .article a { color: #7eb8e0; }
+html[data-theme="dark"] .article strong { color: #e0e0e0; }
+html[data-theme="dark"] .article code { background: #2a2a2a; color: #d0d0d0; }
+html[data-theme="dark"] .disclaimer, html[data-theme="dark"] .note { background: #1a2233; border-left-color: #3a6a9f; }
+html[data-theme="dark"] .disclaimer p, html[data-theme="dark"] .note p { color: #d0d0d0; }
+html[data-theme="dark"] .diagram-graph { box-shadow: 0 4px 24px rgba(0,0,0,0.4); }
+html[data-theme="dark"] .section-block + .section-block { border-top-color: #333; }
+html[data-theme="dark"] .section-num { color: #50E6FF; }
+html[data-theme="dark"] .section-desc { color: #4ecdc4; }
+html[data-theme="dark"] .concept-tag { background: #2a2a2a; color: #ccc; }
+html[data-theme="dark"] .coming-soon { background: #222; }
+html[data-theme="dark"] .coming-soon h3 { color: #ccc; }
+html[data-theme="dark"] .coming-soon p { color: #888; }
+html[data-theme="dark"] .coming-soon iconify-icon { color: #555; }
+html[data-theme="dark"] .sources { border-color: #50E6FF; }
+html[data-theme="dark"] .sources h3 { color: #50E6FF; }
+html[data-theme="dark"] .sources > p { color: #999; }
+html[data-theme="dark"] .sources-grid a { color: #50E6FF; }
+html[data-theme="dark"] .sources-grid a:hover { color: #7ef0ff; }
+html[data-theme="dark"] .sources .src-note { color: #666; }
+html[data-theme="dark"] .section-nav-card {
+  background: #1e1e1e; border-color: #333;
+}
+html[data-theme="dark"] .section-nav-card:hover {
+  background: #252525; border-color: #444;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.35);
+}
+html[data-theme="dark"] .section-nav-card-icon {
+  background: color-mix(in srgb, var(--card-accent) 15%, transparent);
+}
+html[data-theme="dark"] .section-nav-card-title { color: #e0e0e0; }
+html[data-theme="dark"] .section-nav-card-desc { color: #999; }
+html[data-theme="dark"] .section-nav-card-arrow { color: #555; }
+html[data-theme="dark"] .section-nav-hero .section-nav-card {
+  background: linear-gradient(135deg, #141c2e 0%, #1a1f2e 100%);
+  border-color: color-mix(in srgb, var(--card-accent) 30%, transparent);
+}
+html[data-theme="dark"] .section-nav-hero .section-nav-card:hover {
+  background: linear-gradient(135deg, #182238 0%, #1e2940 100%);
+  border-color: var(--card-accent);
+}
+html[data-theme="dark"] .footer { border-top-color: #333; color: #777; }
+html[data-theme="dark"] .footer a { color: #7eb8e0; }
+html[data-theme="dark"] .hero { background: linear-gradient(135deg, #111827 0%, #1a2744 50%, #1e304f 100%); }
+html[data-theme="dark"] .topbar { background: #111; }
+.theme-toggle { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; background: transparent; border: 1px solid #555; border-radius: 4px; color: #fff; cursor: pointer; transition: all .2s; margin-right: 8px; }
+.theme-toggle:hover { background: #222; border-color: #888; }
+html[data-theme="dark"] .theme-toggle { border-color: #444; color: #fff; }
+html[data-theme="dark"] .theme-toggle:hover { background: #222; border-color: #666; }
+
+
+/* ============================================================
+   ============== EDITORIAL OVERRIDES (draft) =================
+   These rules override the original chrome and prose styles
+   to match the homepage editorial design system (index.draft.html).
+   Interactive component styles (.canvas-*, .flow-*, .dedicated-*)
+   are intentionally left untouched.
+   ============================================================ */
+
+:root {
+  --bg:           oklch(0.985 0.005 80);
+  --bg-elev:      oklch(0.965 0.006 80);
+  --bg-sunk:      oklch(0.945 0.007 80);
+  --ink:          oklch(0.20 0.012 70);
+  --ink-soft:     oklch(0.32 0.012 70);
+  --muted:        oklch(0.46 0.012 70);
+  --muted-soft:   oklch(0.60 0.012 70);
+  --hairline:     oklch(0.88 0.008 70);
+  --hairline-soft:oklch(0.93 0.008 70);
+  --accent:       oklch(0.55 0.18 245);
+  --accent-soft:  oklch(0.55 0.18 245 / 0.12);
+  --accent-ink:   oklch(0.45 0.18 245);
+  --focus:        oklch(0.55 0.18 245 / 0.45);
+  --font-display: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --font-sans:    'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --font-mono:    'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --ease-out:     cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    --bg:           oklch(0.16 0.012 70);
+    --bg-elev:      oklch(0.20 0.012 70);
+    --bg-sunk:      oklch(0.13 0.012 70);
+    --ink:          oklch(0.94 0.008 80);
+    --ink-soft:     oklch(0.84 0.008 80);
+    --muted:        oklch(0.66 0.012 70);
+    --muted-soft:   oklch(0.52 0.012 70);
+    --hairline:     oklch(0.28 0.012 70);
+    --hairline-soft:oklch(0.23 0.012 70);
+    --accent:       oklch(0.75 0.15 235);
+    --accent-soft:  oklch(0.75 0.15 235 / 0.15);
+    --accent-ink:   oklch(0.82 0.13 235);
+    --focus:        oklch(0.75 0.15 235 / 0.55);
+  }
+}
+html[data-theme="dark"] {
+  --bg:           oklch(0.16 0.012 70);
+  --bg-elev:      oklch(0.20 0.012 70);
+  --bg-sunk:      oklch(0.13 0.012 70);
+  --ink:          oklch(0.94 0.008 80);
+  --ink-soft:     oklch(0.84 0.008 80);
+  --muted:        oklch(0.66 0.012 70);
+  --muted-soft:   oklch(0.52 0.012 70);
+  --hairline:     oklch(0.28 0.012 70);
+  --hairline-soft:oklch(0.23 0.012 70);
+  --accent:       oklch(0.75 0.15 235);
+  --accent-soft:  oklch(0.75 0.15 235 / 0.15);
+  --accent-ink:   oklch(0.82 0.13 235);
+  --focus:        oklch(0.75 0.15 235 / 0.55);
+}
+
+/* --- Page base --- */
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.7;
+  min-height: 100dvh;
+  font-feature-settings: 'kern', 'liga', 'calt';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+html[data-theme="dark"] body { background: var(--bg); color: var(--ink); }
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: absolute; left: -9999px; top: 8px;
+  background: var(--ink); color: var(--bg);
+  padding: 8px 14px; border-radius: 4px;
+  font-size: 13px; font-weight: 500; z-index: 1000; text-decoration: none;
+}
+.skip-link:focus { left: 16px; }
+
+.shell { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+/* --- Masthead (replaces sticky black topbar) --- */
+header.masthead {
+  padding: 28px 0 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+}
+.wordmark {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  display: inline-flex; align-items: baseline; gap: 4px;
+}
+.wordmark::after {
+  content: '';
+  display: inline-block;
+  width: 8px; height: 14px;
+  background: var(--accent);
+  transform: translateY(2px);
+}
+.masthead .theme-toggle {
+  background: transparent;
+  border: 1px solid var(--hairline);
+  color: var(--muted);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0; margin: 0;
+  transition: color 240ms var(--ease-out), border-color 240ms var(--ease-out), background 240ms var(--ease-out);
+}
+.masthead .theme-toggle:hover { color: var(--ink); border-color: var(--muted); background: var(--bg-elev); }
+.masthead .theme-toggle svg { width: 16px; height: 16px; }
+.masthead .theme-toggle .icon-sun  { display: none; }
+.masthead .theme-toggle .icon-moon { display: block; }
+html[data-theme="dark"] .masthead .theme-toggle .icon-sun  { display: block; }
+html[data-theme="dark"] .masthead .theme-toggle .icon-moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .masthead .theme-toggle .icon-sun  { display: block; }
+  html:not([data-theme="light"]) .masthead .theme-toggle .icon-moon { display: none; }
+}
+
+/* --- Editorial article header (replaces blue gradient hero) --- */
+.article-header {
+  padding: 56px 0 36px;
+  max-width: 760px;
+  margin: 0 auto;
+  border-bottom: 1px solid var(--hairline);
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin-bottom: 28px;
+  display: flex; align-items: center; gap: 8px;
+}
+.eyebrow a { color: var(--muted); text-decoration: none; transition: color 220ms var(--ease-out); }
+.eyebrow a:hover { color: var(--accent); }
+.eyebrow .crumb-sep { opacity: 0.5; }
+
+.article-meta {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px; color: var(--muted);
+  margin-bottom: 14px;
+}
+.article-meta .sep {
+  display: inline-block; width: 4px; height: 4px;
+  border-radius: 50%; background: var(--muted); opacity: 0.5;
+}
+.article-meta .tag {
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+h1.article-title {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 96, 'wght' 500;
+  font-size: clamp(30px, 4.5vw, 44px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-bottom: 18px;
+  font-weight: 500;
+}
+.article-dek {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 18, 'wght' 400;
+  font-style: italic;
+  font-size: clamp(17px, 1.8vw, 19px);
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 60ch;
+  margin-bottom: 32px;
+}
+
+.byline {
+  display: flex; align-items: center; gap: 14px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+.byline .avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+.byline-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.byline-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+.byline-role {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+.byline-spacer { flex: 1; }
+.byline-action {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 8px 14px;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--ink-soft);
+  text-decoration: none;
+  transition: border-color 220ms var(--ease-out), color 220ms var(--ease-out), background 220ms var(--ease-out);
+}
+.byline-action:hover { border-color: var(--accent); color: var(--accent); background: var(--accent-soft); }
+.byline-action svg { width: 14px; height: 14px; fill: currentColor; }
+
+/* --- Main content wrapper --- */
+main#main { display: block; }
+
+/* --- React-rendered prose overrides (.article inside section blocks) ---
+   These take precedence over the original .article styles because they
+   come later in the cascade. They only restyle the text ,  the interactive
+   diagrams keep their own scoped tokens (--canvas-*, --flow-*, etc.).
+*/
+.article {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 0 0;
+}
+.article h2 {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 48, 'wght' 500;
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-weight: 500;
+  margin: 48px 0 16px;
+}
+.article h3 {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 24, 'wght' 500;
+  font-size: 19px;
+  line-height: 1.3;
+  color: var(--ink);
+  font-weight: 500;
+  margin: 32px 0 10px;
+}
+.article p {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.72;
+  color: var(--ink-soft);
+  margin-bottom: 22px;
+  max-width: 64ch;
+}
+.article ul, .article ol {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+.article li { color: var(--ink-soft); }
+.article a {
+  color: var(--accent);
+  text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  padding-bottom: 1px;
+  transition: opacity 220ms var(--ease-out);
+}
+.article a:hover { opacity: 0.75; text-decoration: none; }
+.article strong { font-weight: 600; color: var(--ink); }
+.article code {
+  font-family: var(--font-mono);
+  background: var(--bg-elev);
+  border: 1px solid var(--hairline);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  color: var(--ink);
+}
+html[data-theme="dark"] .article code { background: var(--bg-elev); color: var(--ink); }
+
+/* --- Section block dividers (used by React content) --- */
+.section-block {
+  padding: 36px 0 28px;
+  max-width: 1080px;
+  margin: 0 auto;
+}
+.section-block + .section-block {
+  border-top: 1px solid var(--hairline);
+}
+.section-head {
+  max-width: 760px;
+  margin: 0 auto 6px;
+  display: flex;
+  align-items: baseline;
+  gap: 14px;
+}
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+.section-head h2 {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 48, 'wght' 500;
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+html[data-theme="dark"] .section-head h2 { color: var(--ink); }
+.section-desc {
+  max-width: 760px;
+  margin: 0 auto 18px;
+  font-family: var(--font-display);
+  font-style: italic;
+  font-variation-settings: 'opsz' 18, 'wght' 400;
+  font-size: 16px;
+  color: var(--muted);
+  font-weight: 400;
+}
+html[data-theme="dark"] .section-desc { color: var(--muted); }
+
+/* --- Footer (replaces gray bordered footer) --- */
+footer.site-footer {
+  border-top: 1px solid var(--hairline);
+  padding: 24px 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+footer.site-footer a { color: var(--muted); text-decoration: none; }
+footer.site-footer a:hover { color: var(--accent); }
+
+/* --- Mobile --- */
+@media (max-width: 760px) {
+  .shell { padding: 0 20px; }
+  .article-header { padding: 40px 0 28px; }
+  h1.article-title { font-size: 28px; }
+  .byline { gap: 12px; }
+  .byline-spacer { display: none; }
+  .byline-action { margin-left: auto; }
+  .section-head { padding: 0 20px; }
+  .section-desc { padding: 0 20px; }
+  .article { padding: 0 20px; }
+}
+
+.primary-nav { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-left: auto; margin-right: 12px; font-family: var(--font-mono, 'IBM Plex Mono', monospace); font-size: 12px; }
+.primary-nav a { color: var(--muted, #767676); text-decoration: none; }
+.primary-nav a:hover, .primary-nav a:focus-visible { color: var(--accent, #2a446f); }
+.article-byline { font-family: var(--font-mono, 'IBM Plex Mono', monospace); font-size: 13px; color: var(--muted, #767676); margin: 8px 0 24px; line-height: 1.5; }
+.article-byline a { color: inherit; text-decoration: underline; text-decoration-color: var(--hairline, #e5e5e5); text-underline-offset: 3px; }
+.article-byline a:hover { color: var(--accent, #2a446f); text-decoration-color: currentColor; }
+@media (max-width: 760px) { .primary-nav { order: 3; width: 100%; margin: 8px 0 0; } }
+
+</style>
+<script>
+(function(){
+  var saved = localStorage.getItem('theme');
+  var theme = saved || (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+  document.documentElement.setAttribute('data-theme', theme);
+})();
+function toggleTheme() {
+  var html = document.documentElement;
+  var current = html.getAttribute('data-theme') || 'light';
+  var next = current === 'dark' ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('theme', next);
+  var icon = document.querySelector('.theme-toggle iconify-icon');
+  if(icon) icon.setAttribute('icon', next === 'light' ? 'fluent:weather-moon-24-regular' : 'fluent:weather-sunny-24-regular');
+}
+</script>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Microsoft Entra Agent ID: How Identity Works for AI Agents",
+  "description": "An interactive visual reference for Microsoft Entra Agent ID: the hierarchical identity model and authentication flows that power AI agents in Microsoft Entra ID.",
+  "image": "https://contosec.com/articles/entra-agent-id/unified-view-full.png",
+  "datePublished": "2026-04-01",
+  "dateModified": "2026-06-02",
+  "author": {
+    "@type": "Person",
+    "name": "Carlos Suarez",
+    "url": "https://www.linkedin.com/in/csuarezro"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Carlos Suarez"
+  },
+  "mainEntityOfPage": "https://contosec.com/articles/entra-agent-id/",
+  "url": "https://contosec.com/articles/entra-agent-id/",
+  "keywords": "Microsoft Entra, Agent ID, AI agents, identity, Microsoft Entra Agent ID"
+}
+</script>
+</head>
+<body>
+
+<a href="#main" class="skip-link">Skip to content</a>
+
+<div class="shell">
+  <header class="masthead">
+    <a class="wordmark" href="/" aria-label="Contosec home">contosec</a>
+    <nav class="primary-nav" aria-label="Primary navigation">
+      <a href="/">Home</a>
+      <a href="/#articles">Articles</a>
+      <a href="/#projects">Projects</a>
+      <a href="/about/">About</a>
+    </nav>
+    <button class="theme-toggle" type="button" onclick="toggleTheme()" aria-label="Toggle color theme">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+      </svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>
+    </button>
+  </header>
+
+<main id="main">
+    <header class="article-header">
+      <div class="eyebrow">
+        <a href="/">contosec</a>
+        <span class="crumb-sep">/</span>
+        <span>Articles</span>
+      </div>
+
+      <div class="article-meta">
+        <time datetime="2026-04">Apr 2026</time>
+        <span class="sep" aria-hidden="true"></span>
+        <span class="tag">Identity</span>
+      </div>
+
+      <h1 class="article-title">Microsoft Entra Agent ID: How Identity Works for AI Agents</h1>
+
+      <p class="article-dek">An interactive visual reference for Microsoft Entra Agent ID, the hierarchical identity model and authentication flows that power AI agents in Microsoft Entra ID.</p>
+
+      <div class="article-byline">By <a href="/about/">Carlos Suarez</a> &middot; Published April 2026 &middot; Updated June 2 2026 &middot; 18 min read</div>
+
+      <div class="byline">
+        <div class="avatar" aria-hidden="true">CS</div>
+        <div class="byline-text">
+          <span class="byline-name">Carlos Suarez</span>
+          <span class="byline-role">Sr. Security Solution Engineer &middot; Microsoft</span>
+        </div>
+      </div>
+    </header>
+
+<script>
+(function(){
+  if(new URLSearchParams(window.location.search).get('view')){
+    var m=document.querySelector('header.masthead');if(m)m.style.display='none';
+    var h=document.querySelector('.article-header');if(h)h.style.display='none';
+    var ft=document.querySelector('footer.site-footer');if(ft)ft.style.display='none';
+  }
+})();
+</script>
+
+<div id="root"></div>
+
+</main>
+
+  <footer class="site-footer">
+    <span>© <span id="year"></span> Contosec</span>
+  </footer>
+</div>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@18.2.0",
+    "react-dom/client": "https://esm.sh/react-dom@18.2.0/client",
+    "htm": "https://esm.sh/htm@3.1.1"
+  }
+}
+</script>
+<script type="module">
+
+import React from 'react';
+import { createRoot } from 'react-dom/client';
+import htm from 'htm';
+const html = htm.bind(React.createElement);
+const { useState, useEffect, useRef, useCallback } = React;
+
+/* ══════ DATA ══════ */
+const C = {
+  tenant: { name: 'Azure Tenant', icon: 'fluent:shield-checkmark-24-regular', category: 'Context', color: '#00a4ef', initial: 'E',
+    definition: 'The Microsoft Entra ID tenant that serves as the root container for all agent identity objects. Agent identities are always scoped to a single tenant.',
+    keyFacts: ['Root context for all Agent ID objects','Policies and access controls are scoped to the tenant','Agent identities are always single-tenant'],
+    relationships: [{ target: 'blueprint', label: 'Contains agent identity blueprints' }] },
+  principal: { name: 'Agent Identity Blueprint Principal', icon: 'fluent:shield-keyhole-24-regular', category: 'Core', color: '#8B5CF6', initial: 'P',
+    definition: 'A Microsoft Entra object created when an agent identity blueprint is added to a tenant via consent. Records the blueprint\u2019s presence, enables token acquisition, and appears in audit logs. Analogous to a service principal in the traditional app model.',
+    keyFacts: ['Created automatically via admin consent','One per tenant per agent identity blueprint','Enables token acquisition and audit logging','Analogous to a service principal'],
+    relationships: [{ target: 'blueprint', label: 'Local representation of an agent identity blueprint' },{ target: 'tenant', label: 'Exists within the Azure tenant' }] },
+  blueprint: { name: 'Agent Identity Blueprint', icon: 'fluent:document-copy-24-regular', category: 'Core', color: '#0078D4', initial: 'B',
+    definition: 'The template and authentication foundation for agent identities. Holds credentials and acquires tokens on behalf of all child identities. Analogous to an app registration in the traditional app model.',
+    keyFacts: ['Holds credentials: managed identities, certificates, or client secrets','Acquires tokens on behalf of all child agent identities','Conditional Access policies cascade to all children','Can only impersonate its own child identities','Analogous to an app registration'],
+    relationships: [{ target: 'principal', label: 'Instantiated as an agent identity blueprint principal per tenant' },{ target: 'identity', label: 'Creates agent identities (one-to-many)' }] },
+  identity: { name: 'Agent Identity', icon: 'fluent:bot-24-regular', category: 'Core', color: '#50E6FF', initial: 'A',
+    definition: 'The primary identity an AI agent uses to authenticate. Has no credentials of its own and authenticates via tokens from its parent blueprint.',
+    keyFacts: ['No credentials of its own','Always single-tenant regardless of blueprint tenancy','Belongs to exactly one parent blueprint','Can operate with delegated access or own access'],
+    relationships: [{ target: 'blueprint', label: 'Child of one blueprint' },{ target: 'useraccount', label: 'Optionally paired with a user account (1:1)' }] },
+  interactive: { name: 'Agents with Delegated Access', icon: 'fluent:chat-24-regular', category: 'Pattern', color: '#10B981', initial: 'I',
+    definition: 'Agents that sign in a user and act on their behalf using delegated permissions. Formerly known as "OBO agents."',
+    keyFacts: ['Granted delegated permissions','Act on behalf of the signed-in user','Tokens called \u201cuser tokens\u201d','Use the delegated access (OBO) flow','\u201cDelegated access\u201d means the agent acts with user-scoped permissions, not browser sign-in'],
+    relationships: [{ target: 'identity', label: 'An operational mode of agent identities' }] },
+  useraccount: { name: 'Agent\u2019s User Account', icon: 'fluent:bot-sparkle-24-regular', category: 'Optional', color: '#F59E0B', initial: 'U',
+    definition: 'A specialized nonhuman user identity (not a regular human account) paired 1:1 with an agent identity. Created when the agent needs to act as a digital worker in systems that require a user object, such as Exchange mailboxes, Teams channels, or HR systems. Has no passwords and cannot sign in interactively; it authenticates only through its parent agent identity. Can be assigned Microsoft 365 licenses for resource provisioning. Permissions are similar to guest users and cannot include privileged admin roles.',
+    keyFacts: ['Paired 1:1 with an agent identity','Both the identity and account must exist','Required only for user-object systems','Can be impersonated by only one identity'],
+    relationships: [{ target: 'identity', label: 'Paired with an agent identity' }] },
+  autonomous: { name: 'Agents with Own Access', icon: 'fluent:bot-sparkle-24-regular', category: 'Pattern', color: '#EC4899', initial: 'X',
+    definition: 'Agents that perform actions using their own identity. They run in the background, make autonomous decisions, and use app-only permissions. Formerly known as "non-OBO agents."',
+    keyFacts: ['Use app-only permissions','Often run as background processes','Tokens called \u201cagent tokens\u201d','Use the own access (autonomous) flow or user account flow'],
+    relationships: [{ target: 'identity', label: 'An operational mode of agent identities' }] },
+};
+
+const NODES = [
+  { id: 'tenant',      x: 0.46, y: 0.09 },
+  { id: 'blueprint',   x: 0.46, y: 0.28 },
+  { id: 'principal',   x: 0.20, y: 0.48 },
+  { id: 'identity',    x: 0.72, y: 0.48 },
+  { id: 'interactive', x: 0.18, y: 0.75 },
+  { id: 'useraccount', x: 0.46, y: 0.75 },
+  { id: 'autonomous',  x: 0.74, y: 0.75 },
+];
+
+const EDGES = [
+  { source: 'tenant', target: 'blueprint', label: 'Contains', lt: 0.6, lo: 16 },
+  { source: 'blueprint', target: 'principal', label: 'Instantiates', lt: 0.5, lo: 14 },
+  { source: 'blueprint', target: 'identity', label: 'Creates (1:many)', lt: 0.5, lo: -14 },
+  { source: 'identity', target: 'interactive', label: 'Operates as', lt: 0.30, lo: 20 },
+  { source: 'identity', target: 'useraccount', label: 'Operates as', lt: 0.5, lo: -20 },
+  { source: 'identity', target: 'autonomous', label: 'Operates as', lt: 0.55, lo: -20 },
+];
+
+const RESOURCES = {
+  interactive: [
+    { id: 'r_apps', label: 'Apps', icon: 'apps' },
+    { id: 'r_apis', label: 'APIs', icon: 'globe' },
+    { id: 'r_data', label: 'Data', icon: 'data' },
+  ],
+  useraccount: [
+    { id: 'r_teams', label: 'Teams', icon: 'teams' },
+    { id: 'r_mail', label: 'Outlook', icon: 'mail' },
+    { id: 'r_cal', label: 'Calendar', icon: 'calendar' },
+    { id: 'r_sp', label: 'SharePoint', icon: 'sharepoint' },
+  ],
+  autonomous: [
+    { id: 'r_cloud', label: 'Cloud', icon: 'cloud' },
+    { id: 'r_db', label: 'Data', icon: 'database' },
+    { id: 'r_sec', label: 'Security', icon: 'shield' },
+  ],
+};
+
+const FLOWS = {
+  obo: { name: 'Delegated Access (OBO)', accent: '#0078D4', icon: 'fluent:people-swap-24-regular',
+    card: 'Agents with delegated access operating on behalf of signed-in users using OAuth 2.0 OBO flows with agent-specific impersonation.',
+    summary: 'Delegated access via standard OAuth 2.0 On-Behalf-Of flows with agent-specific impersonation. The agent identity uses delegated permissions and requires user consent. Supported grant types: client_credentials, jwt-bearer, refresh_token.',
+    participants: [
+      { label: 'User', icon: 'person-24-filled', color: '#0078D4' },
+      { label: 'Client', icon: 'window-apps-24-filled', color: '#0078D4' },
+      { label: 'Agent\nBlueprint', icon: 'document-copy-24-filled', color: '#5B7DAF' },
+      { label: 'Agent\nIdentity', icon: 'bot-sparkle-24-filled', color: '#0078D4' },
+      { label: 'Microsoft\nEntra ID', icon: 'shield-checkmark-24-filled', color: '#50e6ff' },
+      { label: 'Resource', icon: 'server-24-filled', color: '#4da6ff' }],
+    steps: [
+      { f:0, t:1, label: 'Sign-in / Authentication', detail: 'User authenticates with the client and obtains a user access token (Tc).' },
+      { f:1, t:2, label: 'Send User Access Token (Tc)', detail: 'Client sends Tc to the agent identity blueprint to act on behalf of the user.' },
+      { f:2, t:4, label: 'Request FIC Exchange Token', detail: 'Blueprint presents its managed identity token (TUAMI) as Federated Identity Credential. Entra ID returns T1.' },
+      { f:4, t:2, label: 'Return FIC Token (T1)', detail: 'Entra ID validates the credential and returns FIC exchange token T1.' },
+      { f:3, t:4, label: 'OBO Token Exchange (T1 + Tc)', detail: 'Agent identity sends OBO request with T1 (client assertion) and Tc (user token).' },
+      { f:4, t:3, label: 'Return Resource Token (TR)', detail: 'Entra ID validates T1(aud) and Tc(aud) match the blueprint client ID, returns resource token.' },
+      { f:3, t:5, label: 'Access Resource with TR', detail: 'Agent identity accesses the resource on behalf of the user.' }]},
+  autonomous: { name: 'Own Access (Autonomous)', accent: '#E3008C', icon: 'fluent:bot-sparkle-24-regular',
+    card: 'Agents with own access acting autonomously without user context using app-only permissions.',
+    summary: 'Own access (app-only) operations without user context. The blueprint impersonates the agent identity to obtain a token for itself. Only app-only permissions apply, granted by tenant administrators. Agent identities are always single-tenant.',
+    participants: [
+      { label: 'Agent\nBlueprint', icon: 'document-copy-24-filled', color: '#E3008C' },
+      { label: 'Agent\nIdentity', icon: 'bot-sparkle-24-filled', color: '#E3008C' },
+      { label: 'Microsoft\nEntra ID', icon: 'shield-checkmark-24-filled', color: '#50e6ff' },
+      { label: 'Resource', icon: 'server-24-filled', color: '#4da6ff' }],
+    steps: [
+      { f:0, t:2, label: 'Request FIC Exchange Token', detail: 'Blueprint presents its managed identity token (TUAMI) as FIC. No user context involved.' },
+      { f:2, t:0, label: 'Return FIC Token (T1)', detail: 'Entra ID validates the credential and returns FIC exchange token T1.' },
+      { f:1, t:2, label: 'Token Exchange Request (T1)', detail: 'Agent identity presents T1 as client assertion via client_credentials grant.' },
+      { f:2, t:1, label: 'Return Resource Token (TR)', detail: 'Entra ID validates T1(aud) matches the blueprint client ID, issues app-only resource token.' },
+      { f:1, t:3, label: 'Access Resource with TR', detail: 'Agent identity accesses the resource autonomously.' }]},
+  useraccount: { name: "Agent\u2019s User Account", accent: '#7B5EA7', icon: 'fluent:bot-sparkle-24-regular',
+    card: "Agents operating with user context through a dedicated user account.",
+    summary: "Credential chaining: blueprint (actor 1) impersonates the agent identity (actor 2), which impersonates the agent\u2019s user account (subject) via FIC. Access scoped to delegations on the agent identity. Only one identity can impersonate a given user account.",
+    participants: [
+      { label: 'Agent\nBlueprint', icon: 'document-copy-24-filled', color: '#7B5EA7' },
+      { label: 'Agent\nIdentity', icon: 'bot-sparkle-24-filled', color: '#7B5EA7' },
+      { label: 'Agent\nUser', icon: 'bot-sparkle-24-filled', color: '#7B5EA7' },
+      { label: 'Microsoft\nEntra ID', icon: 'shield-checkmark-24-filled', color: '#50e6ff' },
+      { label: 'Resource', icon: 'server-24-filled', color: '#4da6ff' }],
+    steps: [
+      { f:0, t:3, label: 'Request FIC Exchange Token', detail: 'Blueprint presents its managed identity token (TUAMI) as FIC for agent identity impersonation.' },
+      { f:3, t:0, label: 'Return FIC Token (T1)', detail: 'Entra ID validates the credential and returns FIC exchange token T1.' },
+      { f:1, t:3, label: 'Request User FIC Token (T1)', detail: 'Agent identity presents T1 as client assertion to get T2 for user account impersonation.' },
+      { f:3, t:1, label: 'Return User FIC Token (T2)', detail: 'Entra ID validates T1(aud) matches the blueprint, returns T2.' },
+      { f:1, t:3, label: 'OBO Exchange (T1 + T2 + username)', detail: 'Agent identity sends T1, T2, and agent user account username. Same client ID for both phases.' },
+      { f:3, t:1, label: 'Return Resource Token (TR)', detail: 'Entra ID validates the full credential chain and issues the resource token.' },
+      { f:1, t:4, label: 'Access Resource with TR', detail: 'Agent identity accesses the resource on behalf of the agent\u2019s user account.' }]},
+};
+
+const GOV = {
+  ca: { name: 'Conditional Access', icon: 'fluent:shield-lock-24-regular', accent: '#0078D4',
+    subtitle: 'Zero Trust controls for agent token acquisition',
+    summary: 'Conditional Access treats agents as first-class identities, evaluating their access requests the same way it evaluates requests for human users or workload identities, with agent-specific logic.',
+    points: [
+      'Applies when an agent identity or agent user requests a token for any resource',
+      'Does not apply to blueprint token exchanges or blueprint-to-Graph flows for creating agent identities',
+      'Scope to all agent identities, specific identities by object ID, custom security attributes, or by blueprint',
+      'Conditions include agent risk levels (high, medium, low) from ID Protection signals',
+      'Access controls support block actions; policies can be On, Off, or Report-only'
+    ]},
+  governance: { name: 'ID Governance', icon: 'fluent:people-settings-24-regular', accent: '#107C10',
+    subtitle: 'Identity and access lifecycle management for agents',
+    summary: 'Microsoft Entra ID Governance extends lifecycle and access features to agent identities, ensuring agents have a responsible human sponsor providing oversight and that access does not persist longer than needed.',
+    points: [
+      'Sponsors are human users accountable for an agent identity\u2019s lifecycle and access decisions',
+      'If a sponsor leaves, sponsorship automatically transfers to their manager',
+      'Governed via My Account portal (enable/disable) and My Access portal (request access packages)',
+      'Agents from Foundry, Copilot Studio, and Teams auto-provision agent identity blueprints',
+      'Agent identities start with limited permissions inherited from their parent blueprint'
+    ]},
+  packages: { name: 'Access Packages', icon: 'fluent:box-checkmark-24-regular', accent: '#8661C5',
+    subtitle: 'Structured, time-bound access assignments via entitlement management',
+    summary: 'Access packages ensure agent access assignments are intentional, auditable, and time-bound. They enable standardized access for fleets of agents with the same needs, such as customer support agents.',
+    points: [
+      'Resources include security group memberships, OAuth app permissions (including Graph), and Entra roles',
+      'Three request paths: agent self-request via Graph API, sponsor request, or admin direct assignment',
+      'Requests routed to approvers with single, two, or three-stage approval',
+      'Assignments have expiry dates; sponsors receive notifications before expiration',
+      'Privileged catalogs used when packages include OAuth API permissions or directory roles'
+    ]},
+  protection: { name: 'ID Protection', icon: 'fluent:shield-error-24-regular', accent: '#D83B01',
+    subtitle: 'Automated risk detection and response for agent identities',
+    summary: 'Microsoft Entra ID Protection detects anomalous agent behavior by establishing a baseline for normal activity and continuously monitoring for deviations. Flagged agents can be blocked via risk-based Conditional Access.',
+    points: [
+      'Risk detections: unfamiliar resource access, sign-in spike, failed attempts, risky user, admin-confirmed compromise',
+      'All risk detections for agents are currently offline detections',
+      'Risky Agents report shows flagged agents with actions: confirm compromise, confirm safe, dismiss, disable',
+      'Confirm compromise sets risk to High and triggers risk-based Conditional Access policies',
+      'Risk detections available via Graph API (riskyAgents, agentRiskDetections collections)'
+    ]},
+  network: { name: 'Network Controls', icon: 'fluent:globe-shield-24-regular', accent: '#008272',
+    subtitle: 'Global Secure Access for agent network traffic',
+    summary: 'Global Secure Access for agents provides network security controls for Copilot Studio agents, applying the same security policies to agents that you use for human users.',
+    points: [
+      'Traffic forwarding enabled per-environment or per-environment-group in Power Platform Admin Center',
+      'Applies to HTTP Node traffic, custom connectors, and MCP Server Connector traffic',
+      'Policies include web content filtering, threat intelligence, and network file filtering',
+      'Configured via the baseline profile in Global Secure Access for tenant-level enforcement'
+    ]},
+  logs: { name: 'Sign-in & Audit Logs', icon: 'fluent:document-search-24-regular', accent: '#4A90D9',
+    subtitle: 'Monitoring agent activity across audit and sign-in logs',
+    summary: 'Agent identity activities are logged under the base identity type they originate from. A new agentSignIn resource type in sign-in logs contains agent-specific properties.',
+    points: [
+      'Audit logs: agent creation as "Create service principal", user creation as "Create user", blueprint deletion as "Delete application"',
+      'Sign-in logs: filter by Agent type or Is Agent (Yes/No)',
+      'Agent sign-ins may appear across all four sign-in log types (delegated vs app-only)',
+      'Graph API: query at /beta/auditLogs/signIns with agentType filter'
+    ]},
+  consent: { name: 'Consent & Sign-in', icon: 'fluent:person-lock-24-regular', accent: '#C239B3',
+    subtitle: 'How users consent to agent access in their organization',
+    summary: 'When signing in to an agent that uses Microsoft Entra Agent ID, users see consent pages because agents need explicit permissions before they can operate in the organization.',
+    points: [
+      'Two-step consent: first add the agent to the organization, then allow access to specific data and actions',
+      'Trust indicators: agent name, publisher verification, publishing organization, whether built by Microsoft',
+      'Adding an agent allows it to create agent accounts for access to apps, tools, files, and systems',
+      'Approved permissions let the agent run in background without re-prompting for each task',
+      'Users and administrators can disable agents or revoke permissions at any time'
+    ]},
+};
+const IC = {}; const RC = {};
+function agentSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M22 16 L10 32 L22 48" stroke="${color}" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><path d="M42 16 L54 32 L42 48" stroke="${color}" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/><line x1="36" y1="12" x2="28" y2="52" stroke="${color}" stroke-width="5" stroke-linecap="round"/></svg>`}
+function flowSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M14 32H40" stroke="${color}" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M36 20L52 32L36 44" stroke="${color}" stroke-width="5" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
+function shieldSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 8L52 18V36Q52 52 32 58Q12 52 12 36V18Z" stroke="${color}" stroke-width="3.5" fill="none" stroke-linejoin="round"/><path d="M24 34L30 40L42 26" stroke="${color}" stroke-width="4" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`}
+function rbacSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="24" cy="20" r="8" stroke="${color}" stroke-width="3.5" fill="none"/><path d="M10 52v-4a14 14 0 0 1 28 0v4" stroke="${color}" stroke-width="3.5" fill="none" stroke-linecap="round"/><circle cx="44" cy="22" r="6" stroke="${color}" stroke-width="3" fill="none"/><path d="M50 52v-2a10 10 0 0 0-8-9.7" stroke="${color}" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`}
+function apiPermSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="42" cy="22" r="12" stroke="${color}" stroke-width="3.5" fill="none"/><line x1="33" y1="31" x2="12" y2="52" stroke="${color}" stroke-width="3.5" stroke-linecap="round"/><line x1="12" y1="52" x2="22" y2="52" stroke="${color}" stroke-width="3.5" stroke-linecap="round"/><line x1="20" y1="42" x2="28" y2="42" stroke="${color}" stroke-width="3.5" stroke-linecap="round"/></svg>`}
+function appPermSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><circle cx="32" cy="32" r="10" stroke="${color}" stroke-width="3.5" fill="none"/><path d="M32 8v8M32 48v8M8 32h8M48 32h8M15 15l5.6 5.6M43.4 43.4l5.6 5.6M49 15l-5.6 5.6M20.6 43.4L15 49" stroke="${color}" stroke-width="3" stroke-linecap="round"/></svg>`}
+function riskSignalsSvg(color){return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><path d="M32 6L4 56h56L32 6z" stroke="${color}" stroke-width="3.5" fill="none" stroke-linejoin="round"/><line x1="32" y1="24" x2="32" y2="40" stroke="${color}" stroke-width="3.5" stroke-linecap="round"/><circle cx="32" cy="48" r="2.5" fill="${color}"/></svg>`}
+
+/* ══════ UNIFIED GRAPH DATA ══════ */
+const UC = {...C,
+  flow_obo:{name:'Delegated Access Flow',icon:'fluent:people-swap-24-regular',category:'Flow',color:'#0078D4',initial:'D',
+    definition:FLOWS.obo.summary,
+    keyFacts:FLOWS.obo.steps.map((s,i)=>`Step ${i+1} - ${s.label}: ${s.detail}`),
+    relationships:[{target:'interactive',label:'Used by agents with delegated access'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
+  flow_auto:{name:'Own Access Flow',icon:'fluent:bot-sparkle-24-regular',category:'Flow',color:'#EC4899',initial:'O',
+    definition:FLOWS.autonomous.summary,
+    keyFacts:FLOWS.autonomous.steps.map((s,i)=>`Step ${i+1} - ${s.label}: ${s.detail}`),
+    relationships:[{target:'autonomous',label:'Used by agents with own access'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
+  flow_ua:{name:'User Account Flow',icon:'fluent:bot-sparkle-24-regular',category:'Flow',color:'#7B5EA7',initial:'U',
+    definition:FLOWS.useraccount.summary,
+    keyFacts:FLOWS.useraccount.steps.map((s,i)=>`Step ${i+1} - ${s.label}: ${s.detail}`),
+    relationships:[{target:'useraccount',label:'Used with agent user accounts'},{target:'blueprint',label:'Blueprint acquires FIC token'}]},
+  auth_rbac:{name:'RBAC',icon:'fluent:people-settings-24-regular',category:'Authorization',color:'#0078D4',initial:'R',
+    definition:'Role-Based Access Control assigns directory and custom roles to agent identities, granting permissions to manage Entra ID resources and perform administrative actions within defined scopes.',
+    keyFacts:['Directory roles scope administrative permissions for agent identities','Custom roles can be created for fine-grained agent access control','Roles can be assigned directly or inherited through group membership','Applies to all agent access patterns: delegated access, own access, and user account'],
+    relationships:[{target:'gov_ca',label:'CA evaluates role-based access'},{target:'flow_obo',label:'Scopes delegated access permissions'},{target:'flow_auto',label:'Scopes own access permissions'},{target:'flow_ua',label:'Scopes user account permissions'}]},
+  auth_api:{name:'API Permissions',icon:'fluent:key-24-regular',category:'Authorization',color:'#00B7C3',initial:'A',
+    definition:'Delegated (API) permissions define what an agent can do on behalf of a signed-in user. The effective permissions are the intersection of what the app is granted and what the user is allowed to do.',
+    keyFacts:['Delegated permissions require user context and user consent','Effective access is the intersection of app permissions and user privileges','Used by agents with delegated access operating via the OBO flow','Used by agents with user accounts that need user-object-scoped access','Scopes are defined on the agent identity blueprint (app registration)'],
+    relationships:[{target:'gov_ca',label:'CA evaluates delegated access'},{target:'flow_obo',label:'Delegated access flow uses delegated permissions'},{target:'flow_ua',label:'User account flow uses delegated permissions'}]},
+  auth_app:{name:'App Permissions',icon:'fluent:shield-keyhole-24-regular',category:'Authorization',color:'#8661C5',initial:'P',
+    definition:'Application permissions grant an agent identity direct access to resources without user context. These are consented by an administrator and apply when the agent operates autonomously.',
+    keyFacts:['App-only permissions do not require user context','Granted by tenant administrators via admin consent','Used by agents with own access running background operations','Permissions are configured on the agent identity blueprint','Higher privilege level requires stronger governance controls'],
+    relationships:[{target:'gov_ca',label:'CA evaluates app-only access'},{target:'flow_auto',label:'Own access flow uses app permissions'}]},
+  risk_signals:{name:'Risk Signals',icon:'fluent:shield-task-24-regular',category:'Authentication',color:'#0078D4',initial:'S',
+    definition:'Risk signals are conditions and threat intelligence evaluated during token issuance and enforcement. They feed into Conditional Access policies to make real-time grant or block decisions for agent identities.',
+    keyFacts:['Anomalous sign-in patterns ,  unusual login behavior detected for the agent identity (all flows)','Leaked credentials ,  agent credentials found exposed in public repositories or dark web (all flows)','Suspicious sign-ins ,  sign-ins from unfamiliar locations, impossible travel, or malware-linked IPs (all flows)','Named locations ,  IP ranges and geographic regions defined as trusted or blocked (all flows)','Compliant network ,  traffic routed through Global Secure Access verified as compliant (all flows)','Authentication context ,  step-up requirements for sensitive operations like role activation (all flows)','Insider risk level ,  risk score from Adaptive Protection based on user behavior; applies only in delegated access flows (OBO and User Account) where user context exists'],
+    relationships:[{target:'gov_ca',label:'Feeds signals into Conditional Access evaluation'},{target:'auth_rbac',label:'Evaluates risk before granting role-based access'},{target:'auth_api',label:'Evaluates risk before granting delegated permissions'},{target:'auth_app',label:'Evaluates risk before granting app-only permissions'}]},
+  gov_ca:{name:'Conditional Access',icon:GOV.ca.icon,category:'Security Controls',color:GOV.ca.accent,initial:'C',
+    definition:GOV.ca.summary,keyFacts:[...GOV.ca.points,
+      'Evaluation signals for agent identities: anomalous sign-in patterns, leaked credentials, suspicious sign-ins, named locations, compliant network, authentication context',
+      'Insider risk from Adaptive Protection applies as a CA condition in delegated access flows (OBO and User Account) where user context exists; does not apply to agents with own access',
+    ],relationships:[{target:'identity',label:'Evaluates agent token requests'},{target:'risk_signals',label:'Evaluates risk signals for grant/block decisions'}],
+    licensing:{title:'Conditional Access',plans:[
+      {name:'Microsoft Entra ID P1',includes:['Conditional Access policies','MFA enforcement','Location-based access','Device-based conditions','Session controls','Authentication context','Token protection'],note:'Included with M365 E3/A3/F1/F3, Business Premium, EMS E3 (and all higher tiers)'},
+      {name:'Microsoft Entra ID P2',includes:['All P1 features','Risk-based Conditional Access (sign-in risk & user risk - requires ID Protection)'],note:'Included with M365 E5/A5, EMS E5, Microsoft Defender Suite (and all higher tiers incl. Entra Suite & M365 E7)'}
+    ]}},
+  gov_protection:{name:'ID Protection',icon:GOV.protection.icon,category:'Security Controls',color:GOV.protection.accent,initial:'P',
+    definition:GOV.protection.summary,keyFacts:GOV.protection.points,relationships:[{target:'identity',label:'Detects risky agent behavior'}],
+    licensing:{title:'ID Protection',plans:[
+      {name:'Microsoft Entra ID Free / P1',includes:['Limited risky users report (medium & high risk only)','Limited risky sign-ins report (no risk detail)','Limited risk detections (P1 only, no details)'],note:'Basic visibility included at Free and P1 tiers'},
+      {name:'Microsoft Entra ID P2',includes:['Risk-based sign-in & user policies','Full risky users, sign-ins & detections reports','Users at risk alerts & weekly digest','MFA registration policy','Microsoft Graph risk APIs'],note:'Included with M365 E5/A5, EMS E5, Microsoft Defender Suite (and all higher tiers incl. Entra Suite & M365 E7)'},
+      {name:'ID Protection for Agents',includes:['Risky Agents report & dashboard','Agent risk detections (unfamiliar resource, sign-in spike, failed access, risky user sign-in)','Confirm compromise / dismiss / disable actions','Risk-based CA for agents','Microsoft Graph riskyAgents & agentRiskDetections APIs'],note:'Included with Entra ID P2 license (during preview)'}
+    ]}},
+  gov_governance:{name:'ID Governance',icon:GOV.governance.icon,category:'Security Controls',color:GOV.governance.accent,initial:'G',
+    definition:GOV.governance.summary,keyFacts:GOV.governance.points,relationships:[{target:'blueprint',label:'Manages agent lifecycle'}],
+    licensing:{title:'ID Governance',plans:[
+      {name:'Microsoft Entra ID P2',includes:['Entitlement management (core)','Access reviews (core)','Privileged Identity Management','PIM for Groups'],note:'Included with M365 E5/A5, EMS E5 (and all higher tiers)'},
+      {name:'Microsoft Entra ID Governance (add-on)',includes:['All P2 features','Lifecycle Workflows','Advanced access reviews (ML-assisted)','Advanced entitlement management (auto-assignment, custom extensions)'],note:'Requires P1 or P2 prerequisite',bundle:'Also included in Microsoft Entra Suite and M365 E7'}
+    ]}},
+  gov_packages:{name:'Access Packages',icon:GOV.packages.icon,category:'Security Controls',color:GOV.packages.accent,initial:'K',
+    definition:GOV.packages.summary,keyFacts:GOV.packages.points,relationships:[{target:'identity',label:'Manages agent access'}],
+    licensing:{title:'Access Packages',plans:[
+      {name:'Microsoft Entra ID P2',includes:['Entitlement management (core capabilities)','Access package assignments','Self-service access requests','Multi-stage approvals'],note:'Included with M365 E5/A5, EMS E5 (and all higher tiers)'},
+      {name:'Microsoft Entra ID Governance (add-on)',includes:['All P2 features','Auto-assignment policies','Custom Extensions (Logic Apps)','Verified ID integration','Eligible group memberships (PIM for Groups)'],note:'Requires P1 or P2 prerequisite',bundle:'Also included in Microsoft Entra Suite and M365 E7'},
+      {name:'Agent ID Access Packages',includes:['Access packages for agent identities','Access packages for agent user accounts','Agent self-request via Graph API','Sponsor-initiated requests','Time-bound agent access with expiration'],note:'Requires M365 Copilot license + Frontier program enabled'}
+    ]}},
+  gov_network:{name:'Network Controls',icon:GOV.network.icon,category:'Security Controls',color:GOV.network.accent,initial:'N',
+    definition:GOV.network.summary,keyFacts:GOV.network.points,relationships:[{target:'identity',label:'Secures agent network traffic'}],
+    licensing:{title:'Global Secure Access',plans:[
+      {name:'Network Security for Agents',includes:['Agent traffic forwarding to Global Secure Access','Web content filtering for agent traffic','Threat intelligence filtering','Network file filtering','HTTP Node, custom connectors & MCP Server traffic'],note:'Currently via Copilot Studio agents. Requires M365 Copilot + Frontier program enabled'}
+    ]}},
+  gov_logs:{name:'Sign-in & Audit',icon:GOV.logs.icon,category:'Security Controls',color:GOV.logs.accent,initial:'L',
+    definition:GOV.logs.summary,keyFacts:GOV.logs.points,relationships:[{target:'tenant',label:'Audits tenant-wide activity'}],
+    licensing:{title:'Monitoring & Health',plans:[
+      {name:'Microsoft Entra ID Free',includes:['Audit logs','Sign-in logs','Custom security attributes'],note:'Included with any Microsoft cloud subscription'},
+      {name:'Microsoft Entra ID P1 / P2',includes:['All Free features','Provisioning logs','Health','Microsoft Graph activity logs','Usage and insights'],note:'P1 with M365 E3/F1/F3, Business Premium, EMS E3; P2 with M365 E5, EMS E5 (and all higher tiers)'},
+      {name:'Agent Sign-in & Audit Logs',includes:['agentSignIn resource type in sign-in logs','Agent type filter (Agent Identity, Agent ID user, Agent Identity Blueprint)','Agent audit events (create, delete, update)','Microsoft Graph /beta agent log queries'],note:'Included with Microsoft Entra ID, no additional license required'}
+    ]}},
+  gov_consent:{name:'Consent & Sign-in',icon:GOV.consent.icon,category:'Security Controls',color:GOV.consent.accent,initial:'S',
+    definition:GOV.consent.summary,keyFacts:GOV.consent.points,relationships:[{target:'blueprint',label:'Controls agent onboarding'}],
+    licensing:{title:'Consent & Sign-in Settings',plans:[
+      {name:'Microsoft Entra ID Free',includes:['User consent settings','Admin consent workflow & reviews','Enterprise app consent policies'],note:'Included with any Microsoft cloud subscription'},
+      {name:'Microsoft Entra ID P1',includes:['All Free features','App consent permissions for custom roles','Conditional Access app enforcement'],note:'Included with M365 E3/F1/F3, Business Premium, EMS E3 (and all higher tiers)'},
+      {name:'Agent Consent Experience',includes:['Two-step agent consent (add to org + grant data access)','Agent identity blueprint principal creation via consent','Publisher verification display for agents','User-initiated agent disable & permission removal'],note:'Included with Microsoft Entra ID, no additional license required'}
+    ]}},
+  res_graph:{name:'Microsoft Graph',icon:'fluent:code-24-regular',category:'Resource',color:'#0078D4',initial:'G',
+    definition:'The primary API surface for accessing Microsoft 365 services. Agents use Graph to interact with organizational data, users, mail, calendars, and files.',
+    keyFacts:['Unified REST API endpoint for Microsoft 365','Supports delegated and app-only permissions','Central hub for agent resource access'],
+    relationships:[{target:'flow_obo',label:'Accessed via delegated access flow'},{target:'flow_auto',label:'Accessed via own access flow'}]},
+  res_teams:{name:'Microsoft Teams',icon:'fluent:people-team-24-regular',category:'Resource',color:'#6264A7',initial:'T',
+    definition:'Collaboration platform. Agents interact with Teams through user-context flows for chat, channels, and meetings.',
+    keyFacts:['Requires user object context','Chat, channels, and meeting capabilities'],
+    relationships:[{target:'flow_ua',label:'Accessed via user account flow'}]},
+  res_outlook:{name:'Outlook',icon:'fluent:mail-24-regular',category:'Resource',color:'#0078D4',initial:'O',
+    definition:'Email and calendar services accessed through Exchange Online with user context.',
+    keyFacts:['Requires user object for mailbox access','Mail, calendar, and contacts'],
+    relationships:[{target:'flow_ua',label:'Accessed via user account flow'}]},
+  res_sharepoint:{name:'SharePoint',icon:'fluent:document-24-regular',category:'Resource',color:'#038387',initial:'S',
+    definition:'Document management and collaboration platform. Agents access sites, lists, and files.',
+    keyFacts:['Supports both delegated and app-only access','File and content management'],
+    relationships:[{target:'flow_obo',label:'Accessed via delegated access flow'},{target:'flow_ua',label:'Accessed via user account flow'}]},
+  res_calendar:{name:'Calendar',icon:'fluent:calendar-24-regular',category:'Resource',color:'#0078D4',initial:'C',
+    definition:'Calendar services through Exchange Online. Agents manage events and scheduling with user context.',
+    keyFacts:['Exchange Online integration','Scheduling and event management'],
+    relationships:[{target:'flow_ua',label:'Accessed via user account flow'}]},
+  res_apps:{name:'Apps',icon:'fluent:apps-24-regular',category:'Resource',color:'#50E6FF',initial:'A',
+    definition:'Line-of-business applications and third-party services that agents access with proper permissions.',
+    keyFacts:['Custom line-of-business APIs','Third-party service integrations'],
+    relationships:[{target:'flow_obo',label:'Accessed via delegated access flow'}]},
+  res_apis:{name:'Custom APIs',icon:'fluent:globe-24-regular',category:'Resource',color:'#50E6FF',initial:'P',
+    definition:'Organization-specific APIs protected by OAuth 2.0 that agents can access.',
+    keyFacts:['Custom APIs and integrations','Protected by OAuth 2.0'],
+    relationships:[{target:'flow_obo',label:'Accessed via delegated access flow'},{target:'flow_auto',label:'Accessed via own access flow'}]},
+  res_cloud:{name:'Cloud Services',icon:'fluent:cloud-24-regular',category:'Resource',color:'#0078D4',initial:'C',
+    definition:'Azure and cloud infrastructure resources accessed by agents with own access using app-only permissions.',
+    keyFacts:['Cloud infrastructure resources','App-only permission access'],
+    relationships:[{target:'flow_auto',label:'Accessed via own access flow'}]},
+  res_data:{name:'Data Stores',icon:'fluent:database-24-regular',category:'Resource',color:'#F59E0B',initial:'D',
+    definition:'Backend databases and storage services that agents with own access connect to using app-only permissions.',
+    keyFacts:['Databases and storage services','App-only permission access'],
+    relationships:[{target:'flow_auto',label:'Accessed via own access flow'}]},
+  res_security:{name:'Security',icon:'fluent:shield-24-regular',category:'Resource',color:'#E3008C',initial:'S',
+    definition:'Security services and APIs accessed by agents with own access for monitoring and response.',
+    keyFacts:['Security monitoring and response','Threat intelligence APIs'],
+    relationships:[{target:'flow_auto',label:'Accessed via own access flow'}]},
+};
+const UNIFIED_NODES = [
+  /* ── Identity Model ── */
+  {id:'tenant',x:0.57,y:0.06,s:1.0},
+  {id:'blueprint',x:0.57,y:0.17,s:1.0},{id:'principal',x:0.40,y:0.23,s:1.0},
+  {id:'identity',x:0.74,y:0.23,s:1.0},
+  {id:'interactive',x:0.36,y:0.34,s:1.0},{id:'useraccount',x:0.57,y:0.34,s:1.0},{id:'autonomous',x:0.78,y:0.34,s:1.0},
+  /* ── Authentication Flows ── */
+  {id:'flow_obo',x:0.36,y:0.49,s:1.0},{id:'flow_ua',x:0.57,y:0.49,s:1.0},{id:'flow_auto',x:0.78,y:0.49,s:1.0},
+  /* ── Authorization ── */
+  {id:'risk_signals',x:0.57,y:0.62,s:1.0,shape:'square'},
+  {id:'auth_rbac',x:0.47,y:0.75,s:1.0,shape:'square'},{id:'auth_api',x:0.57,y:0.75,s:1.0,shape:'square'},{id:'auth_app',x:0.67,y:0.75,s:1.0,shape:'square'},
+  /* ── Resources & Services (clustered below each flow) ── */
+  {id:'res_apis',x:0.23,y:0.89,s:1.0},{id:'res_apps',x:0.29,y:0.91,s:1.0},{id:'res_graph',x:0.35,y:0.89,s:1.0},
+  {id:'res_teams',x:0.51,y:0.86,s:1.0},{id:'res_outlook',x:0.57,y:0.84,s:1.0},{id:'res_calendar',x:0.63,y:0.86,s:1.0},{id:'res_sharepoint',x:0.57,y:0.91,s:1.0},
+  {id:'res_security',x:0.79,y:0.89,s:1.0},{id:'res_data',x:0.85,y:0.91,s:1.0},{id:'res_cloud',x:0.91,y:0.89,s:1.0},
+  /* ── Governance & Security (vertical left panel) ── */
+  {id:'gov_ca',x:0.075,y:0.12,s:1.0,shape:'square'},
+  {id:'gov_protection',x:0.075,y:0.24,s:1.0,shape:'square'},
+  {id:'gov_governance',x:0.075,y:0.36,s:1.0,shape:'square'},
+  {id:'gov_packages',x:0.075,y:0.48,s:1.0,shape:'square'},
+  {id:'gov_network',x:0.075,y:0.60,s:1.0,shape:'square'},
+  {id:'gov_logs',x:0.075,y:0.72,s:1.0,shape:'square'},
+  {id:'gov_consent',x:0.075,y:0.84,s:1.0,shape:'square'},
+];
+const UNIFIED_EDGES = [
+  {source:'tenant',target:'blueprint',label:'Contains',lt:0.55,lo:28},
+  {source:'blueprint',target:'principal',label:'Instantiates',lt:0.5,lo:14},
+  {source:'blueprint',target:'identity',label:'Creates (1:many)',lt:0.4,lo:-20},
+  {source:'identity',target:'interactive',label:'Operates as',lt:0.3,lo:18},
+  {source:'identity',target:'useraccount',label:'Operates as',lt:0.5,lo:-18},
+  {source:'identity',target:'autonomous',label:'Operates as',lt:0.65,lo:-36},
+  {source:'interactive',target:'flow_obo',label:'Authenticates via',lt:0.72,lo:14},
+  {source:'useraccount',target:'flow_ua',label:'Authenticates via',lt:0.35,lo:50},
+  {source:'autonomous',target:'flow_auto',label:'Authenticates via',lt:0.72,lo:-14},
+  /* ── Flows → Risk Signals ── */
+  {source:'flow_obo',target:'risk_signals',label:'Delegated',lt:0.35,lo:14},
+  {source:'flow_ua',target:'risk_signals',label:'Delegated',lt:0.5,lo:30},
+  {source:'flow_auto',target:'risk_signals',label:'App-only',lt:0.5,lo:-14},
+  /* ── Risk Signals → Permissions ── */
+  {source:'risk_signals',target:'auth_rbac',label:'',lt:0.5,lo:8},
+  {source:'risk_signals',target:'auth_api',label:'',lt:0.5,lo:0},
+  {source:'risk_signals',target:'auth_app',label:'',lt:0.5,lo:-8},
+  /* ── Authorization → Resources ── */
+  {source:'auth_rbac',target:'res_graph',label:'',lt:0.5,lo:6},
+  {source:'auth_rbac',target:'res_apps',label:'',lt:0.5,lo:0},
+  {source:'auth_rbac',target:'res_apis',label:'',lt:0.5,lo:-6},
+  {source:'auth_api',target:'res_teams',label:'',lt:0.5,lo:6},
+  {source:'auth_api',target:'res_outlook',label:'',lt:0.5,lo:0},
+  {source:'auth_api',target:'res_calendar',label:'',lt:0.5,lo:-6},
+  {source:'auth_api',target:'res_sharepoint',label:'',lt:0.4,lo:-8},
+  {source:'auth_app',target:'res_cloud',label:'',lt:0.5,lo:-6,cv:-22},
+  {source:'auth_app',target:'res_data',label:'',lt:0.5,lo:0,cv:-22},
+  {source:'auth_app',target:'res_security',label:'',lt:0.5,lo:6,cv:-22},
+  /* ── Risk Signals → Conditional Access ── */
+  {source:'risk_signals',target:'gov_ca',label:'Evaluated by',lt:0.3,lo:0},
+  /* ── Identity → Governance ── */
+  {source:'identity',target:'gov_ca',label:'',lt:0.3,lo:6},
+  {source:'identity',target:'gov_protection',label:'',lt:0.3,lo:0},
+  {source:'identity',target:'gov_packages',label:'',lt:0.3,lo:-6},
+  {source:'identity',target:'gov_governance',label:'',lt:0.3,lo:-12},
+  {source:'useraccount',target:'gov_ca',label:'',lt:0.3,lo:0},
+  {source:'useraccount',target:'gov_logs',label:'',lt:0.3,lo:6},
+  {source:'useraccount',target:'gov_governance',label:'',lt:0.3,lo:12},
+  {source:'useraccount',target:'gov_packages',label:'',lt:0.3,lo:-12},
+  {source:'identity',target:'gov_network',label:'',lt:0.3,lo:18},
+  {source:'identity',target:'gov_logs',label:'',lt:0.3,lo:24},
+  {source:'blueprint',target:'gov_consent',label:'',lt:0.3,lo:6},
+  {source:'blueprint',target:'gov_logs',label:'',lt:0.3,lo:-6},
+  {source:'tenant',target:'gov_logs',label:'',lt:0.3,lo:8},
+];
+async function loadIcons() {
+  const azBase = 'https://raw.githubusercontent.com/tomkiljo/ms-icons/main/public/icons/Azure_Public_Service_Icons/Icons/identity/';
+  const secBase = 'https://raw.githubusercontent.com/tomkiljo/ms-icons/main/public/icons/Azure_Public_Service_Icons/Icons/security/';
+  const monBase = 'https://raw.githubusercontent.com/tomkiljo/ms-icons/main/public/icons/Azure_Public_Service_Icons/Icons/monitor/';
+  const entraBase = 'https://raw.githubusercontent.com/tomkiljo/ms-icons/main/public/icons/Microsoft_Entra_architecture_icons/Microsoft%20Entra%20color%20icons%20SVG/';
+  const m365Blue = 'https://raw.githubusercontent.com/tomkiljo/ms-icons/main/public/icons/Microsoft_365_Content_Icons/Microsoft%20Blue/48x48%20Dark%20Blue%20Icon/';
+  const m365Teams = 'https://raw.githubusercontent.com/tomkiljo/ms-icons/main/public/icons/Microsoft_365_Content_Icons/Teams%20Purple/';
+  const remote = {
+    tenant: entraBase + 'Microsoft%20Entra%20ID%20color%20icon.svg',
+    principal: azBase + '10225-icon-service-Enterprise-Applications.svg',
+    blueprint: azBase + '10232-icon-service-App-Registrations.svg',
+    gov_ca: secBase + '10233-icon-service-Conditional-Access.svg',
+    gov_protection: azBase + '10231-icon-service-Entra-ID-Protection.svg',
+    gov_governance: azBase + '10235-icon-service-Identity-Governance.svg',
+    gov_packages: azBase + '10235-icon-service-Identity-Governance.svg',
+    gov_network: azBase + '03309-icon-service-Entra-Global-Secure-Access.svg',
+    gov_logs: monBase + '00001-icon-service-Monitor.svg',
+    gov_consent: azBase + '10340-icon-service-Entra-Identity-Roles-and-Administrators.svg',
+  };
+  const resSvg = (paths,col) => `<svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="${col}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">${paths}</svg>`;
+  const resIcons = {
+    res_graph: resSvg('<path d="M13 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z"/><polyline points="13 2 13 9 20 9"/>','#0078D4'),
+    res_teams: resSvg('<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>','#6264A7'),
+    res_outlook: resSvg('<path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/>','#0078D4'),
+    res_sharepoint: resSvg('<path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/>','#038387'),
+    res_calendar: resSvg('<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>','#0078D4'),
+    res_apps: resSvg('<rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/>','#50E6FF'),
+    res_apis: resSvg('<circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>','#50E6FF'),
+    res_cloud: resSvg('<path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/>','#0078D4'),
+    res_data: resSvg('<ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>','#F59E0B'),
+    res_security: resSvg('<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>','#E3008C'),
+  };
+  const botSvg = (color) => `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="14" y="22" width="36" height="28" rx="6" stroke="${color}" stroke-width="4" fill="none"/><circle cx="25" cy="36" r="4" fill="${color}"/><circle cx="39" cy="36" r="4" fill="${color}"/><line x1="32" y1="14" x2="32" y2="22" stroke="${color}" stroke-width="4" stroke-linecap="round"/><circle cx="32" cy="11" r="3" fill="${color}"/><path d="M26 46 L32 50 L38 46" stroke="${color}" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+  const inline = { identity: agentSvg('#0078D4'), interactive: agentSvg('#7B5EA7'), autonomous: agentSvg('#E3008C'), useraccount: botSvg('#7B5EA7'),
+    flow_obo: flowSvg('#0078D4'), flow_auto: flowSvg('#EC4899'), flow_ua: flowSvg('#7B5EA7'),
+    auth_rbac: rbacSvg('#0078D4'), auth_api: apiPermSvg('#00B7C3'), auth_app: appPermSvg('#8661C5'),
+    risk_signals: riskSignalsSvg('#0078D4'),
+    ...resIcons };
+  const resRemote = {
+    teams: m365Teams + 'Building%20People_Teams_Dark.svg',
+    mail: m365Blue + 'Mail.svg', calendar: m365Blue + 'Calendar%20Month.svg',
+    sharepoint: m365Blue + 'Document%20Bullet%20List.svg', apps: m365Blue + 'Apps.svg',
+    globe: m365Blue + 'Globe.svg', data: m365Blue + 'Database.svg',
+    cloud: m365Blue + 'Cloud.svg', database: m365Blue + 'Database.svg', shield: m365Blue + 'Lock%20Shield.svg'
+  };
+  const loadImg = (svg) => { const b=new Blob([svg],{type:'image/svg+xml'}); const u=URL.createObjectURL(b); const i=new Image(); return new Promise((ok,no)=>{i.onload=()=>ok(i);i.onerror=no;i.src=u}) };
+  await Promise.all([
+    ...Object.entries(remote).map(async ([k,url]) => { try { const r=await fetch(url); const s=await r.text(); IC[k]=await loadImg(s) } catch(e){IC[k]=null} }),
+    ...Object.entries(inline).map(async ([k,svg]) => { try { IC[k]=await loadImg(svg) } catch(e){IC[k]=null} }),
+    ...Object.entries(resRemote).map(async ([k,url]) => { try { const r=await fetch(url); const s=await r.text(); RC[k]=await loadImg(s) } catch(e){RC[k]=null} })
+  ]);
+}
+
+/* ══════ CANVAS HELPERS ══════ */
+function hexRgb(h){const n=parseInt(h.slice(1),16);return[(n>>16)&255,(n>>8)&255,n&255]}
+function lighten(h,a){const[r,g,b]=hexRgb(h);return`rgb(${r+(255-r)*a},${g+(255-g)*a},${b+(255-b)*a})`}
+function bezPt(a,c,b,t){const m=1-t;return{x:m*m*a.x+2*m*t*c.x+t*t*b.x,y:m*m*a.y+2*m*t*c.y+t*t*b.y}}
+function ctrlPt(s,t,off){const mx=(s.x+t.x)/2,my=(s.y+t.y)/2,dx=t.x-s.x,dy=t.y-s.y,l=Math.sqrt(dx*dx+dy*dy)||1;return{x:mx+(-dy/l)*off,y:my+(dx/l)*off}}
+function rrect(ctx,x,y,w,h,r){ctx.beginPath();ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath()}
+
+const THEME = {
+  dark: {
+    canvasBg: '#0a0e1a',
+    nodeFill: 'rgba(255,255,255,0.95)',
+    nodeFillDim: 'rgba(30,30,40,0.6)',
+    nodeLabel: 'rgba(255,255,255,0.82)',
+    nodeLabelDim: 'rgba(255,255,255,0.06)',
+    nodeLabelSel: '#fff',
+    edgeStroke: 'rgba(80,230,255,0.45)',
+    edgeStrokeDim: 'rgba(255,255,255,0.06)',
+    edgeStrokeHi: 'rgba(80,230,255,0.85)',
+    edgeLabel: 'rgba(255,255,255,0.55)',
+    edgeLabelDim: 'rgba(255,255,255,0.03)',
+    edgeLabelHi: 'rgba(255,255,255,0.95)',
+    edgeDash: 'rgba(80,230,255,0.35)',
+    edgeDashGov: 'rgba(255,255,255,0.10)',
+    edgeDashDim: 'rgba(255,255,255,0.05)',
+    particle: 'rgba(0,120,212,0.8)',
+    particleHi: 'rgba(255,160,0,0.95)',
+    selStroke: '#50E6FF',
+    fallbackText: 'rgba(255,255,255,0.9)',
+    fallbackTextDim: 'rgba(0,0,0,0.1)',
+    layerShadow: 'rgba(0,0,0,0.18)',
+    resFill: 'rgba(255,255,255,0.92)',
+    resFillDim: 'rgba(255,255,255,0.04)',
+    resStroke: 'rgba(255,255,255,0.10)',
+    resStrokeDim: 'rgba(255,255,255,0.03)',
+    resStrokeHi: 'rgba(80,230,255,0.4)',
+    resLabel: 'rgba(255,255,255,0.35)',
+    resLabelDim: 'rgba(255,255,255,0.03)',
+    resLabelHi: 'rgba(255,255,255,0.8)',
+    resConn: 'rgba(255,255,255,0.25)',
+    resConnDim: 'rgba(255,255,255,0.03)',
+    resConnHi: 'rgba(80,230,255,0.5)',
+    resEdgeHi: 'rgba(0,200,120,0.6)',
+    hintColor: 'rgba(255,255,255,0.35)',
+  },
+  light: {
+    canvasBg: '#f0f4f8',
+    nodeFill: 'rgba(255,255,255,0.98)',
+    nodeFillDim: 'rgba(200,210,220,0.3)',
+    nodeLabel: 'rgba(0,0,0,0.75)',
+    nodeLabelDim: 'rgba(0,0,0,0.08)',
+    nodeLabelSel: '#000',
+    edgeStroke: 'rgba(0,90,180,0.40)',
+    edgeStrokeDim: 'rgba(0,0,0,0.06)',
+    edgeStrokeHi: 'rgba(0,120,212,0.75)',
+    edgeLabel: 'rgba(0,0,0,0.55)',
+    edgeLabelDim: 'rgba(0,0,0,0.06)',
+    edgeLabelHi: 'rgba(0,0,0,0.90)',
+    edgeDash: 'rgba(0,90,180,0.30)',
+    edgeDashGov: 'rgba(0,0,0,0.08)',
+    edgeDashDim: 'rgba(0,0,0,0.05)',
+    particle: 'rgba(230,120,0,0.7)',
+    particleHi: 'rgba(230,120,0,0.9)',
+    selStroke: '#0078D4',
+    fallbackText: 'rgba(0,0,0,0.8)',
+    fallbackTextDim: 'rgba(0,0,0,0.08)',
+    layerShadow: 'rgba(0,0,0,0.06)',
+    resFill: 'rgba(255,255,255,0.95)',
+    resFillDim: 'rgba(0,0,0,0.03)',
+    resStroke: 'rgba(0,0,0,0.12)',
+    resStrokeDim: 'rgba(0,0,0,0.04)',
+    resStrokeHi: 'rgba(0,120,212,0.4)',
+    resLabel: 'rgba(0,0,0,0.45)',
+    resLabelDim: 'rgba(0,0,0,0.06)',
+    resLabelHi: 'rgba(0,0,0,0.8)',
+    resConn: 'rgba(0,0,0,0.15)',
+    resConnDim: 'rgba(0,0,0,0.04)',
+    resConnHi: 'rgba(0,120,212,0.4)',
+    resEdgeHi: 'rgba(0,160,80,0.55)',
+    hintColor: 'rgba(0,0,0,0.35)',
+  }
+};
+
+const LAYERS_DARK = [
+  {x0:0.005,x1:0.15,y0:0.01,y1:0.96,label:'GOVERNANCE &\nSECURITY',vertical:true,from:'rgba(227,0,140,0.05)',to:'rgba(227,0,140,0.02)',border:'rgba(227,0,140,0.20)',labelColor:'rgba(227,100,180,0.70)'},
+  {x0:0.15,y0:0.01,y1:0.43,label:'AGENT IDENTITY MODEL',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.22)',labelColor:'rgba(120,180,255,0.70)'},
+  {x0:0.15,y0:0.43,y1:0.70,label:'AUTHENTICATION & RISK EVALUATION',from:'rgba(80,230,255,0.06)',to:'rgba(80,230,255,0.02)',border:'rgba(80,230,255,0.22)',labelColor:'rgba(80,230,255,0.70)'},
+  {x0:0.15,y0:0.70,y1:0.80,label:'AUTHORIZATION',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.22)',labelColor:'rgba(60,160,240,0.70)'},
+  {x0:0.15,y0:0.80,y1:0.96,label:'RESOURCES AGENTS MAY CONSUME',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.22)',labelColor:'rgba(120,180,255,0.70)'},
+];
+
+const LAYERS_LIGHT = [
+  {x0:0.005,x1:0.15,y0:0.01,y1:0.96,label:'GOVERNANCE &\nSECURITY',vertical:true,from:'rgba(227,0,140,0.04)',to:'rgba(227,0,140,0.01)',border:'rgba(227,0,140,0.12)',labelColor:'rgba(180,0,110,0.60)'},
+  {x0:0.15,y0:0.01,y1:0.43,label:'AGENT IDENTITY MODEL',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.18)',labelColor:'rgba(0,80,160,0.65)'},
+  {x0:0.15,y0:0.43,y1:0.70,label:'AUTHENTICATION & RISK EVALUATION',from:'rgba(0,120,212,0.06)',to:'rgba(0,120,212,0.02)',border:'rgba(0,120,212,0.18)',labelColor:'rgba(0,80,160,0.65)'},
+  {x0:0.15,y0:0.70,y1:0.80,label:'AUTHORIZATION',from:'rgba(0,120,212,0.05)',to:'rgba(0,120,212,0.01)',border:'rgba(0,120,212,0.18)',labelColor:'rgba(0,90,160,0.65)'},
+  {x0:0.15,y0:0.80,y1:0.96,label:'RESOURCES AGENTS MAY CONSUME',from:'rgba(0,120,212,0.04)',to:'rgba(0,120,212,0.01)',border:'rgba(0,120,212,0.15)',labelColor:'rgba(0,80,160,0.60)'},
+];
+
+function getTheme() {
+  return document.documentElement.getAttribute('data-theme') === 'dark' ? 'dark' : 'light';
+}
+function tp() { return THEME[getTheme()]; }
+function getLayers() { return getTheme() === 'light' ? LAYERS_LIGHT : LAYERS_DARK; }
+
+/* ══════ GRAPH COMPONENT ══════ */
+function ConceptGraph({ selected, onSelect, dedicated, unified }) {
+  const wrapRef = useRef(null), canvasRef = useRef(null), selRef = useRef(selected), hovRef = useRef(null), animRef = useRef(null);
+  const nodesRef = useRef([]), epRef = useRef([]), icReady = useRef(false);
+  const DATA = unified ? UC : C, ND = unified ? UNIFIED_NODES : NODES, ED = unified ? UNIFIED_EDGES : EDGES;
+  useEffect(()=>{selRef.current=selected},[selected]);
+  useEffect(()=>{loadIcons().then(()=>{icReady.current=true})},[]);
+  useEffect(()=>{
+    const wrap=wrapRef.current, cv=canvasRef.current; if(!wrap||!cv) return;
+    const ctx=cv.getContext('2d'), dpr=window.devicePixelRatio||1;
+    const sc=dedicated?1.35:1;
+    let W,H;
+    function resize(){
+      W=wrap.clientWidth; H=unified?(dedicated?1100:780):(dedicated?520:400);
+      cv.width=W*dpr; cv.height=H*dpr; cv.style.width=W+'px'; cv.style.height=H+'px';
+      ctx.setTransform(dpr,0,0,dpr,0,0);
+      const baseR = unified ? Math.min(W,H)*0.024 : Math.min(W,H)*0.05;
+      nodesRef.current=ND.map(n=>({...n,bx:n.x*W,by:n.y*H,dx:n.x*W,dy:n.y*H,r:baseR*(n.s||1),ph:Math.random()*6.28}));
+      epRef.current=ED.map(e=>({...e,ps:Array.from({length:3},(_,i)=>({t:i/3,sp:0.0007+Math.random()*0.0005}))}));
+    }
+    function getN(mx,my){for(const n of nodesRef.current){if(n.shape==='square'){const s=n.r+6;if(Math.abs(mx-n.dx)<s&&Math.abs(my-n.dy)<s)return n}else{const dx=mx-n.dx,dy=my-n.dy;if(dx*dx+dy*dy<(n.r+10)*(n.r+10))return n}}return null}
+    /* full downstream cascade + direct upstream parents */
+    function hiSet(sel){
+      if(!sel)return{nodes:new Set(),edges:new Set()};
+      const ns=new Set([sel]),es=new Set();
+      // upstream: add direct parents (edges where sel is target)
+      ED.forEach((e,i)=>{if(e.target===sel){es.add(i);ns.add(e.source)}});
+      // downstream BFS: follow source→target from selected node only
+      let frontier=[sel];
+      while(frontier.length){
+        const next=[];
+        frontier.forEach(nid=>{ED.forEach((e,i)=>{
+          if(es.has(i))return;
+          if(e.source===nid&&!ns.has(e.target)){es.add(i);ns.add(e.target);next.push(e.target)}
+        })});
+        frontier=next;
+      }
+      // also include governance edges from any highlighted node
+      ED.forEach((e,i)=>{
+        if(es.has(i))return;
+        if(ns.has(e.source)&&e.target.startsWith('gov_')){es.add(i);ns.add(e.target)}
+        if(ns.has(e.target)&&e.source.startsWith('gov_')){es.add(i);ns.add(e.source)}
+      });
+      return{nodes:ns,edges:es};
+    }
+    function drawE(e,ei,hs,t){
+      const sn=nodesRef.current.find(n=>n.id===e.source),tn=nodesRef.current.find(n=>n.id===e.target);if(!sn||!tn)return;
+      const sel=selRef.current,hi=sel&&hs.edges.has(ei),dim=sel&&!hi;
+      const isGov=e.source.startsWith('gov_')||e.target.startsWith('gov_');
+      const isRes=e.source.startsWith('res_')||e.target.startsWith('res_');
+      const s={x:sn.dx,y:sn.dy},tt={x:tn.dx,y:tn.dy},cp=ctrlPt(s,tt,e.cv||22);const T=tp();
+      ctx.beginPath();ctx.moveTo(s.x,s.y);ctx.quadraticCurveTo(cp.x,cp.y,tt.x,tt.y);
+      if(isGov||isRes){ctx.save();ctx.setLineDash(hi?[6,4]:[4,6]);ctx.strokeStyle=dim?T.edgeDashDim:hi?(isRes?T.resEdgeHi:'rgba(0,120,212,0.6)'):(isRes?T.edgeDash:T.edgeDashGov);ctx.lineWidth=hi?1.4:1.2;ctx.stroke();ctx.restore()}
+      else{ctx.strokeStyle=dim?T.edgeStrokeDim:hi?T.edgeStrokeHi:T.edgeStroke;ctx.lineWidth=hi?2.5:1.5;ctx.stroke()}
+      if(e.label){const lt=e.lt||0.5,lo=e.lo||0;
+        const lp=bezPt(s,cp,tt,lt);const lp2=bezPt(s,cp,tt,lt+0.02);
+        const ldx=lp2.x-lp.x,ldy=lp2.y-lp.y,ll=Math.sqrt(ldx*ldx+ldy*ldy)||1;
+        const ox=-ldy/ll*Math.abs(lo)*(lo<0?-1:1),oy=ldx/ll*Math.abs(lo)*(lo<0?-1:1);
+        ctx.font=`${dedicated?11:9}px Segoe UI, sans-serif`;ctx.fillStyle=dim?T.edgeLabelDim:hi?T.edgeLabelHi:T.edgeLabel;
+        ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(e.label,lp.x+ox,lp.y+oy)}
+      if(!dim&&!isGov&&!isRes)for(const p of e.ps){p.t=(p.t+p.sp)%1;const pp=bezPt(s,cp,tt,p.t);const g=ctx.createRadialGradient(pp.x,pp.y,0,pp.x,pp.y,3);
+        g.addColorStop(0,hi?T.particleHi:T.particle);g.addColorStop(1,'rgba(0,120,212,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(pp.x,pp.y,5,0,6.28);ctx.fill()}
+    }
+    function drawN(n,hs,t){
+      const c=DATA[n.id];if(!c)return;const sel=selRef.current,isSel=sel===n.id,
+        isCon=sel&&hs.nodes.has(n.id)&&!isSel,
+        dim=sel&&!isSel&&!isCon,hov=hovRef.current===n.id&&!isSel;
+      const r=n.r,x=n.dx,y=n.dy,[cr,cg,cb]=hexRgb(c.color),a=dim?0.15:1;const T=tp();
+      const isGov=c.category==='Governance',isFlow=c.category==='Flow',isRes=c.category==='Resource';
+      const isPat=c.category==='Pattern';
+      const sq=n.shape==='square';
+      const gr=isSel?r*2.2:hov?r*1.8:r*1.4,go=(isSel?0.25:hov?0.14:0.06)*a;
+      if(!isGov){const gl=ctx.createRadialGradient(x,y,r*0.5,x,y,gr);gl.addColorStop(0,`rgba(${cr},${cg},${cb},${go})`);gl.addColorStop(1,`rgba(${cr},${cg},${cb},0)`);
+      ctx.fillStyle=gl;ctx.beginPath();ctx.arc(x,y,gr,0,6.28);ctx.fill()}
+      const fillCol=dim?T.nodeFillDim:isGov?'transparent':T.nodeFill;
+      const strokeCol=isSel?T.selStroke:dim?`rgba(${cr},${cg},${cb},0.12)`:c.color;
+      if(sq){const sz=r*2;ctx.fillStyle=fillCol;rrect(ctx,x-sz/2,y-sz/2,sz,sz,5);ctx.fill();ctx.strokeStyle=strokeCol;ctx.lineWidth=isSel?2.5:hov?1.8:1;ctx.stroke()}
+      else{ctx.fillStyle=fillCol;ctx.beginPath();ctx.arc(x,y,r,0,6.28);ctx.fill();ctx.strokeStyle=strokeCol;ctx.lineWidth=isSel?2.5:hov?1.8:1.2;ctx.stroke()}
+      if((isPat||isFlow)&&!dim){ctx.save();ctx.setLineDash([3,3]);ctx.strokeStyle=`rgba(${cr},${cg},${cb},0.3)`;ctx.lineWidth=1;ctx.beginPath();ctx.arc(x,y,r+4,0,6.28);ctx.stroke();ctx.restore()}
+      const ic=IC[n.id];const iconS=r*1.4;
+      if(ic&&icReady.current){ctx.globalAlpha=dim?0.15:1;ctx.drawImage(ic,x-iconS/2,y-iconS/2,iconS,iconS);ctx.globalAlpha=1}
+      else{ctx.font=`600 ${r*.65}px Segoe UI, sans-serif`;ctx.fillStyle=dim?T.fallbackTextDim:(isGov||isRes)?T.fallbackText:c.color;ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(c.initial,x,y)}
+      const isSmall=isGov||isRes;const lfs=isSmall?(dedicated?10:8):(dedicated?11:9);
+      ctx.font=`500 ${lfs}px Segoe UI, sans-serif`;ctx.fillStyle=dim?T.nodeLabelDim:isSel?T.nodeLabelSel:T.nodeLabel;ctx.textAlign='center';ctx.textBaseline='top';
+      const maxC=isSmall?12:16;const words=c.name.split(' ');let lines=[],cur='';for(const w of words){if(cur&&(cur+' '+w).length>maxC){lines.push(cur);cur=w}else cur=cur?cur+' '+w:w}if(cur)lines.push(cur);
+      const lh=isSmall?(dedicated?12:10):(dedicated?13:11);
+      lines.forEach((l,i)=>ctx.fillText(l,x,y+r+(isSmall?4:6)+i*lh));
+    }
+    function drawRes(hs){
+      const sel=selRef.current;const rr=dedicated?18:14;const orbit=dedicated?115:90;const T=tp();
+      for(const [parentId,items] of Object.entries(RESOURCES)){
+        const pn=nodesRef.current.find(n=>n.id===parentId);if(!pn)continue;
+        const dim=sel&&!hs.nodes.has(parentId);
+        const hi=sel===parentId;const n=items.length;
+        const spread=Math.min(Math.PI*0.85,n*0.45);
+        const startA=Math.PI/2-spread/2;
+        for(let i=0;i<n;i++){
+          const a=n===1?Math.PI/2:startA+spread*i/(n-1);
+          const rx=pn.dx+Math.cos(a)*orbit,ry=pn.dy+Math.sin(a)*orbit;
+          const sx=pn.dx+Math.cos(a)*(pn.r+4),sy=pn.dy+Math.sin(a)*(pn.r+4);
+          const ex=rx-Math.cos(a)*(rr+2),ey=ry-Math.sin(a)*(rr+2);
+          ctx.save();ctx.setLineDash([3,4]);ctx.strokeStyle=dim?T.resConnDim:hi?T.resConnHi:T.resConn;ctx.lineWidth=1.2;
+          ctx.beginPath();ctx.moveTo(sx,sy);ctx.lineTo(ex,ey);ctx.stroke();ctx.restore();
+          ctx.fillStyle=dim?T.resFillDim:T.resFill;ctx.beginPath();ctx.arc(rx,ry,rr,0,6.28);ctx.fill();
+          ctx.strokeStyle=dim?T.resStrokeDim:hi?T.resStrokeHi:T.resStroke;ctx.lineWidth=1;ctx.stroke();
+          const ic=RC[items[i].icon];if(ic&&icReady.current){const s=rr*1.5;ctx.globalAlpha=dim?0.08:0.9;ctx.drawImage(ic,rx-s/2,ry-s/2,s,s);ctx.globalAlpha=1}
+          ctx.font=`${dedicated?10:8}px Segoe UI, sans-serif`;ctx.fillStyle=dim?T.resLabelDim:hi?T.resLabelHi:T.resLabel;
+          ctx.textAlign='center';ctx.textBaseline='top';ctx.fillText(items[i].label,rx,ry+rr+3);
+        }
+      }
+    }
+    function drawLayers(){
+      if(!unified)return;
+      const layers=getLayers();const T=tp();
+      for(const L of layers){
+        const ty=L.y0*H,by=L.y1*H,bh=by-ty;
+        const pad=4;
+        const lx=(L.x0||0)*W+pad, lw=((L.x1||1)*W)-lx-pad;
+        const grad=L.vertical
+          ? ctx.createLinearGradient(lx,0,lx+lw,0)
+          : ctx.createLinearGradient(0,ty,0,by);
+        grad.addColorStop(0,L.from);grad.addColorStop(1,L.to);
+        ctx.save();
+        ctx.shadowColor=T.layerShadow;ctx.shadowBlur=6;ctx.shadowOffsetY=1;
+        ctx.fillStyle=grad;rrect(ctx,lx,ty,lw,bh,8);ctx.fill();
+        ctx.shadowColor='transparent';
+        ctx.strokeStyle=L.border;ctx.lineWidth=1;ctx.stroke();
+        ctx.restore();
+        ctx.fillStyle=L.labelColor||L.border;
+        if(L.vertical){
+          const lines=L.label.split('\n');
+          ctx.font='600 10px Segoe UI, sans-serif';ctx.textAlign='center';ctx.textBaseline='top';
+          lines.forEach((ln,i)=>ctx.fillText(ln,lx+lw/2,ty+7+i*12));
+        } else {
+          ctx.font='600 11px Segoe UI, sans-serif';ctx.textAlign='left';ctx.textBaseline='top';
+          ctx.fillText(L.label,lx+8,ty+7);
+        }
+      }
+    }
+    function drawAuthOverlay(hs){
+      if(!unified)return;
+      const rs=nodesRef.current.find(n=>n.id==='risk_signals');
+      const rbac=nodesRef.current.find(n=>n.id==='auth_rbac');
+      const api=nodesRef.current.find(n=>n.id==='auth_api');
+      const app=nodesRef.current.find(n=>n.id==='auth_app');
+      if(!rs||!rbac||!api||!app)return;
+      const sel=selRef.current;
+      const anyHi=sel&&(hs.nodes.has('risk_signals')||hs.nodes.has('auth_rbac')||hs.nodes.has('auth_api')||hs.nodes.has('auth_app'));
+      const dim=sel&&!anyHi;
+      const dk=getTheme()==='dark';
+      /* ── sub-group rect around permission nodes ── */
+      const pad=18;
+      const gx=rbac.dx-rbac.r-pad, gy=rbac.dy-rbac.r-pad;
+      const gw=app.dx+app.r+pad-gx, gh=rbac.r*2+pad*2;
+      ctx.save();ctx.globalAlpha=dim?0.08:0.35;ctx.strokeStyle=dk?'rgba(0,120,212,0.45)':'rgba(0,90,160,0.35)';
+      ctx.setLineDash([4,4]);ctx.lineWidth=1;rrect(ctx,gx,gy,gw,gh,6);ctx.stroke();ctx.restore();
+      /* ── signal ellipse (full ring around Risk Signals) ── */
+      const leftSignals=['Anomalous sign-in','Leaked credentials','Suspicious sign-ins','Named locations'];
+      const rightSignals=['Compliant network','Auth context','IRM / Adaptive Protection (delegated only)'];
+      const fs=dedicated?9:7;
+      const pillH=fs+5, pillR=pillH/2;
+      const fillAlpha=dim?0.04:0.12, textAlpha=dim?0.15:0.75;
+      const pillFill=dk?`rgba(0,120,212,${fillAlpha})`:`rgba(60,160,240,${fillAlpha*1.5})`;
+      const pillStroke=dk?`rgba(0,120,212,${dim?0.06:0.25})`:`rgba(0,90,160,${dim?0.08:0.22})`;
+      const pillText=dk?`rgba(255,200,120,${textAlpha})`:`rgba(120,60,0,${textAlpha})`;
+      const lineCol=dk?`rgba(0,120,212,${dim?0.08:0.45})`:`rgba(0,90,160,${dim?0.1:0.4})`;
+      ctx.save();ctx.font=`500 ${fs}px Segoe UI, sans-serif`;
+      const eaH=W*0.14,ebV=H*0.045;
+      /* full ellipse */
+      ctx.strokeStyle=lineCol;ctx.lineWidth=1.5;ctx.setLineDash([4,3]);
+      ctx.beginPath();ctx.ellipse(rs.dx,rs.dy,eaH,ebV,0,0,Math.PI*2);ctx.stroke();
+      /* left pills (210° top to 150° bottom) */
+      const lAngles=leftSignals.map((_,i)=>{const s=210,e=150;return(s-i*(s-e)/(leftSignals.length-1))*Math.PI/180});
+      leftSignals.forEach((sig,i)=>{
+        const px=rs.dx+eaH*Math.cos(lAngles[i]),py=rs.dy+ebV*Math.sin(lAngles[i]);
+        const pw=ctx.measureText(sig).width+12;
+        ctx.setLineDash([]);ctx.fillStyle=pillFill;rrect(ctx,px-pw-4,py-pillH/2,pw,pillH,pillR);ctx.fill();
+        ctx.strokeStyle=pillStroke;ctx.lineWidth=0.8;ctx.stroke();
+        ctx.fillStyle=pillText;ctx.textAlign='right';ctx.textBaseline='middle';
+        ctx.fillText(sig,px-10,py);
+      });
+      /* right pills (-30° top to 30° bottom) */
+      const irmFill=dk?`rgba(200,50,180,${dim?0.06:0.18})`:`rgba(200,50,180,${(dim?0.04:0.12)*1.5})`;
+      const irmStroke=dk?`rgba(220,80,200,${dim?0.1:0.55})`:`rgba(160,40,140,${dim?0.1:0.4})`;
+      const irmText=dk?`rgba(255,160,240,${textAlpha})`:`rgba(140,20,120,${textAlpha})`;
+      const irmGlow=dk?'rgba(220,80,200,0.35)':'rgba(180,50,160,0.25)';
+      const rAngles=rightSignals.map((_,i)=>{const s=-30,e=30;return(s+i*(e-s)/(rightSignals.length-1))*Math.PI/180});
+      rightSignals.forEach((sig,i)=>{
+        const isIRM=sig.startsWith('IRM');
+        const px=rs.dx+eaH*Math.cos(rAngles[i]),py=rs.dy+ebV*Math.sin(rAngles[i]);
+        const pw=ctx.measureText(sig).width+12;
+        if(isIRM&&!dim){ctx.save();ctx.shadowColor=irmGlow;ctx.shadowBlur=10;ctx.fillStyle=irmFill;rrect(ctx,px+4,py-pillH/2,pw,pillH,pillR);ctx.fill();ctx.restore();}
+        else{ctx.setLineDash([]);ctx.fillStyle=pillFill;rrect(ctx,px+4,py-pillH/2,pw,pillH,pillR);ctx.fill();}
+        ctx.strokeStyle=isIRM?irmStroke:pillStroke;ctx.lineWidth=isIRM?1.2:0.8;ctx.setLineDash([]);rrect(ctx,px+4,py-pillH/2,pw,pillH,pillR);ctx.stroke();
+        ctx.fillStyle=isIRM?irmText:pillText;ctx.textAlign='left';ctx.textBaseline='middle';
+        ctx.font=isIRM?`700 ${fs}px Segoe UI, sans-serif`:`500 ${fs}px Segoe UI, sans-serif`;
+        ctx.fillText(sig,px+10,py);
+        if(isIRM)ctx.font=`500 ${fs}px Segoe UI, sans-serif`;
+      });
+      ctx.restore();
+    }
+    function drawLegend(){
+      const T=tp();const items=unified?[
+        {label:'Identity relationship',color:T.edgeStroke,dash:false},
+        {label:'Governance / security',color:'rgba(0,120,212,0.6)',dash:true},
+        {label:'Resource access',color:getTheme()==='dark'?'rgba(0,200,120,0.6)':'rgba(0,160,80,0.55)',dash:true},
+      ]:[
+        {label:'Identity relationship',color:T.edgeStroke,dash:false},
+      ];
+      ctx.save();ctx.font='9px Segoe UI, sans-serif';
+      const lineW=24,gap=8,itemWidths=items.map(it=>lineW+gap+ctx.measureText(it.label).width);
+      const sepW=18,totalW=itemWidths.reduce((a,b)=>a+b,0)+(items.length-1)*sepW+16;
+      const lh=24,lx=unified?(W+W*0.15)/2-totalW/2:W/2-totalW/2,ly=H-lh-8;
+      ctx.globalAlpha=0.85;ctx.fillStyle=getTheme()==='dark'?'rgba(10,14,26,0.88)':'rgba(240,244,248,0.90)';
+      ctx.strokeStyle=getTheme()==='dark'?'rgba(255,255,255,0.12)':'rgba(0,0,0,0.10)';
+      ctx.lineWidth=1;rrect(ctx,lx,ly,totalW,lh,4);ctx.fill();ctx.stroke();ctx.globalAlpha=1;
+      ctx.textAlign='left';ctx.textBaseline='middle';
+      let cx=lx+8;const cy=ly+lh/2;
+      items.forEach((it,i)=>{
+        ctx.beginPath();ctx.moveTo(cx,cy);ctx.lineTo(cx+lineW,cy);
+        ctx.save();if(it.dash)ctx.setLineDash([5,3]);ctx.strokeStyle=it.color;ctx.lineWidth=it.dash?1.3:2;ctx.stroke();ctx.restore();
+        cx+=lineW+gap;ctx.fillStyle=T.nodeLabel;ctx.fillText(it.label,cx,cy);cx+=ctx.measureText(it.label).width+sepW;
+      });
+      ctx.restore();
+    }
+    function anim(t){ctx.clearRect(0,0,W,H);drawLayers();const hs=hiSet(selRef.current);for(const n of nodesRef.current){n.dx=n.bx+Math.sin(t*0.0007+n.ph)*2;n.dy=n.by+Math.cos(t*0.0009+n.ph)*1.5}
+      epRef.current.forEach((e,i)=>drawE(e,i,hs,t));drawAuthOverlay(hs);for(const n of nodesRef.current)drawN(n,hs,t);drawLegend();animRef.current=requestAnimationFrame(anim)}
+    function onClick(ev){const rect=cv.getBoundingClientRect();const nd=getN(ev.clientX-rect.left,ev.clientY-rect.top);onSelect(nd?nd.id:null)}
+    function onMove(ev){const rect=cv.getBoundingClientRect();const nd=getN(ev.clientX-rect.left,ev.clientY-rect.top);hovRef.current=nd?nd.id:null;cv.style.cursor=nd?'pointer':'default'}
+    resize();animRef.current=requestAnimationFrame(anim);cv.addEventListener('click',onClick);cv.addEventListener('mousemove',onMove);
+    const ro=new ResizeObserver(()=>resize());ro.observe(wrap);
+    return()=>{cancelAnimationFrame(animRef.current);cv.removeEventListener('click',onClick);cv.removeEventListener('mousemove',onMove);ro.disconnect()}
+  },[onSelect]);
+  return html`<div ref=${wrapRef} className="graph-canvas-wrap"><canvas ref=${canvasRef}></canvas>${!selected&&html`<div className="graph-hint" style=${{position:'absolute',top:'12px',left:'57%',transform:'translateX(-50%)',fontSize:'11px',opacity:0.5,pointerEvents:'none'}}>Click a node to explore</div>`}</div>`;
+}
+
+/* ══════ DETAIL SIDE PANEL ══════ */
+function Detail({id,onClose,concepts}){const D=concepts||C;const c=D[id];if(!c)return null;const[r,g,b]=hexRgb(c.color);
+  return html`<div className="graph-detail">
+    <button className="gd-back" onClick=${onClose}><iconify-icon icon="fluent:arrow-left-16-regular"></iconify-icon> Back to overview</button>
+    <div className="gd-icon"><iconify-icon icon=${c.icon} width="28" style=${{color:c.color}}></iconify-icon><h3>${c.name}</h3></div>
+    <span className="gd-cat" style=${{background:`rgba(${r},${g},${b},0.15)`,color:c.color}}>${c.category}</span>
+    <p>${c.definition}</p><h4>${c.category==='Flow'?'Flow Steps':c.category==='Governance'?'Key Controls':'Key Facts'}</h4><ul>${c.keyFacts.map((f,i)=>html`<li key=${i}><span style=${{position:'absolute',left:0,top:10,width:5,height:5,borderRadius:'50%',background:c.color}}></span>${f}</li>`)}</ul>
+    <h4>Relationships</h4>${c.relationships.map((rel,i)=>html`<p key=${i} className="gd-rel"><iconify-icon icon=${D[rel.target]?.icon||''} width="14" style=${{color:D[rel.target]?.color,verticalAlign:'middle',marginRight:6}}></iconify-icon>${rel.label}</p>`)}
+  </div>`}
+
+/* ══════ LICENSE PANEL (left side) ══════ */
+/* 2-hop license discovery (3-hop for flow nodes): sel → neighbors → gov */
+function govHiSet(sel,edges,D){
+  const govIds=new Set();
+  if(!sel)return govIds;
+  if(sel.startsWith('gov_')&&D[sel]?.licensing){govIds.add(sel);return govIds}
+  // 1st hop: direct gov connections
+  const hop1=new Set();
+  for(const e of edges){
+    const other=e.source===sel?e.target:e.target===sel?e.source:null;
+    if(!other)continue;
+    if(other.startsWith('gov_')&&D[other]?.licensing)govIds.add(other);
+    else if(!other.startsWith('res_'))hop1.add(other);
+  }
+  // 2nd hop: from non-gov neighbors, follow their gov edges
+  for(const nid of hop1){
+    for(const e of edges){
+      const other=e.source===nid?e.target:e.target===nid?e.source:null;
+      if(other&&other.startsWith('gov_')&&D[other]?.licensing)govIds.add(other);
+    }
+  }
+  // 3rd hop for flow nodes: pattern → identity → gov
+  if(sel.startsWith('flow_')){
+    const newCore=new Set();
+    for(const nid of hop1){
+      for(const e of edges){
+        const other=e.source===nid?e.target:e.target===nid?e.source:null;
+        if(other&&!other.startsWith('gov_')&&!other.startsWith('res_')&&other!==sel&&!hop1.has(other))newCore.add(other);
+      }
+    }
+    for(const nid of newCore){
+      for(const e of edges){
+        const other=e.source===nid?e.target:e.target===nid?e.source:null;
+        if(other&&other.startsWith('gov_')&&D[other]?.licensing)govIds.add(other);
+      }
+    }
+  }
+  return govIds;
+}
+function hasLicensePanel(sel,edges,concepts){return govHiSet(sel,edges,concepts||C).size>0}
+function LicensePanel({sel,edges,concepts}){const D=concepts||C;
+  const govIds=govHiSet(sel,edges,D);
+  if(govIds.size===0)return null;
+  const items=[...govIds].map(id=>({id,...D[id]}));
+  return html`<div className="license-panel">
+    <h3><iconify-icon icon="fluent:certificate-24-regular" width="18" style=${{color:'#0078D4'}}></iconify-icon> Licensing <span className="lp-badge">Recommended</span></h3>
+    ${items.map((c,idx)=>html`<div key=${c.id}>
+      ${idx>0&&html`<div className="lp-connector"></div>`}
+      <div className="lp-tool-header">
+        <iconify-icon icon=${c.icon} width="20" style=${{color:c.color}}></iconify-icon>
+        <span className="lp-tool-name">${c.name}</span>
+        <span style=${{marginLeft:'auto',fontSize:10,color:'var(--canvas-text-dim)'}}>\u2192</span>
+      </div>
+      ${c.licensing.plans.map((p,i)=>html`<div key=${i} className="lp-plan">
+        <div className="lp-plan-name">${p.name}</div>
+        <ul>${p.includes.map((f,j)=>html`<li key=${j}>${f}</li>`)}</ul>
+        ${p.note&&html`<div className="lp-plan-note">${p.note}</div>`}
+        ${p.bundle&&html`<div className="lp-plan-bundle">${p.bundle}</div>`}
+      </div>`)}
+    </div>`)}
+  </div>`}
+function SeqDiagram({flow,step,onStep,dedicated}){
+  const P=flow.participants,S=flow.steps,pn=P.length;const T=tp();
+  const maxCols=6;const sc=dedicated?1.3:1;
+  const colW=120*sc,pad=14*sc,boxW=100*sc,boxH=36*sc;
+  const W=maxCols*colW+pad*2;
+  const offset=(maxCols-pn)*colW/2;
+  const cx=P.map((_,i)=>pad+offset+colW*i+colW/2);
+  const topY=6;const lifeTop=topY+boxH;
+  const stepStart=lifeTop+14*sc;
+  const fixedBodyH=294*sc;
+  const stepH=fixedBodyH/S.length;
+  const bodyEnd=stepStart+fixedBodyH;
+  const lifeBot=bodyEnd+14*sc;const botY=lifeBot+4*sc;const H=botY+boxH+8*sc;
+  const boxFill=flow.accent||'#3a7bbf';const fs=dedicated?13:12;const sfs=dedicated?11:11.5;
+  const lifeStroke=T.edgeStroke;const txtBright=T.nodeLabelSel;const txtDim=T.edgeLabel;const txtLabelDim=T.edgeLabel;const hiBg=getTheme()==='light'?'rgba(0,120,212,0.10)':'rgba(58,123,191,0.12)';
+  function pBox(p,i,y){const lines=p.label.split('\n');const ml=lines.length>1;
+    return html`<g key=${i+'-'+y}>
+      <rect x=${cx[i]-boxW/2} y=${y} width=${boxW} height=${boxH} rx=${3*sc} fill=${boxFill} stroke=${T.edgeStroke} strokeWidth=${1}/>
+      ${ml?html`<text textAnchor="middle" fill="#fff" fontSize=${fs} fontWeight="600"><tspan x=${cx[i]} y=${y+boxH/2-4*sc}>${lines[0]}</tspan><tspan x=${cx[i]} y=${y+boxH/2+8*sc}>${lines[1]}</tspan></text>`
+        :html`<text x=${cx[i]} y=${y+boxH/2+4*sc} textAnchor="middle" fill="#fff" fontSize=${fs} fontWeight="600">${p.label}</text>`}
+    </g>`}
+  return html`<svg viewBox="0 0 ${W} ${H}" xmlns="http://www.w3.org/2000/svg" style=${{width:'100%',maxWidth:W+'px'}}>
+    ${P.map((p,i)=>pBox(p,i,topY))}
+    ${cx.map((x,i)=>html`<line key=${'l'+i} x1=${x} y1=${lifeTop} x2=${x} y2=${lifeBot} stroke=${lifeStroke} strokeWidth="1"/>`)}
+    ${S.map((s,i)=>{const y=stepStart+i*stepH+stepH/2;const x1=cx[s.f],x2=cx[s.t];const right=x2>x1;const ac=i===step;
+      const col=ac?txtBright:txtDim;const sw=ac?2:1;
+      const tipX=right?x2-6*sc:x2+6*sc;const pts=right?`${x2-7*sc},${y-4*sc} ${x2},${y} ${x2-7*sc},${y+4*sc}`:`${x2+7*sc},${y-4*sc} ${x2},${y} ${x2+7*sc},${y+4*sc}`;
+      const midX=(x1+x2)/2;
+      return html`<g key=${i} style=${{cursor:'pointer'}} onClick=${()=>onStep(i)}>
+        ${ac&&html`<rect x=${Math.min(x1,x2)-3} y=${y-18*sc} width=${Math.abs(x2-x1)+6} height=${36*sc} rx=${3*sc} fill=${hiBg}/>`}
+        <line x1=${x1} y1=${y} x2=${tipX} y2=${y} stroke=${col} strokeWidth=${sw}/>
+        <polygon points=${pts} fill=${col}/>
+        <text x=${midX} y=${y-6*sc} textAnchor="middle" fill=${ac?txtBright:txtLabelDim} fontSize=${sfs} fontWeight=${ac?'600':'400'}>${i+1}. ${s.label}</text>
+      </g>`})}
+    ${P.map((p,i)=>pBox(p,i,botY))}
+  </svg>`}
+
+function FlowSection({dedicated}){const[af,setAf]=useState('obo'),[step,setStep]=useState(0);
+  function pick(id){setAf(id);setStep(0);}
+  const fl=FLOWS[af];const s=fl.steps[step];
+  return html`<div className="flow-diagram-wrap">
+    <div className="flow-tabs">${Object.entries(FLOWS).map(([id,f])=>html`
+      <button key=${id} className=${`flow-tab${af===id?' active':''}`} style=${{['--accent']:f.accent}} onClick=${()=>pick(id)}>${f.name}</button>`)}</div>
+    <div className="flow-body" style=${!dedicated?{height:'360px'}:undefined}>
+      <div className="flow-diagram-svg"><${SeqDiagram} flow=${fl} step=${step} onStep=${setStep} key=${af} dedicated=${dedicated} /></div>
+      <div className="flow-detail-panel">
+        <div className="fdp-summary" style=${{borderColor:fl.accent+'33'}}>${fl.summary}</div>
+        <div className="fdp-header">
+          <div className="fdp-num" style=${{background:fl.accent}}>${step+1}</div>
+          <div className="fdp-label">${s.label}</div>
+        </div>
+        <div className="fdp-from">${fl.participants[s.f].label.replace('\n',' ')} \u2192 ${fl.participants[s.t].label.replace('\n',' ')}</div>
+        <div className="fdp-detail">${s.detail}</div>
+        <div className="fdp-nav">
+          <button disabled=${step===0} onClick=${()=>setStep(v=>v-1)}>\u2190 Previous</button>
+          <button disabled=${step===fl.steps.length-1} onClick=${()=>setStep(v=>v+1)}>Next \u2192</button>
+        </div>
+      </div>
+    </div>
+  </div>`}
+
+function GovernanceSection({dedicated}){const[sel,setSel]=useState('ca');
+  const g=GOV[sel];
+  return html`<div className="flow-diagram-wrap">
+    <div className="gov-body" style=${!dedicated?{height:'360px'}:undefined}>
+      <div className="gov-nav">
+        ${Object.entries(GOV).map(([id,v])=>html`
+          <button key=${id} className=${`gov-btn${sel===id?' active':''}`}
+            style=${{['--accent']:v.accent,...(sel===id?{background:v.accent}:{})}}
+            onClick=${()=>setSel(id)}>
+            <iconify-icon icon=${v.icon}></iconify-icon>
+            ${v.name}
+          </button>`)}
+      </div>
+      <div className="gov-detail">
+        <div className="gov-title" style=${{color:g.accent}}>${g.name}</div>
+        <div className="gov-subtitle">${g.subtitle}</div>
+        <div className="gov-summary">${g.summary}</div>
+        <ul className="gov-points" style=${{['--accent']:g.accent}}>
+          ${g.points.map((p,i)=>html`<li key=${i}>${p}</li>`)}
+        </ul>
+      </div>
+    </div>
+  </div>`}
+
+/* ══════ APP ══════ */
+const VIEW = new URLSearchParams(window.location.search).get('view');
+const VIEW_TITLES = { unified: 'Entra Agent ID Architecture', concepts: 'Key Concepts of Agent ID', flows: 'Agent Authentication Flows', governance: 'Govern and Secure' };
+
+function DedicatedView({view}){const[sel,setSel]=useState(null);
+  return html`<div className="dedicated-view">
+    <div className="dedicated-header">
+      <a className="dedicated-back" href="${window.location.pathname}">\u2190 Back to article</a>
+      <span className="dedicated-title">${VIEW_TITLES[view]}</span>
+      <button className="theme-toggle" style=${{marginLeft:'auto'}} onClick=${()=>{if(typeof toggleTheme==='function')toggleTheme()}} title="Toggle light/dark mode"><iconify-icon icon=${getTheme()==='dark'?'fluent:weather-sunny-24-regular':'fluent:weather-moon-24-regular'} width="16"></iconify-icon></button>
+    </div>
+    <div className="dedicated-body">
+      ${view==='unified'&&html`<div className="graph-section">
+        <div className="graph-with-detail has-overlay">
+          <${LicensePanel} sel=${sel} edges=${UNIFIED_EDGES} concepts=${UC} />
+          <div className="diagram-graph">
+            <${ConceptGraph} selected=${sel} onSelect=${setSel} dedicated=${true} unified=${true} />
+          </div>
+          ${sel && html`<${Detail} id=${sel} onClose=${()=>setSel(null)} concepts=${UC} />`}
+        </div>
+      </div>`}
+      ${view==='concepts'&&html`<div className="graph-section">
+        <div className="graph-with-detail has-overlay">
+          <${LicensePanel} sel=${sel} edges=${UNIFIED_EDGES} />
+          <div className="diagram-graph">
+            <${ConceptGraph} selected=${sel} onSelect=${setSel} dedicated=${true} />
+          </div>
+          ${sel && html`<${Detail} id=${sel} onClose=${()=>setSel(null)} />`}
+        </div>
+      </div>`}
+      ${view==='flows'&&html`<div className="graph-section"><${FlowSection} dedicated=${true} /></div>`}
+      ${view==='governance'&&html`<div className="graph-section"><${GovernanceSection} dedicated=${true} /></div>`}
+    </div>
+  </div>`}
+
+function App(){const[sel,setSel]=useState(null);
+  if(VIEW && VIEW_TITLES[VIEW]) return html`<${DedicatedView} view=${VIEW} />`;
+  return html`
+    <div className="article" style=${{paddingTop:32,paddingBottom:0}}>
+      <div className="disclaimer"><p>The views and opinions expressed here are my own and do not represent Microsoft. This content is not official Microsoft documentation and is not supported by Microsoft.</p></div>
+      <p>AI agents are getting their own identities in Microsoft Entra, and with identity comes the full weight of authentication, authorization, and governance. I put this together to break down <strong>Microsoft Entra Agent ID</strong>, the identity layer, not the broader <strong>Microsoft Agent 365</strong> platform. Agent 365 is the full management umbrella (admin center, registry, observability, Purview compliance, Defender threat protection). Agent ID is one component within it: the part that lives in Entra and handles how agents prove who they are, what they can access, and what controls apply. The sections below turn those identity building blocks into interactive visuals. As we say at Microsoft: <strong>adversaries think in graphs</strong>. That same principle drives attack paths in Defender XDR and investigation graphs across incidents. I applied it here so we can see how the pieces of Agent ID connect, and more importantly, where the security controls sit.</p>
+      <p>The article walks through three sections. <strong>Section 01, Key Concepts of Agent ID</strong>, maps the identity hierarchy (blueprints, principals, user bindings, operational patterns) as an interactive relationship graph. <strong>Section 02, Agent Authentication Flows</strong>, presents step-by-step sequence diagrams for the three ways an agent can authenticate. <strong>Section 03, Govern and Secure</strong>, covers the seven pillars we can use to lock all of this down. There is also a <strong>Unified Architecture view</strong> that combines every concept, flow, and governance control into a single interactive graph, useful when you want the full picture in one place.</p>
+      <p>You have two ways to use this. If you prefer to read some context first, keep scrolling. It is not long, just the core foundations condensed. If you are more of a visual person and want to jump straight to an interactive diagram, click any of the boxes below and it will open in a dedicated page.</p>
+      <div className="section-nav-hero">
+        <a className="section-nav-card" href="?view=unified" style=${{['--card-accent']:tp().selStroke}}>
+          <div className="section-nav-card-icon"><iconify-icon icon="fluent:globe-24-regular"></iconify-icon></div>
+          <div className="section-nav-card-body">
+            <div className="section-nav-card-num">✷ Unified View</div>
+            <div className="section-nav-card-title">Entra Agent ID Architecture</div>
+            <p className="section-nav-card-desc">Identity, auth flows, and governance in one unified interactive graph</p>
+          </div>
+          <iconify-icon className="section-nav-card-arrow" icon="fluent:chevron-right-20-regular" width="20"></iconify-icon>
+        </a>
+      </div>
+      <div className="section-nav-grid">
+        <a className="section-nav-card" href="?view=concepts" style=${{['--card-accent']:'#0078D4'}}>
+          <div className="section-nav-card-icon"><iconify-icon icon="fluent:diagram-24-regular"></iconify-icon></div>
+          <div className="section-nav-card-body">
+            <div className="section-nav-card-num">01</div>
+            <div className="section-nav-card-title">Key Concepts of Agent ID</div>
+            <p className="section-nav-card-desc">Interactive relationship graph</p>
+          </div>
+          <iconify-icon className="section-nav-card-arrow" icon="fluent:chevron-right-20-regular" width="16"></iconify-icon>
+        </a>
+        <a className="section-nav-card" href="?view=flows" style=${{['--card-accent']:'#E3008C'}}>
+          <div className="section-nav-card-icon"><iconify-icon icon="fluent:arrow-routing-24-regular"></iconify-icon></div>
+          <div className="section-nav-card-body">
+            <div className="section-nav-card-num">02</div>
+            <div className="section-nav-card-title">Agent Authentication Flows</div>
+            <p className="section-nav-card-desc">Step-by-step sequence diagrams</p>
+          </div>
+          <iconify-icon className="section-nav-card-arrow" icon="fluent:chevron-right-20-regular" width="16"></iconify-icon>
+        </a>
+        <a className="section-nav-card" href="?view=governance" style=${{['--card-accent']:'#107C10'}}>
+          <div className="section-nav-card-icon"><iconify-icon icon="fluent:shield-checkmark-24-regular"></iconify-icon></div>
+          <div className="section-nav-card-body">
+            <div className="section-nav-card-num">03</div>
+            <div className="section-nav-card-title">Govern and Secure</div>
+            <p className="section-nav-card-desc">Seven pillars of agent governance</p>
+          </div>
+          <iconify-icon className="section-nav-card-arrow" icon="fluent:chevron-right-20-regular" width="16"></iconify-icon>
+        </a>
+      </div>
+    </div>
+
+    <div className="section-block" id="sec-concepts">
+      <div className="article">
+        <div className="section-head"><span className="section-num">01</span><h2>Agent ID Key Concepts</h2></div>
+        <p className="section-desc">The Agent ID identity hierarchy and how the pieces connect.</p>
+        <p>The model involves several interconnected concepts (blueprints, identities, principals, user accounts, and different operational patterns) that form a clear hierarchy rooted in the Azure tenant. Click any node below to explore what it is and how it fits.</p>
+      </div>
+
+      <div className="graph-section" style=${{maxWidth: sel ? '1200px' : '800px'}}>
+        <div className="graph-with-detail">
+          <div className="diagram-graph" style=${{width:'800px',maxWidth:'800px',flexShrink:0}}>
+            <${ConceptGraph} selected=${sel} onSelect=${setSel} />
+          </div>
+          ${sel && html`<${Detail} id=${sel} onClose=${()=>setSel(null)} />`}
+        </div>
+      </div>
+
+      <div className="article">
+        <h3>The identity model</h3>
+        <p>The map traces the full hierarchy. At the top sits the Azure tenant, the boundary within which all Agent ID objects live. Below it sits the <strong>agent identity blueprint</strong>, the template and authentication foundation for all agent instances. If you are familiar with the traditional app model, the agent identity blueprint is analogous to an app registration: it holds the credentials, defines the configuration, and anchors tenant-wide policies like Conditional Access.</p>
+        <p>From the agent identity blueprint, two branches emerge. On one side, the <strong>agent identity blueprint principal</strong> is the tenant-level object created automatically when an admin consents to the agent. It records the blueprint\u2019s presence in the tenant, enables token acquisition, and ensures the agent appears in audit logs. If the blueprint is the app registration, the agent identity blueprint principal is analogous to a service principal.</p>
+        <p>On the other side, the blueprint creates one or more <strong>agent identities</strong>. Each agent identity represents an individual operating instance of an agent. It does not hold credentials of its own; it authenticates through tokens issued by its parent blueprint. Administrators manage credentials and policies at the blueprint level while scaling out many identities underneath. Every agent identity belongs to exactly one blueprint and is always single-tenant, regardless of whether its parent blueprint supports multi-tenancy.</p>
+
+        <h3>How agents operate</h3>
+        <p>Depending on the scenario, an agent identity can operate with different access models.</p>
+        <ul>
+          <li><strong>Agents with delegated access</strong> (formerly "OBO agents") sign in a user and act in response to user prompts, typically through a chat interface. They use delegated permissions scoped to what the user has consented to, and their tokens are commonly called user tokens.</li>
+          <li><strong>Agents with own access</strong> (formerly "non-OBO agents") perform actions under their own identity without user context. They run in the background, use app-only permissions granted by tenant administrators, and their tokens are called agent tokens.</li>
+          <li><strong>Agent\u2019s user account</strong> pairs one-to-one with an agent identity and is used when the agent must access systems that require a user object, like an Exchange Online mailbox or a Teams channel. The user account does not replace the agent identity; both exist side by side, and the account can be impersonated by only the single agent identity it is paired with.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div className="section-block" id="sec-flows">
+      <div className="article">
+        <div className="section-head"><span className="section-num">02</span><h2>Agent ID Authentication Flows</h2></div>
+        <p className="section-desc">How agents acquire tokens through multi-stage exchanges.</p>
+        <p>Microsoft Entra Agent ID supports three authentication flow patterns. All three rely on multi-stage token exchanges where the agent identity blueprint impersonates the agent identity to perform operations. None use redirect URIs or the /authorize endpoint. All agent entities authenticate as confidential clients. Managed identities are the preferred credential type: the managed identity token serves as the credential for the parent agent identity blueprint, while standard MSI protocols apply for credential acquisition.</p>
+        <p>The <strong>Delegated Access (OBO)</strong> flow enables user delegation: the agent identity operates on behalf of a signed-in user using standard OAuth 2.0 On-Behalf-Of flows with agent-specific impersonation. The <strong>Own Access (Autonomous)</strong> flow enables app-only operations without user context, where the agent identity blueprint impersonates the agent identity to obtain a token for itself. The <strong>Agent\u2019s User Account</strong> flow uses credential chaining (blueprint \u2192 identity \u2192 user account) for agents that need to operate with a user object such as an Exchange Online mailbox.</p>
+        <p>Select a flow below to explore the step-by-step sequence diagram. Click any arrow to see details for that step.</p>
+      </div>
+      <div className="graph-section" style=${{maxWidth:'1000px'}}><${FlowSection} /></div>
+      <div className="article">
+        <h3>Key constraints</h3>
+        <p>Agent identities are always single-tenant, even when the parent blueprint supports multi-tenancy. Each identity belongs to exactly one blueprint. Each user account pairs with exactly one identity. Credential chaining follows a strict blueprint \u2192 identity \u2192 user account path, preventing cross-blueprint privilege escalation.</p>
+        <p>When delegated permission inheritance is enabled via the <code>InheritDelegatedPermissions</code> property, identities can inherit permissions from their parent blueprint, but only within tenant boundaries. Client secrets are supported but not recommended for production. Managed identities with federated identity credentials are preferred.</p>
+      </div>
+    </div>
+
+    <div className="section-block" id="sec-governance">
+      <div className="article">
+        <div className="section-head"><span className="section-num">03</span><h2>Governance and Security</h2></div>
+        <p className="section-desc">Securing and governing agent identities at enterprise scale.</p>
+        <p>Agent identities are subject to the same governance and security controls as human identities. Microsoft Entra provides seven pillars of agent governance: Conditional Access policies that evaluate agent token requests, identity lifecycle management with human sponsors, access packages for time-bound permissions, automated risk detection and response, network security controls for agent traffic, comprehensive audit logging, and a consent framework that keeps users in control.</p>
+      </div>
+      <div className="graph-section" style=${{maxWidth:'1000px'}}>
+        <${GovernanceSection} />
+      </div>
+      <div className="article">
+        <p>Taken together, these controls ensure that agents operate under the same Zero Trust principles as any other identity in the directory. Each capability builds on the core identity hierarchy from the Key Concepts section: Conditional Access evaluates agent identity token requests, ID Protection monitors agent identity behavior, and access packages govern what permissions agent identities hold and for how long.</p>
+        <p>If operating-model framing is more your angle, see the <a href="/articles/agent-365/">Agent 365 article</a>.</p>
+      </div>
+    </div>
+  `}
+
+createRoot(document.getElementById('root')).render(html`<${App} />`);
+
+</script>
+</body>
+</html>
