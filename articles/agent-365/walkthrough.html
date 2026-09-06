@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Agent 365 · Interactive Walkthrough</title>
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<style>
+  :root{
+    /* Surfaces ,  Fluent neutral grey ramp w/ slight Security navy tint */
+    --bg:#0F1419;
+    --panel:#1B1F26;
+    --panel-2:#161B22;
+    --border:#3A3F4A;
+    --text:#FFFFFF;
+    --muted:#ADADAD;
+    --inactive:#2D3340;
+    /* Brand ,  Communication Blue brand[100] for dark surfaces */
+    --accent:#479EF5;
+    /* Pillar + role colors ,  Fluent Shared Colors, tint30/40 for dark */
+    --build:#BDB1D6;     /* Violet tint30 */
+    --admin:#FFD394;     /* Marigold tint30 */
+    --sec:#E37D80;       /* Red tint30 */
+    --comp:#9FD89F;      /* Green tint40 */
+    --user:#6FC9CF;      /* Cyan tint30 */
+    --observe:#6FC9CF;
+    --govern:#FFD394;
+    --secure:#E37D80;
+    /* Composites */
+    --node-fill:#1B1F26;
+    --lane-bg:rgba(27,31,38,.55);
+    --arrow-dim:#616161;
+    --pill-shadow:rgba(0,0,0,.28);
+  }
+  [data-theme="light"]{
+    --bg:#FAFAFA;
+    --panel:#FFFFFF;
+    --panel-2:#F5F5F5;
+    --border:#D1D1D1;
+    --text:#242424;
+    --muted:#616161;
+    --inactive:#E0E0E0;
+    /* Brand ,  brand[80] is the canonical primary on light surfaces */
+    --accent:#0F6CBD;
+    /* Shared color shade variants (≥4.5:1 on white) */
+    --build:#5C2E91;     /* Purple primary */
+    --admin:#BC8B00;     /* Marigold shade10 */
+    --sec:#BC2F32;       /* Red shade10 */
+    --comp:#0E700E;      /* Green shade10 */
+    --user:#006E76;      /* Cyan shade20 */
+    --observe:#006E76;
+    --govern:#BC8B00;
+    --secure:#BC2F32;
+    --node-fill:#FFFFFF;
+    --lane-bg:rgba(255,255,255,.65);
+    --arrow-dim:#A8A8A8;
+    --pill-shadow:rgba(0,0,0,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:var(--bg);color:var(--text);font-family:'Segoe UI','Segoe UI Variable',-apple-system,BlinkMacSystemFont,sans-serif;overflow:hidden;transition:background .25s ease,color .25s ease}
+  body{display:flex;flex-direction:column}
+
+  /* Header */
+  header{padding:14px 28px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--bg);transition:background .25s,border-color .25s}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand iconify-icon{font-size:24px}
+  .brand h1{font-size:16px;font-weight:600;letter-spacing:.2px}
+  .brand .sub{color:var(--muted);font-size:12px;margin-left:8px;font-weight:400}
+  .controls{display:flex;gap:8px;align-items:center}
+  .btn{background:var(--panel);border:1px solid var(--border);color:var(--text);padding:6px 12px;border-radius:4px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit;transition:border-color .15s,color .15s,background .15s}
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn iconify-icon{font-size:14px}
+  .hint{color:var(--muted);font-size:11px}
+
+  /* Main */
+  main{flex:1;display:grid;grid-template-columns:1fr 300px;min-height:0}
+
+  /* Stage area */
+  .stage{position:relative;padding:22px 22px 18px 18px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+
+  /* Pillar header strip ,  absolute-positioned cells aligned with bands below */
+  .pillars{position:relative;height:40px;margin-bottom:6px}
+  .pillar-caps-row{display:none}
+  .pillar-caps{position:absolute;top:0;display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:5px 6px;padding:6px 8px}
+  .pillar-caps .cap{font-size:12px;font-weight:600;letter-spacing:.1px;padding:4px 10px;border-radius:99px;background:var(--panel);border:1px solid var(--border);color:var(--muted);line-height:1.3;box-shadow:0 1px 3px var(--pill-shadow);max-width:100%;text-align:center;overflow-wrap:break-word;word-break:break-word;box-sizing:border-box;flex-shrink:1;min-width:0}
+  .pillar-caps.observe .cap{border-color:rgba(111,201,207,.4);color:var(--observe)}
+  .pillar-caps.govern .cap{border-color:rgba(255,211,148,.4);color:var(--govern)}
+  .pillar-caps.secure .cap{border-color:rgba(227,125,128,.4);color:var(--secure)}
+  [data-theme="light"] .pillar-caps.observe .cap{border-color:rgba(0,110,118,.4)}
+  [data-theme="light"] .pillar-caps.govern .cap{border-color:rgba(188,139,0,.4)}
+  [data-theme="light"] .pillar-caps.secure .cap{border-color:rgba(188,47,50,.4)}
+  .pillar{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:8px 8px 0 0;border:1px solid var(--border);border-bottom:none}
+  .pillar iconify-icon{font-size:20px}
+  .pillar.observe{color:var(--observe);background:rgba(111,201,207,.08)}
+  .pillar.govern{color:var(--govern);background:rgba(255,211,148,.08)}
+  .pillar.secure{color:var(--secure);background:rgba(227,125,128,.08)}
+  [data-theme="light"] .pillar.observe{background:rgba(0,110,118,.08)}
+  [data-theme="light"] .pillar.govern{background:rgba(188,139,0,.08)}
+  [data-theme="light"] .pillar.secure{background:rgba(188,47,50,.08)}
+
+  /* Lanes container, 4 lanes, leaves a 64px bottom routing channel for loop-back arrows */
+  .lanes-wrap{position:relative;flex:1;min-height:0}
+  .pillar-bg{position:absolute;top:0;border-radius:0 0 8px 8px;pointer-events:none;z-index:0;height:calc(100% - 64px)}
+  .pillar-bg.observe{background:linear-gradient(180deg,rgba(111,201,207,.06),rgba(111,201,207,.01));border:1px solid rgba(111,201,207,.18);border-top:none}
+  .pillar-bg.govern{background:linear-gradient(180deg,rgba(255,211,148,.06),rgba(255,211,148,.01));border:1px solid rgba(255,211,148,.18);border-top:none}
+  .pillar-bg.secure{background:linear-gradient(180deg,rgba(227,125,128,.06),rgba(227,125,128,.01));border:1px solid rgba(227,125,128,.18);border-top:none}
+  [data-theme="light"] .pillar-bg.observe{background:linear-gradient(180deg,rgba(0,110,118,.07),rgba(0,110,118,.02));border-color:rgba(0,110,118,.22)}
+  [data-theme="light"] .pillar-bg.govern{background:linear-gradient(180deg,rgba(188,139,0,.07),rgba(188,139,0,.02));border-color:rgba(188,139,0,.22)}
+  [data-theme="light"] .pillar-bg.secure{background:linear-gradient(180deg,rgba(188,47,50,.07),rgba(188,47,50,.02));border-color:rgba(188,47,50,.22)}
+
+  .lanes{position:relative;height:calc(100% - 64px);display:grid;grid-template-rows:repeat(4,1fr);gap:8px;z-index:1}
+  .lane{position:relative;background:var(--lane-bg);backdrop-filter:blur(2px);border:1px solid var(--border);border-radius:8px;padding:8px 12px 8px 104px;display:flex;align-items:center;transition:background .25s,border-color .25s;overflow:visible}
+  .lane-label{position:absolute;left:6px;top:50%;transform:translateY(-50%);width:92px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center}
+  .lane-label iconify-icon.role-icon{font-size:26px}
+  .lane-label .role{font-size:13px;font-weight:700;line-height:1.15}
+  .lane[data-color="build"] .role,.lane[data-color="build"] .role-icon{color:var(--build)}
+  .lane[data-color="admin"] .role,.lane[data-color="admin"] .role-icon{color:var(--admin)}
+  .lane[data-color="sec"] .role,.lane[data-color="sec"] .role-icon{color:var(--sec)}
+  .lane[data-color="comp"] .role,.lane[data-color="comp"] .role-icon{color:var(--comp)}
+  .lane[data-color="user"] .role,.lane[data-color="user"] .role-icon{color:var(--user)}
+  .lane[data-color="build"]{border-left:3px solid var(--build)}
+  .lane[data-color="admin"]{border-left:3px solid var(--admin)}
+  .lane[data-color="sec"]{border-left:3px solid var(--sec)}
+  .lane[data-color="comp"]{border-left:3px solid var(--comp)}
+  .lane[data-color="user"]{border-left:3px solid var(--user)}
+
+  /* SVG overlay for arrows */
+  .arrows{position:absolute;inset:0;pointer-events:none;z-index:2}
+
+  /* Nodes */
+  .node{position:absolute;width:150px;height:82px;background:var(--node-fill);border:1.5px solid var(--inactive);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px;cursor:pointer;opacity:0;transform:scale(0.85);transition:opacity .35s ease,transform .35s ease,border-color .2s,box-shadow .2s,background .25s;z-index:3;padding:6px;box-shadow:0 2px 8px var(--pill-shadow);pointer-events:none}
+  .node.visible{opacity:1;transform:scale(1);pointer-events:auto}
+  .node.next-hint{animation:pulse 1.6s ease-in-out infinite}
+  .node:hover{border-color:var(--accent);box-shadow:0 0 0 3px rgba(71,158,245,.16)}
+  .node.active{border-color:var(--accent);box-shadow:0 0 0 4px rgba(71,158,245,.22), 0 0 24px rgba(71,158,245,.30)}
+  [data-theme="light"] .node:hover{box-shadow:0 0 0 3px rgba(15,108,189,.16)}
+  [data-theme="light"] .node.active{box-shadow:0 0 0 4px rgba(15,108,189,.22), 0 0 24px rgba(15,108,189,.18)}
+  .node iconify-icon.main-icon{font-size:30px;color:var(--text)}
+  .node .label{font-size:12px;text-align:center;line-height:1.2;font-weight:600}
+  .node .step{position:absolute;top:-12px;left:-12px;width:30px;height:30px;background:var(--accent);color:#FFFFFF;border:2px solid var(--bg);border-radius:50%;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:1}
+
+  /* Floating sub-capability chips with light connectors */
+  .subcaps{position:absolute;left:-14px;right:-14px;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 5px;pointer-events:none;opacity:0;transition:opacity .35s ease .1s;z-index:2}
+  .subcaps.above{bottom:calc(100% + 14px)}
+  .subcaps.below{top:calc(100% + 14px)}
+  .node.visible .subcaps{opacity:1}
+  .cap{font-size:10px;font-weight:600;letter-spacing:.1px;padding:3px 7px;border-radius:99px;background:var(--panel);border:1px solid var(--border);color:var(--muted);white-space:nowrap;position:relative;line-height:1.25;box-shadow:0 1px 3px var(--pill-shadow)}
+  /* Connector line */
+  .subcaps.above .cap::after{content:'';position:absolute;top:100%;left:50%;width:1px;height:14px;background:linear-gradient(180deg,var(--border),transparent)}
+  .subcaps.below .cap::after{content:'';position:absolute;bottom:100%;left:50%;width:1px;height:14px;background:linear-gradient(0deg,var(--border),transparent)}
+  .node:hover .cap, .node.active .cap{border-color:var(--accent);color:var(--text)}
+  .node:hover .subcaps.above .cap::after, .node.active .subcaps.above .cap::after{background:linear-gradient(180deg,var(--accent),transparent)}
+  .node:hover .subcaps.below .cap::after, .node.active .subcaps.below .cap::after{background:linear-gradient(0deg,var(--accent),transparent)}
+
+  /* Builder node, label on top, sources grid below */
+  .node.builder{width:150px;height:82px;justify-content:flex-start;padding-top:6px;gap:3px}
+  .node.builder .src-grid{display:grid;grid-template-columns:repeat(5,16px);justify-content:center;gap:4px;margin-top:1px}
+  .node.builder .src-grid iconify-icon{font-size:16px;width:16px;height:16px;opacity:.95;color:var(--text)}
+  .node.builder .label{font-size:12px;font-weight:600}
+
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(71,158,245,.55)}
+    50%{box-shadow:0 0 0 12px rgba(71,158,245,0)}
+  }
+
+  /* Detail side panel */
+  aside{background:var(--panel);border-left:1px solid var(--border);padding:14px 16px 12px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;transition:background .25s,border-color .25s;min-height:0}
+  aside .step-num{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+  aside h2{font-size:16px;font-weight:600;display:flex;align-items:center;gap:9px;line-height:1.2}
+  aside h2 iconify-icon{font-size:22px;flex-shrink:0;color:var(--accent)}
+  aside .role-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:3px 9px;border-radius:99px;background:var(--panel-2);border:1px solid var(--border);width:fit-content}
+  aside .role-badge iconify-icon{font-size:13px}
+  aside .where{font-size:11px;color:var(--muted);background:var(--panel-2);padding:6px 9px;border-radius:4px;border:1px solid var(--border);display:flex;align-items:center;gap:6px}
+  aside .where iconify-icon{font-size:13px;color:var(--accent)}
+  aside p.desc{color:var(--muted);font-size:12px;line-height:1.45;margin:0}
+  aside .actions-title{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;display:flex;align-items:center;gap:6px}
+  aside .actions-title iconify-icon{font-size:12px;color:var(--accent)}
+  .action-list{display:flex;flex-direction:column;gap:4px;flex:1;min-height:0;overflow-y:auto}
+  .action{display:flex;align-items:flex-start;gap:7px;background:var(--panel-2);border:1px solid var(--border);border-radius:4px;padding:5px 8px;cursor:pointer;transition:border-color .15s,background .15s}
+  .action:hover{border-color:var(--accent)}
+  .action iconify-icon{font-size:14px;color:var(--accent);margin-top:1px;flex-shrink:0}
+  .action-text{display:flex;flex-direction:column;gap:0;min-width:0}
+  .action-name{font-size:12px;font-weight:600;color:var(--text);line-height:1.3}
+  .action-desc{font-size:10px;color:var(--muted);line-height:1.3}
+
+  aside .next-cta{margin-top:6px;padding-top:8px;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+  aside .next-cta .next-label{font-size:10px;color:var(--muted);letter-spacing:1.5px;text-transform:uppercase}
+  aside .next-cta .next-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--accent);color:#FFFFFF;border:none;border-radius:4px;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .12s,box-shadow .15s,background .15s;width:100%;text-align:left}
+  aside .next-cta .next-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(71,158,245,.30)}
+  aside .next-cta .next-btn iconify-icon{font-size:16px}
+  [data-theme="light"] aside .next-cta .next-btn:hover{box-shadow:0 4px 12px rgba(15,108,189,.30)}
+  aside .next-cta .back-btn{background:transparent;border:1px solid var(--border);color:var(--muted);border-radius:4px;padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;transition:border-color .15s,color .15s}
+  aside .next-cta .back-btn:hover{border-color:var(--accent);color:var(--accent)}
+  aside .next-cta .back-btn iconify-icon{font-size:13px}
+  aside .next-cta .cta-row{display:flex;gap:6px;align-items:stretch}
+  aside .next-cta .cta-row .next-btn{flex:1}
+  aside .next-cta .next-done{font-size:12px;color:var(--muted);text-align:center;padding:8px;background:var(--panel-2);border:1px solid var(--border);border-radius:4px}
+
+  .placeholder{color:var(--muted);font-size:13px;text-align:center;margin-top:60px;line-height:1.6}
+  .placeholder b{color:var(--accent)}
+
+  /* Footer */
+  footer{padding:7px 28px;border-top:1px solid var(--border);font-size:11px;color:var(--muted);text-align:center;flex-shrink:0;background:var(--bg);transition:background .25s,border-color .25s}
+  footer a{color:var(--muted);text-decoration:none;border-bottom:1px dotted var(--muted)}
+  footer a:hover{color:var(--accent);border-color:var(--accent)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <iconify-icon icon="logos:microsoft-icon"></iconify-icon>
+    <h1>Microsoft Agent 365<span class="sub">Agent Lifecycle Flow</span></h1>
+  </div>
+  <div class="controls">
+    <a href="./" class="btn" title="Back to article" style="text-decoration:none;color:inherit"><iconify-icon icon="fluent:arrow-left-24-regular"></iconify-icon>Back to article</a>
+    <span class="hint">Click each step to advance →</span>
+    <button class="btn" id="themeToggle" title="Toggle light / dark mode">
+      <iconify-icon id="themeIcon" icon="fluent:weather-moon-24-regular"></iconify-icon>
+      <span id="themeLabel">Dark</span>
+    </button>
+    <button class="btn" id="reset"><iconify-icon icon="fluent:arrow-reset-24-regular"></iconify-icon>Restart</button>
+  </div>
+</header>
+
+<main>
+  <div class="stage">
+    <!-- Pillar header strip ,  absolute-positioned cells -->
+    <div class="pillars" id="pillarsHeader">
+      <div class="pillar observe" id="hdrObserve"><iconify-icon icon="fluent:eye-tracking-24-filled"></iconify-icon>Observe</div>
+      <div class="pillar govern" id="hdrGovern"><iconify-icon icon="fluent:person-shield-24-filled"></iconify-icon>Govern</div>
+      <div class="pillar secure" id="hdrSecure"><iconify-icon icon="fluent:shield-checkmark-24-filled"></iconify-icon>Secure</div>
+    </div>
+
+    <!-- Per-pillar capability chips (always visible) -->
+    <div class="pillar-caps-row" id="pillarCapsRow">
+      <div class="pillar-caps observe" id="capsObserve">
+        <span class="cap">Real-time visibility</span><span class="cap">Agent Registry</span><span class="cap">Registry sync</span><span class="cap">Agent Map</span>
+      </div>
+      <div class="pillar-caps govern" id="capsGovern">
+        <span class="cap">Lifecycle management</span><span class="cap">Access control</span><span class="cap">Compliance</span><span class="cap">Permissions</span><span class="cap">Policies</span><span class="cap">Reviews</span>
+      </div>
+      <div class="pillar-caps secure" id="capsSecure">
+        <span class="cap">Microsoft Entra</span><span class="cap">Microsoft Defender</span><span class="cap">Microsoft Purview</span><span class="cap">Risk-based access</span><span class="cap">Threat detection</span><span class="cap">Information protection</span><span class="cap">DLP</span><span class="cap">Risk safeguards</span>
+      </div>
+    </div>
+
+    <div class="lanes-wrap" id="lanesWrap">
+      <!-- Pillar background bands -->
+      <div class="pillar-bg observe" id="bgObserve"></div>
+      <div class="pillar-bg govern" id="bgGovern"></div>
+      <div class="pillar-bg secure" id="bgSecure"></div>
+
+      <div class="lanes" id="lanes">
+        <div class="lane" data-color="build">
+          <div class="lane-label">
+            <iconify-icon class="role-icon" icon="fluent:bot-sparkle-24-filled"></iconify-icon>
+            <div class="role">Builder</div>
+          </div>
+        </div>
+        <div class="lane" data-color="admin">
+          <div class="lane-label">
+            <iconify-icon class="role-icon" icon="fluent:person-shield-24-filled"></iconify-icon>
+            <div class="role">AI / IT<br>Admin</div>
+          </div>
+        </div>
+        <div class="lane" data-color="sec">
+          <div class="lane-label">
+            <iconify-icon class="role-icon" icon="fluent:shield-checkmark-24-filled"></iconify-icon>
+            <div class="role">Security<br>Admin</div>
+          </div>
+        </div>
+        <div class="lane" data-color="comp">
+          <div class="lane-label">
+            <iconify-icon class="role-icon" icon="fluent:scales-24-filled"></iconify-icon>
+            <div class="role">Compliance /<br>Data Officer</div>
+          </div>
+        </div>
+      </div>
+
+      <svg class="arrows" id="arrows" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#479EF5"/>
+          </marker>
+          <marker id="arrow-dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#616161"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <aside id="detail">
+    <p class="placeholder">Click <b>Step 1</b> to start the flow.<br><br>Each step shows the persona, where they act, and the actions available, sourced from Microsoft Learn.</p>
+  </aside>
+</main>
+
+<script>
+/* ============================================================
+   FLOW: 7 steps across 4 lanes, 6 columns
+   Pillar layout (each pillar = 2 cols, equal width):
+     cols 0-1   : Observe   (Agent created → Registry → loop back to Agent Map)
+     cols 2-3   : Govern    (Pending request → Lifecycle actions)
+     cols 4-5   : Secure    (Defender XDR · Purview)
+   Lanes (4): Builder · AI / IT Admin · Security Admin · Compliance Admin
+   ============================================================ */
+const TOTAL_COLS = 6;
+const LABEL_COL_PX = 104;        // width of left label strip
+const STAGE_PAD_RIGHT = 18;
+const NODE_HALF = 82;            // half of node width (165/2 rounded)
+
+const NODES = [
+  { id:'n1', lane:0, col:0, step:1, type:'builder', icon:'fluent:bot-sparkle-24-filled', label:'Agent created',
+    title:'Agent is created',
+    role:'Builder', roleIcon:'fluent:bot-sparkle-24-filled',
+    where:'Foundry · Copilot Studio · SDK · ZIP · partners · Bedrock · Vertex',
+    whereIcon:'fluent:apps-list-detail-24-regular',
+    desc:'A new agent is built from any supported source. Microsoft Agent 365 auto-discovers it into the Agent Registry, no manual onboarding required.',
+    actions:[
+      {n:'Create in Foundry', d:'Build with Microsoft Foundry Agents toolkit', i:'simple-icons:microsoftazure'},
+      {n:'Create in Copilot Studio', d:'Low-code agent maker', i:'logos:microsoft-icon'},
+      {n:'Build with SDK / CLI', d:'Agent 365 SDK and CLI for developers', i:'fluent:code-24-regular'},
+      {n:'Upload custom agent (ZIP)', d:'Publish a packaged agent to the tenant', i:'fluent:arrow-upload-24-regular'},
+      {n:'External / partner agent', d:'Connect agents from partners', i:'fluent:plug-connected-24-regular'},
+      {n:'Bedrock / Vertex AI sync', d:'Registry sync from AWS or Google Cloud', i:'fluent:cloud-sync-24-regular'}
+    ],
+    next:'Auto-discovered in the Registry (Observe)' },
+
+  { id:'n2', lane:1, col:1, step:2, icon:'fluent:database-search-24-filled', label:'Auto-discovered in Registry',
+    title:'Agent Registry · Auto-Discovery',
+    role:'AI / IT Administrator', roleIcon:'fluent:person-shield-24-filled',
+    where:'Microsoft 365 admin center → Agents → All agents → Registry',
+    whereIcon:'fluent:building-shield-24-regular',
+    desc:'The agent appears in the centralized registry with source, owner, and identity. Single pane of glass for every agent across the tenant.',
+    actions:[
+      {n:'View All agents', d:'Unified registry list across platforms', i:'fluent:apps-list-24-regular'},
+      {n:'Filter by platform / publisher / status', d:'Slice by Copilot Studio, Foundry, etc.', i:'fluent:filter-24-regular'},
+      {n:'Open agent details fly-out', d:'See metadata, permissions, owner, scope', i:'fluent:document-search-24-regular'},
+      {n:'Export to Excel', d:'Export the registry list', i:'fluent:document-table-24-regular'},
+      {n:'Manage pinned agents', d:'Control which agents are pinned for users', i:'fluent:pin-24-regular'}
+    ],
+    next:'A pending request appears for the admin (Govern)' },
+
+  { id:'n3', lane:1, col:2, step:3, icon:'fluent:clipboard-task-list-ltr-24-filled', label:'Pending request',
+    title:'Pending Request',
+    role:'AI / IT Administrator', roleIcon:'fluent:person-shield-24-filled',
+    where:'Agent 365 Overview → Pending Requests card → Manage requests',
+    whereIcon:'fluent:document-bullet-list-24-regular',
+    desc:'A request card surfaces in the admin overview. Only AI Administrator, IT Administrator, or Global Administrator can act on it. Read-only roles see it but cannot decide.',
+    actions:[
+      {n:'Manage agent activation requests', d:'Open the Requests tab', i:'fluent:clipboard-task-list-ltr-24-regular'},
+      {n:'Review agent details', d:'See requester, scope, permissions', i:'fluent:document-search-24-regular'},
+      {n:'Approve request and activate', d:'Make agent available to scope', i:'fluent:checkmark-circle-24-regular'},
+      {n:'Reject request', d:'Deny activation', i:'fluent:dismiss-circle-24-regular'},
+      {n:'Reject submission', d:'Prevent publish to org store', i:'fluent:prohibited-24-regular'}
+    ],
+    next:'Admin approves and runs lifecycle actions' },
+
+  { id:'n4', lane:1, col:3, step:4, icon:'fluent:checkmark-starburst-24-filled', label:'Lifecycle actions',
+    title:'Approve, Assign Owner & Lifecycle',
+    role:'AI / IT Administrator', roleIcon:'fluent:person-shield-24-filled',
+    where:'M365 admin center → Agent details panel',
+    whereIcon:'fluent:building-shield-24-regular',
+    desc:'Admin approves and runs all governance and lifecycle actions: install, block, delete, assign owner, publish to store, manage instances. The agent is now governed.',
+    actions:[
+      {n:'Activate agent', d:'Make available to users or groups', i:'fluent:rocket-24-regular'},
+      {n:'Install / Uninstall', d:'Deploy or remove for users', i:'fluent:apps-add-in-24-regular'},
+      {n:'Assign new owner', d:'Set accountable owner', i:'fluent:person-key-24-regular'},
+      {n:'Block / Unblock', d:'Restrict use across the org', i:'fluent:shield-prohibited-24-regular'},
+      {n:'Delete', d:'Permanently remove agent and files', i:'fluent:delete-24-regular'},
+      {n:'Publish to store', d:'Make available in Agent Store', i:'fluent:store-microsoft-24-regular'},
+      {n:'Update in store', d:'Push new ZIP package', i:'fluent:arrow-sync-24-regular'},
+      {n:'Pin for users', d:'Force-pin in host UI', i:'fluent:pin-24-regular'},
+      {n:'Manage instances', d:'Block or delete individual instances', i:'fluent:layer-24-regular'},
+      {n:'Apply policy template', d:'Enforce a security template', i:'fluent:document-shield-24-regular'}
+    ],
+    next:'Security & compliance controls activate in parallel (Secure)' },
+
+  { id:'n5', lane:2, col:4, step:5, icon:'fluent:shield-checkmark-24-filled', label:'Identity & Threat Protection',
+    title:'Microsoft Entra + Defender · Identity & Threat Protection',
+    role:'Security Administrator', roleIcon:'fluent:shield-checkmark-24-filled',
+    where:'Microsoft Entra · Conditional Access · Defender XDR',
+    whereIcon:'fluent:shield-task-24-regular',
+    desc:'Microsoft Entra enforces consistent risk-based access controls for agents (Conditional Access, Entra Agent ID, ID Protection) while Microsoft Defender adds continuous threat detection and real-time protection against unsafe behaviors and malicious activity. Risky agents feed the Agents at Risk card on the Agent 365 overview.',
+    actions:[
+      {n:'Apply Conditional Access', d:'Gate agent sign-ins with CA policies', i:'fluent:shield-keyhole-24-regular'},
+      {n:'Manage Entra Agent ID', d:'Lifecycle of the agent workload identity', i:'fluent:person-key-24-regular'},
+      {n:'Review Risky Agents report', d:'Entra ID Protection risk signals', i:'fluent:warning-24-regular'},
+      {n:'Confirm compromise', d:'Mark the agent as compromised', i:'fluent:bug-prohibited-24-regular'},
+      {n:'Confirm safe / Dismiss', d:'Clear false positive', i:'fluent:checkmark-shield-24-regular'},
+      {n:'Reset agent secret', d:'Rotate credentials', i:'fluent:key-reset-24-regular'},
+      {n:'Disable agent identity', d:'Block the agent from authenticating', i:'fluent:plug-disconnected-24-regular'},
+      {n:'Investigate in Defender XDR', d:'Open the incident, hunt across signals', i:'fluent:search-info-24-regular'},
+      {n:'Real-time runtime protection', d:'Defender for Cloud Apps blocks unsafe agent behavior', i:'fluent:shield-prohibited-24-regular'}
+    ],
+    next:'Data protection also applies in parallel' },
+
+  { id:'n6', lane:3, col:4, step:6, icon:'fluent:document-lock-24-filled', label:'DLP & Information Protection',
+    title:'Microsoft Purview · DLP & Information Protection',
+    role:'Compliance / Data Officer', roleIcon:'fluent:scales-24-filled',
+    where:'Microsoft Purview portal · DSPM for AI',
+    whereIcon:'fluent:shield-keyhole-24-regular',
+    desc:'Purview applies DLP, sensitivity labels, and information protection so the agent only reads or shares authorized data. DSPM for AI provides deep visibility into data risks across agent interactions.',
+    actions:[
+      {n:'Apply DLP policy', d:'Block sensitive data exfiltration', i:'fluent:shield-error-24-regular'},
+      {n:'Apply sensitivity labels', d:'Govern label inheritance', i:'fluent:tag-24-regular'},
+      {n:'DSPM for AI', d:'Monitor agent data interactions', i:'fluent:data-pie-24-regular'},
+      {n:'Encrypt agent outputs', d:'Inherit MIP encryption rules', i:'fluent:lock-closed-24-regular'},
+      {n:'Configure adaptive protection', d:'Tighten DLP for risky users/agents', i:'fluent:shield-keyhole-24-regular'}
+    ],
+    next:'Insider Risk and Audit cover behavioral and forensic compliance' },
+
+  { id:'n7', lane:3, col:5, step:7, icon:'fluent:person-warning-24-filled', label:'Insider Risk & Audit',
+    title:'Microsoft Purview · Insider Risk & Audit',
+    role:'Compliance / Data Officer', roleIcon:'fluent:scales-24-filled',
+    where:'Microsoft Purview portal · Insider Risk Management · Audit · eDiscovery',
+    whereIcon:'fluent:history-24-regular',
+    desc:'Purview Insider Risk detects risky agent-driven behavior, Communication Compliance reviews prompts and responses, Audit captures every agent action, and eDiscovery holds and collects agent interactions for forensics or litigation.',
+    actions:[
+      {n:'Insider Risk policies', d:'Detect risky agent-driven behavior', i:'fluent:person-warning-24-regular'},
+      {n:'Communication Compliance', d:'Review prompts and responses', i:'fluent:chat-warning-24-regular'},
+      {n:'Audit agent activity', d:'Search audit log for agent actions', i:'fluent:history-24-regular'},
+      {n:'eDiscovery on agent data', d:'Hold and collect agent interactions', i:'fluent:search-24-regular'},
+      {n:'Review compliance alerts', d:'Triage agent-related signals', i:'fluent:alert-urgent-24-regular'}
+    ],
+    next:'All telemetry rolls up to Agent Map (Observe loop)' },
+
+  { id:'n8', lane:1, col:0, step:8, icon:'fluent:eye-tracking-24-filled', label:'Observe · Agent Map',
+    title:'Observe · Agent Map & Risk Insights',
+    role:'AI / IT Administrator', roleIcon:'fluent:person-shield-24-filled',
+    where:'Agent 365 Overview · Agent Map · Agents at risk card',
+    whereIcon:'fluent:data-trending-24-regular',
+    desc:'Usage, risk, and exception signals roll up into the Agent 365 Overview. Admin sees adoption, agents at risk, agents without owners, and agents with exceptions, then takes corrective action.',
+    actions:[
+      {n:'Open Agent 365 Overview', d:'Top governance cards & insights', i:'fluent:data-pie-24-regular'},
+      {n:'Open Agent Map', d:'Visual map of agents and relationships', i:'fluent:map-24-regular'},
+      {n:'Manage agent risks', d:'Filter Registry by risk', i:'fluent:warning-24-regular'},
+      {n:'Manage ownerless agents', d:'Triage and assign owners', i:'fluent:person-question-mark-24-regular'},
+      {n:'Manage exceptions', d:'Investigate failing agents', i:'fluent:error-circle-24-regular'},
+      {n:'Cross-cloud Registry sync', d:'Bedrock & Vertex AI inventory', i:'fluent:cloud-sync-24-regular'}
+    ],
+    next:'Lifecycle complete, feedback loop continues' }
+];
+
+const EDGES = [
+  ['n1','n2'], ['n2','n3'], ['n3','n4'],
+  ['n4','n5'], ['n5','n6'], ['n6','n7'],   // linear chain through Secure pillar
+  ['n7','n8','dim'],                        // dashed feedback: Insider Risk & Audit -> Agent Map
+  ['n8','n2','dim']                         // dashed feedback loop within Observe
+];
+
+const SOURCE_ICONS = [
+  'simple-icons:microsoftazure','logos:microsoft-icon','fluent:bot-24-filled',
+  'fluent:store-microsoft-24-regular','fluent:document-24-regular',
+  'fluent:share-24-regular','fluent:code-24-regular','fluent:ghost-24-regular',
+  'simple-icons:amazonaws','simple-icons:googlecloud'
+];
+
+/* ============================================================
+   THEME
+   ============================================================ */
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  const icon = document.getElementById('themeIcon');
+  const label = document.getElementById('themeLabel');
+  if(theme === 'light'){
+    icon.setAttribute('icon','fluent:weather-sunny-24-regular');
+    label.textContent = 'Light';
+  } else {
+    icon.setAttribute('icon','fluent:weather-moon-24-regular');
+    label.textContent = 'Dark';
+  }
+  // arrow colors depend on theme ,  must mirror --accent / --arrow-dim CSS vars
+  const arrowColor = theme === 'light' ? '#0F6CBD' : '#479EF5';
+  const dimColor = theme === 'light' ? '#A8A8A8' : '#616161';
+  document.querySelectorAll('#arrows marker#arrow path').forEach(p=>p.setAttribute('fill', arrowColor));
+  document.querySelectorAll('#arrows marker#arrow-dim path').forEach(p=>p.setAttribute('fill', dimColor));
+  // restyle existing arrows
+  document.querySelectorAll('#arrows path.edge').forEach(p=>{
+    if(p.getAttribute('marker-end')==='url(#arrow)'){
+      p.setAttribute('stroke', arrowColor);
+    } else {
+      p.setAttribute('stroke', dimColor);
+    }
+  });
+}
+function initTheme(){
+  const saved = localStorage.getItem('a365-theme');
+  if(saved){ applyTheme(saved); return; }
+  const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+  applyTheme(prefersLight ? 'light' : 'dark');
+}
+document.addEventListener('DOMContentLoaded', ()=>{
+  initTheme();
+  document.getElementById('themeToggle').addEventListener('click', ()=>{
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'light' ? 'dark' : 'light';
+    localStorage.setItem('a365-theme', next);
+    applyTheme(next);
+  });
+  // listen for OS theme changes
+  if(window.matchMedia){
+    const mq = window.matchMedia('(prefers-color-scheme: light)');
+    mq.addEventListener && mq.addEventListener('change', e=>{
+      if(!localStorage.getItem('a365-theme')) applyTheme(e.matches ? 'light' : 'dark');
+    });
+  }
+});
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const lanesEl = document.getElementById('lanes');
+const lanesWrap = document.getElementById('lanesWrap');
+const arrowsEl = document.getElementById('arrows');
+const detailEl = document.getElementById('detail');
+const pillarsHeaderEl = document.getElementById('pillarsHeader');
+
+function colWidth(){
+  const stageW = lanesEl.clientWidth;
+  const usable = stageW - LABEL_COL_PX - STAGE_PAD_RIGHT;
+  return usable / TOTAL_COLS;
+}
+function colCenter(col){
+  return LABEL_COL_PX + colWidth() * (col + 0.5);
+}
+function nodeWidth(){
+  // Responsive: fit within the column with a small gap. Cap at 165 (the design size).
+  const cw = colWidth();
+  return Math.max(105, Math.min(150, cw - 12));
+}
+function nodeHalf(){ return nodeWidth() / 2; }
+function nodePosition(col){ return colCenter(col) - nodeHalf(); }
+
+function positionPillarBands(){
+  const cw = colWidth();
+  const GAP = 6;
+  // Each pillar is exactly 2 columns wide (equal widths)
+  const ranges = {
+    observe: { left: LABEL_COL_PX + cw * 0, right: LABEL_COL_PX + cw * 2 - GAP },
+    govern:  { left: LABEL_COL_PX + cw * 2, right: LABEL_COL_PX + cw * 4 - GAP },
+    secure:  { left: LABEL_COL_PX + cw * 4, right: LABEL_COL_PX + cw * 6 - GAP }
+  };
+  ['observe','govern','secure'].forEach(key=>{
+    const r = ranges[key];
+    const cap = key.charAt(0).toUpperCase() + key.slice(1);
+    const band = document.getElementById('bg' + cap);
+    const hdr  = document.getElementById('hdr' + cap);
+    const caps = document.getElementById('caps' + cap);
+    band.style.left = r.left + 'px';
+    band.style.width = (r.right - r.left) + 'px';
+    hdr.style.left = r.left + 'px';
+    hdr.style.width = (r.right - r.left) + 'px';
+    if(caps){ caps.style.left = r.left + 'px'; caps.style.width = (r.right - r.left) + 'px'; }
+  });
+  const row = document.getElementById('pillarCapsRow');
+  if(row){
+    const heights = ['Observe','Govern','Secure'].map(c => document.getElementById('caps' + c).offsetHeight);
+    row.style.height = Math.max(...heights, 36) + 'px';
+  }
+}
+
+function buildNodes(){
+  document.querySelectorAll('.node').forEach(n=>n.remove());
+  const nw = nodeWidth();
+  const builderW = nw;
+  NODES.forEach(n=>{
+    const lane = lanesEl.querySelectorAll('.lane')[n.lane];
+    const node = document.createElement('div');
+    node.className = 'node' + (n.type==='builder' ? ' builder' : '');
+    node.id = n.id;
+    node.dataset.id = n.id;
+    node.style.left = nodePosition(n.col) + 'px';
+    node.style.width = (n.type === 'builder' ? builderW : nw) + 'px';
+    node.style.top = '50%';
+    node.style.transform = 'translateY(-50%) scale(0.85)';
+
+    let inner;
+    if(n.type==='builder'){
+      inner = `<div class="step">${n.step}</div>
+        <div class="label">${n.label}</div>
+        <div class="src-grid">${SOURCE_ICONS.map(i=>`<iconify-icon icon="${i}"></iconify-icon>`).join('')}</div>`;
+    } else {
+      inner = `<div class="step">${n.step}</div>
+        <iconify-icon icon="${n.icon}" class="main-icon"></iconify-icon>
+        <div class="label">${n.label}</div>`;
+    }
+    if(n.subs && n.subs.length){
+      const pos = n.chipsPos === 'below' ? 'below' : 'above';
+      inner += `<div class="subcaps ${pos}">${n.subs.map(s=>`<span class="cap">${s}</span>`).join('')}</div>`;
+    }
+    node.innerHTML = inner;
+    node.addEventListener('click', ()=>activate(n.id));
+    lane.appendChild(node);
+  });
+  drawArrows();
+}
+
+function drawArrows(){
+  arrowsEl.querySelectorAll('path.edge, text.edge-label').forEach(p=>p.remove());
+  const W = lanesWrap.clientWidth;
+  const H = lanesWrap.clientHeight;
+  arrowsEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  arrowsEl.setAttribute('width', W);
+  arrowsEl.setAttribute('height', H);
+  const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const dimColor = theme === 'light' ? '#A8A8A8' : '#616161';
+
+  // Compute node geometry in coords relative to lanesWrap
+  const wrapTop = lanesWrap.getBoundingClientRect().top;
+  const wrapLeft = lanesWrap.getBoundingClientRect().left;
+  const pos = {};
+  NODES.forEach(n=>{
+    const el = document.getElementById(n.id);
+    if(!el) return;
+    const r = el.getBoundingClientRect();
+    const x = r.left - wrapLeft;
+    const y = r.top - wrapTop;
+    const w = r.width;
+    const h = r.height;
+    pos[n.id] = { x, y, w, h, cx: x + w/2, cy: y + h/2, top: y, bottom: y + h, left: x, right: x + w };
+  });
+
+  // Bottom routing channel center: vertically centered in the strip below lanes
+  const lanesBottom = lanesEl.offsetTop + lanesEl.offsetHeight;
+  const channelY = lanesBottom + (H - lanesBottom) / 2;
+
+  // Helper: build orthogonal path with sharp corners
+  function orthoForward(a, b){
+    // Going right; a is to the left of b
+    const x1 = a.right;
+    const x2 = b.left;
+    const y1 = a.cy;
+    const y2 = b.cy;
+    if(Math.abs(y1 - y2) < 2){
+      // Same lane, straight horizontal
+      return `M ${x1} ${y1} L ${x2} ${y2}`;
+    }
+    // If boxes overlap horizontally (e.g., same column, stacked vertically),
+    // exit bottom of a and enter top of b straight down to avoid a Z-loop.
+    if(x2 < x1){
+      return `M ${a.cx} ${a.bottom} V ${b.top}`;
+    }
+    // Cross-lane: exit right, horizontal to midX, vertical to target row, horizontal to enter target
+    const midX = x1 + (x2 - x1) / 2;
+    return `M ${x1} ${y1} H ${midX} V ${y2} H ${x2}`;
+  }
+
+  function orthoLoopBack(a, b){
+    // Going left/back via bottom channel
+    const stub = 24;
+    const x1 = a.left;
+    const x2 = b.cx;
+    const y1 = a.cy;
+    const y2 = b.bottom;
+    const dropX = a.left - stub;
+    return `M ${x1} ${y1} H ${dropX} V ${channelY} H ${x2} V ${y2}`;
+  }
+
+  function orthoFeedbackUnder(a, b){
+    // Dashed feedback: exit BOTTOM of a, drop to channel, run to b's column, rise to b's bottom.
+    const x1 = a.cx;
+    const x2 = b.cx;
+    const y1 = a.bottom;
+    const y2 = b.bottom;
+    return `M ${x1} ${y1} V ${channelY} H ${x2} V ${y2}`;
+  }
+
+  function orthoSameLaneFeedback(a, b){
+    // Same-lane dashed feedback: horizontal connection from right side of a to left side of b.
+    return `M ${a.right} ${a.cy} L ${b.left} ${b.cy}`;
+  }
+
+  function orthoEnterTop(a, b){
+    // Forward arrow that enters the TOP of b (instead of the side).
+    const x1 = a.right;
+    const y1 = a.cy;
+    return `M ${x1} ${y1} H ${b.cx} V ${b.top}`;
+  }
+
+  EDGES.forEach(([from, to, mod])=>{
+    const a = pos[from];
+    const b = pos[to];
+    if(!a || !b) return;
+
+    let d;
+    if(from === 'n1' && to === 'n2'){
+      d = orthoEnterTop(a, b);
+    } else if(mod === 'dim' && Math.abs(a.cy - b.cy) < 4){
+      d = orthoSameLaneFeedback(a, b);
+    } else if(mod === 'dim'){
+      d = orthoFeedbackUnder(a, b);
+    } else if(b.cx < a.cx){
+      d = orthoLoopBack(a, b);
+    } else {
+      d = orthoForward(a, b);
+    }
+
+    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d', d);
+    p.classList.add('edge');
+    p.dataset.from = from;
+    p.dataset.to = to;
+    p.setAttribute('fill','none');
+    p.setAttribute('stroke-linejoin','round');
+    p.setAttribute('stroke-linecap','round');
+    if(mod === 'dim'){
+      p.setAttribute('stroke', dimColor);
+      p.setAttribute('stroke-width','1.4');
+      p.setAttribute('stroke-dasharray','5 5');
+      p.setAttribute('marker-end','url(#arrow-dim)');
+    } else {
+      p.setAttribute('stroke', dimColor);
+      p.setAttribute('stroke-width','1.8');
+      p.setAttribute('marker-end','url(#arrow-dim)');
+    }
+    p.style.opacity = '0';
+    p.style.transition = 'opacity .35s ease, stroke .25s ease';
+    arrowsEl.appendChild(p);
+  });
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let revealed = new Set();
+let activeId = null;
+
+function reveal(id){
+  if(revealed.has(id)) return;
+  revealed.add(id);
+  const el = document.getElementById(id);
+  if(el) el.classList.add('visible');
+  const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const arrowColor = theme === 'light' ? '#0F6CBD' : '#479EF5';
+  arrowsEl.querySelectorAll(`path.edge[data-to="${id}"]`).forEach(p=>{
+    if(revealed.has(p.dataset.from) && p.dataset.to === id){
+      const isDim = EDGES.find(e=>e[0]===p.dataset.from && e[1]===p.dataset.to && e[2]==='dim');
+      if(!isDim){
+        p.style.opacity = '1';
+        p.setAttribute('stroke', arrowColor);
+        p.setAttribute('marker-end','url(#arrow)');
+      } else {
+        p.style.opacity = '1';
+      }
+    }
+  });
+  arrowsEl.querySelectorAll(`path.edge[data-from="${id}"]`).forEach(p=>{
+    if(revealed.has(p.dataset.to)){
+      const isDim = EDGES.find(e=>e[0]===p.dataset.from && e[1]===p.dataset.to && e[2]==='dim');
+      if(!isDim){
+        p.style.opacity = '1';
+        p.setAttribute('stroke', arrowColor);
+        p.setAttribute('marker-end','url(#arrow)');
+      } else {
+        p.style.opacity = '1';
+      }
+    }
+  });
+  arrowsEl.querySelectorAll('text.edge-label').forEach(t=>{
+    if(revealed.has(t.dataset.from) && revealed.has(t.dataset.to)){
+      t.style.opacity = '1';
+    }
+  });
+}
+
+function rewindTo(step){
+  NODES.forEach(n=>{
+    if(n.step > step){
+      revealed.delete(n.id);
+      const el = document.getElementById(n.id);
+      if(el) el.classList.remove('visible','active','next-hint');
+    }
+  });
+  arrowsEl.querySelectorAll('path.edge').forEach(p=>{
+    if(!revealed.has(p.dataset.from) || !revealed.has(p.dataset.to)){
+      p.style.opacity = '0';
+      p.removeAttribute('marker-end');
+    }
+  });
+  arrowsEl.querySelectorAll('text.edge-label').forEach(t=>{
+    if(!revealed.has(t.dataset.from) || !revealed.has(t.dataset.to)){
+      t.style.opacity = '0';
+    }
+  });
+}
+
+function activate(id){
+  const node = NODES.find(n=>n.id===id);
+  if(!node) return;
+  rewindTo(node.step);
+  reveal(id);
+  document.querySelectorAll('.node.active').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.node.next-hint').forEach(n=>n.classList.remove('next-hint'));
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+  activeId = id;
+  renderDetail(node);
+}
+
+function nextNodeFor(id){
+  const cur = NODES.find(n=>n.id===id);
+  if(!cur) return null;
+  const next = NODES.find(n=>n.step === cur.step + 1);
+  return next ? next.id : null;
+}
+
+function advance(){
+  if(!activeId) return;
+  const nextId = nextNodeFor(activeId);
+  if(!nextId) return;
+  activate(nextId);
+}
+
+function renderDetail(n){
+  const actionsHtml = (n.actions || []).map(a=>`
+    <div class="action">
+      <iconify-icon icon="${a.i}"></iconify-icon>
+      <div class="action-text">
+        <div class="action-name">${a.n}</div>
+        <div class="action-desc">${a.d}</div>
+      </div>
+    </div>`).join('');
+
+  const nextId = nextNodeFor(n.id);
+  const nextNode = nextId ? NODES.find(x=>x.id===nextId) : null;
+  const prevId = prevNodeFor(n.id);
+  const backBtnHtml = prevId
+    ? `<button class="back-btn" id="backBtn"><iconify-icon icon="fluent:arrow-left-24-regular"></iconify-icon>Back</button>`
+    : '';
+  const nextHtml = nextNode
+    ? `<div class="next-cta">
+         <div class="next-label">Next step</div>
+         <div class="cta-row">
+           ${backBtnHtml}
+           <button class="next-btn" id="nextBtn">
+             <span>Step ${nextNode.step}: ${nextNode.title}</span>
+             <iconify-icon icon="fluent:arrow-right-24-filled"></iconify-icon>
+           </button>
+         </div>
+       </div>`
+    : `<div class="next-cta">
+         <div class="cta-row">
+           ${backBtnHtml}
+           <div class="next-done" style="flex:1">Lifecycle complete. Click <b>Restart</b> to start over.</div>
+         </div>
+       </div>`;
+
+  detailEl.innerHTML = `
+    <div class="step-num">Step ${n.step} of ${NODES.length}</div>
+    <h2><iconify-icon icon="${n.icon}"></iconify-icon>${n.title}</h2>
+    <div class="role-badge"><iconify-icon icon="${n.roleIcon}"></iconify-icon>${n.role}</div>
+    <div class="where"><iconify-icon icon="${n.whereIcon}"></iconify-icon>${n.where}</div>
+    <p class="desc">${n.desc}</p>
+    <div class="actions-title"><iconify-icon icon="fluent:cursor-click-24-regular"></iconify-icon>Actions</div>
+    <div class="action-list">${actionsHtml}</div>
+    ${nextHtml}
+  `;
+  const btn = document.getElementById('nextBtn');
+  if(btn) btn.addEventListener('click', advance);
+  const back = document.getElementById('backBtn');
+  if(back) back.addEventListener('click', goBack);
+}
+
+function prevNodeFor(id){
+  const cur = NODES.find(n=>n.id===id);
+  if(!cur || cur.step <= 1) return null;
+  const prev = NODES.find(n=>n.step === cur.step - 1);
+  return prev ? prev.id : null;
+}
+
+function goBack(){
+  if(!activeId) return;
+  const prevId = prevNodeFor(activeId);
+  if(!prevId) return;
+  activate(prevId);
+}
+
+function reset(){
+  revealed.clear();
+  activeId = null;
+  const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const dimColor = theme === 'light' ? '#A8A8A8' : '#616161';
+  document.querySelectorAll('.node').forEach(n=>{
+    n.classList.remove('visible','active','next-hint');
+  });
+  arrowsEl.querySelectorAll('path.edge').forEach(p=>{
+    p.style.opacity = '0';
+    p.setAttribute('stroke', dimColor);
+    p.setAttribute('marker-end','url(#arrow-dim)');
+  });
+  arrowsEl.querySelectorAll('text.edge-label').forEach(t=>{
+    t.style.opacity = '0';
+    t.setAttribute('fill', dimColor);
+  });
+  const first = document.getElementById('n1');
+  if(first){
+    first.classList.add('visible','next-hint');
+    revealed.add('n1');
+  }
+  detailEl.innerHTML = `<p class="placeholder">Click <b>Step 1</b> to start the flow.<br><br>Each step shows the persona, where they act, and the actions available, sourced from Microsoft Learn.</p>`;
+}
+
+function relayout(){
+  positionPillarBands();
+  const nw = nodeWidth();
+  const builderW = nw;
+  // reposition existing nodes without rebuilding
+  NODES.forEach(n=>{
+    const el = document.getElementById(n.id);
+    if(el){
+      el.style.left = nodePosition(n.col) + 'px';
+      el.style.width = (n.type === 'builder' ? builderW : nw) + 'px';
+    }
+  });
+  drawArrows();
+  // re-apply visible state to revealed arrows/nodes
+  revealed.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.add('visible');
+  });
+  const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const arrowColor = theme === 'light' ? '#0F6CBD' : '#479EF5';
+  arrowsEl.querySelectorAll('path.edge').forEach(p=>{
+    if(revealed.has(p.dataset.from) && revealed.has(p.dataset.to)){
+      const isDim = EDGES.find(e=>e[0]===p.dataset.from && e[1]===p.dataset.to && e[2]==='dim');
+      p.style.opacity = '1';
+      if(!isDim){
+        p.setAttribute('stroke', arrowColor);
+        p.setAttribute('marker-end','url(#arrow)');
+      }
+    }
+  });
+  if(activeId){
+    const el = document.getElementById(activeId);
+    if(el) el.classList.add('active');
+  } else {
+    const first = document.getElementById('n1');
+    if(first) first.classList.add('next-hint');
+  }
+}
+
+function init(){
+  positionPillarBands();
+  buildNodes();
+  reset();
+}
+
+window.addEventListener('load', ()=>{
+  setTimeout(init, 50);
+});
+
+// resize / zoom handling: ResizeObserver fires on layout changes including browser zoom
+let _resizeTimer;
+function scheduleRelayout(){
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(relayout, 60);
+}
+window.addEventListener('resize', scheduleRelayout);
+if(window.ResizeObserver){
+  const ro = new ResizeObserver(scheduleRelayout);
+  ro.observe(lanesEl);
+}
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', scheduleRelayout);
+}
+
+document.getElementById('reset').addEventListener('click', reset);
+
+// Keyboard navigation: ArrowLeft = Back, ArrowRight = Next
+document.addEventListener('keydown', (e)=>{
+  if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+  if(e.key === 'ArrowRight'){ e.preventDefault(); if(activeId) advance(); else activate('n1'); }
+  else if(e.key === 'ArrowLeft'){ e.preventDefault(); if(activeId) goBack(); }
+});
+</script>
+</body>
+</html>
+
+

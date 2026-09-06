@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Carlos Suarez">
+    <meta name="theme-color" content="#f7f4ee" media="(prefers-color-scheme: light)">
+    <meta name="theme-color" content="#1a1815" media="(prefers-color-scheme: dark)">
+    <link rel="alternate" type="application/rss+xml" title="Contosec RSS" href="/feed.xml">
+    <link rel="canonical" href="https://contosec.com/articles/agent-365/">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
+<title>Microsoft Agent 365: How It Fits Into Your Operating Model</title>
+<meta name="description" content="A walkthrough of the Microsoft Agent 365 lifecycle showing who owns what at every step: Builder, AI/IT Admin, Security Admin, and Compliance.">
+<meta property="og:title" content="Microsoft Agent 365: How It Fits Into Your Operating Model">
+<meta property="og:description" content="An interactive walkthrough of the Microsoft Agent 365 lifecycle showing who does what at every step and how it lands in your operating model.">
+<meta property="og:type" content="article">
+<meta property="og:url" content="https://contosec.com/articles/agent-365/">
+<meta property="og:image" content="https://contosec.com/articles/agent-365/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://contosec.com/articles/agent-365/og-image.png">
+<script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+<style>* { margin: 0; padding: 0; box-sizing: border-box; }
+body {
+    font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+    color: #1a1a1a; line-height: 1.75; -webkit-font-smoothing: antialiased; background: #fff; font-size: 16px;
+    min-height: 100vh;
+}
+html[data-theme="dark"] body { background: #0a0e1a; color: #e0e0e0; }
+html[data-theme="dark"] .article p,
+html[data-theme="dark"] .article li { color: #d0d0d0; }
+html[data-theme="dark"] .article h2,
+html[data-theme="dark"] .article h3 { color: #fff; }
+html[data-theme="dark"] .disclaimer { background: #1a2233; border-left-color: #3a6a9f; }
+html[data-theme="dark"] .disclaimer p { color: #d0d0d0; }
+html[data-theme="dark"] .section-block + .section-block { border-top-color: #333; }
+html[data-theme="dark"] .phase-card { background: #121826; border-color: #2a3550; }
+html[data-theme="dark"] .phase-card h3 { color: #fff; }
+html[data-theme="dark"] .phase-card .phase-meta { color: #8fabc8; }
+html[data-theme="dark"] .phase-card p,
+html[data-theme="dark"] .phase-card li { color: #c0c8d4; }
+html[data-theme="dark"] .phase-card .phase-row strong { color: #50E6FF; }
+html[data-theme="dark"] .sources-grid a { color: #50E6FF; }
+html[data-theme="dark"] .sources-grid a:hover { color: #7ef0ff; }
+html[data-theme="dark"] .footer { color: #8896a8; border-color: #2a3550; }
+html[data-theme="dark"] .footer a { color: #8fabc8; }
+
+.topbar { background: #000; position: sticky; top: 0; z-index: 100; padding: 8px 24px; display: flex; justify-content: flex-end; align-items: center; }
+.theme-toggle { background: transparent; color: #fff; border: 1px solid #444; border-radius: 4px; padding: 6px 10px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; font-family: inherit; font-size: 13px; }
+.theme-toggle:hover { background: #222; border-color: #666; }
+
+.hero { background: linear-gradient(135deg, #1e304f 0%, #263e65 50%, #2a446f 100%); padding: 48px 24px 44px; color: #fff; }
+.hero-inner { max-width: 1080px; margin: 0 auto; }
+.hero-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1.5px; color: #8fabc8; margin-bottom: 16px; font-weight: 600; }
+.hero h1 { font-size: 34px; font-weight: 600; line-height: 1.25; margin-bottom: 20px; }
+.hero .meta { display: flex; align-items: center; gap: 12px; font-size: 14px; color: #b0c4de; }
+.hero .meta-author { font-weight: 600; color: #fff; text-decoration: none; }
+.hero .meta-author:hover { text-decoration: underline; }
+.hero .meta-sep { color: #5a7a9e; }
+.hero .meta-role { font-size: 13px; color: #8fabc8; margin-top: 4px; display: inline-flex; align-items: center; gap: 6px; }
+.hero .meta-role .ms-logo { width: 16px; height: 16px; vertical-align: middle; }
+
+.article { max-width: 1080px; margin: 0 auto; padding: 0 24px 40px; }
+.article h2 { font-size: 24px; font-weight: 600; color: #1a1a1a; margin: 36px 0 16px; }
+.article h3 { font-size: 18px; font-weight: 600; color: #1a1a1a; margin: 24px 0 10px; }
+.article p { margin-bottom: 16px; color: #1a1a1a; }
+.article ul { margin: 0 0 16px 22px; padding: 0; }
+.article li { line-height: 1.75; color: #1a1a1a; margin-bottom: 4px; }
+.article a { color: #2a446f; text-decoration: none; }
+.article a:hover { text-decoration: underline; }
+.article strong { font-weight: 600; }
+.article code { background: #f5f5f5; padding: 2px 6px; border-radius: 3px; font-size: 14px; font-family: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace; }
+html[data-theme="dark"] .article code { background: #1a2233; color: #c0c8d4; }
+
+.disclaimer { background: #eef2f7; border-left: 3px solid #2a446f; padding: 16px 20px; margin: 24px 0; font-size: 15px; }
+.disclaimer p { margin-bottom: 0; }
+
+.section-block { padding: 28px 0 24px; }
+.section-block + .section-block { border-top: 1px solid #e5e5e5; }
+.section-head { display: flex; align-items: baseline; gap: 14px; margin-bottom: 4px; }
+.section-num { font-size: 22px; font-weight: 700; color: #0078D4; letter-spacing: 0.02em; font-variant-numeric: tabular-nums; }
+.section-head h2 { font-size: 22px; font-weight: 600; color: #1a1a1a; margin: 0; }
+html[data-theme="dark"] .section-head h2 { color: #fff; }
+.section-desc { font-size: 15px; color: #008272; margin-bottom: 16px; font-weight: 500; }
+html[data-theme="dark"] .section-desc { color: #4ec3a0; }
+
+.diagram-wrap { max-width: 1080px; margin: 24px auto 8px; padding: 0 24px; }
+.article:has(+ .diagram-wrap) { padding-bottom: 0; }
+
+.pillar-index {
+  --pi-text:#1a1a1a; --pi-muted:#555; --pi-rule:rgba(0,0,0,.10);
+  --pi-observe:#006E76; --pi-govern:#8A6500; --pi-secure:#BC2F32;
+  max-width: 760px; margin: 10px auto 24px;
+  font-family: inherit;
+}
+.pillar-index * { font-family: inherit; }
+html[data-theme="dark"] .pillar-index {
+  --pi-text:#f5f5f5; --pi-muted:#c8c8c8; --pi-rule:rgba(255,255,255,.14);
+  --pi-observe:#6FC9CF; --pi-govern:#FFD394; --pi-secure:#E37D80;
+}
+.pi-item { position:relative; display:grid; grid-template-columns: 3.4rem 1fr; gap: .9rem; padding: .65rem 0; border-top: 1px solid var(--pi-rule); align-items:baseline; }
+.pi-item:last-child { border-bottom: 1px solid var(--pi-rule); }
+.pi-num { font-size: 1.6rem; line-height:1; font-weight:700; letter-spacing:-.04em; color: color-mix(in srgb, var(--pi-pillar) 32%, transparent); font-variant-numeric: tabular-nums; user-select:none; }
+.pi-body { position:relative; padding-left: .75rem; border-left: 2px solid var(--pi-pillar); }
+.pi-head { display:flex; align-items:baseline; gap:.55rem; margin-bottom: 3px; flex-wrap:wrap; }
+.pi-title { font-size: 16px; font-weight: 700; color: var(--pi-text); line-height: 1.4; }
+.pi-eyebrow { font-size: 11px; letter-spacing:.14em; text-transform:uppercase; font-weight:700; color: var(--pi-pillar); }
+.pi-copy { margin: 0; max-width: 640px; color: var(--pi-text); line-height: 1.75; font-size: 16px; }
+@media (max-width: 680px) { .pi-item { grid-template-columns: 1fr; gap: .25rem; } }
+
+/* Inline-mode picture treatment: make the diagram look like a static full picture, not an interactive widget */
+.a365-app.inline-mode { height: 580px !important; font-size: 13px; }
+.a365-app.inline-mode .a365-main { grid-template-columns: 1fr !important; }
+.a365-app.inline-mode .a365-aside { display: none !important; }
+.a365-app.inline-mode .controls .hint,
+.a365-app.inline-mode #reset,
+.a365-app.inline-mode #themeToggle { display: none !important; }
+.a365-app.inline-mode .node { cursor: default !important; pointer-events: none !important; width: 138px !important; height: 82px !important; padding: 6px !important; gap: 3px !important; }
+.a365-app.inline-mode .node.builder .src-grid { grid-template-columns: repeat(5, 20px) !important; gap: 4px !important; }
+.a365-app.inline-mode .node.builder .src-grid iconify-icon { font-size: 20px !important; width: 20px !important; height: 20px !important; }
+.a365-app.inline-mode .node .icon-row iconify-icon,
+.a365-app.inline-mode .node iconify-icon { font-size: 18px !important; }
+.a365-app.inline-mode .node .title,
+.a365-app.inline-mode .node .label { font-size: 11px !important; line-height: 1.15 !important; }
+.a365-app.inline-mode .node .step-badge { width: 18px !important; height: 18px !important; font-size: 10px !important; top: -8px !important; left: -8px !important; }
+.a365-app.inline-mode .node.next-hint { animation: none !important; }
+.a365-app.inline-mode .a365-header { padding: 10px 18px !important; }
+.a365-app.inline-mode .a365-header .brand h2 { font-size: 14px; }
+.a365-app.inline-mode .a365-header .brand h2 .sub { opacity: 0.7; font-size: 11px; }
+.a365-app.inline-mode .pillars .pillar { font-size: 11px !important; padding: 4px 8px !important; }
+.a365-app.inline-mode .pill-cap, .a365-app.inline-mode .cap { font-size: 10px !important; padding: 2px 7px !important; }
+.a365-app.inline-mode .subcaps,
+.a365-app.inline-mode .pillar-caps-row { display: none !important; }
+.a365-app.inline-mode .pillars { height: 32px !important; margin-bottom: 4px !important; }
+.a365-app.inline-mode .lane-label .role { font-size: 11px !important; }
+.a365-app.inline-mode .lane-label iconify-icon.role-icon { font-size: 20px !important; }
+.a365-app.inline-mode .lane { padding-left: 90px !important; }
+.a365-app.inline-mode .stage { padding: 14px 14px 12px 12px !important; }
+
+/* CTA row under the picture */
+.picture-cta-row { display: flex; justify-content: center; margin: 14px 0 8px; }
+.diagram-aftermath { max-width: 1080px; margin: 8px auto 16px; padding: 0 24px; text-align: center; }
+.diagram-caption { font-size: 14px; color: var(--text-muted, #5a5a5a); margin: 8px auto 4px; max-width: 720px; line-height: 1.55; }
+html[data-theme="dark"] .diagram-caption { color: #a0a8b8; }
+.picture-cta {
+  display: inline-flex; align-items: center; gap: 8px;
+  padding: 10px 18px; border-radius: 6px;
+  background: #0078D4; color: #fff !important; text-decoration: none !important;
+  font-size: 14px; font-weight: 600; transition: background .15s;
+}
+.picture-cta:hover { background: #005a9e; }
+.picture-cta .arrow { font-size: 12px; opacity: .85; }
+html[data-theme="dark"] .picture-cta { background: #479EF5; color: #0a0e1a !important; }
+html[data-theme="dark"] .picture-cta:hover { background: #62B0FA; }
+
+.phase-grid { display: grid; gap: 16px; margin-top: 8px; }
+.phase-card { position: relative; background: #ffffff; border: 1px solid #e5e5e5; border-radius: 10px; padding: 20px 22px 18px; }
+.phase-card::before {
+  content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 3px;
+  background: var(--phase-accent, #0078D4); border-radius: 10px 10px 0 0;
+}
+.phase-card.observe { --phase-accent: #006E76; }
+.phase-card.govern  { --phase-accent: #BC8B00; }
+.phase-card.secure  { --phase-accent: #BC2F32; }
+html[data-theme="dark"] .phase-card.observe { --phase-accent: #6FC9CF; }
+html[data-theme="dark"] .phase-card.govern  { --phase-accent: #FFD394; }
+html[data-theme="dark"] .phase-card.secure  { --phase-accent: #E37D80; }
+.phase-card .phase-num {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--phase-accent); margin-bottom: 2px;
+}
+.phase-card h3 { font-size: 18px; font-weight: 600; color: #1a1a1a; margin: 0 0 6px; }
+.phase-card .phase-meta { font-size: 12.5px; color: #616161; margin-bottom: 12px; display: flex; flex-wrap: wrap; gap: 6px 14px; }
+.phase-card .phase-meta span { display: inline-flex; align-items: center; gap: 4px; }
+.phase-card .phase-row { margin-bottom: 8px; font-size: 15px; line-height: 1.6; }
+.phase-card .phase-row strong { color: #2a446f; font-weight: 600; }
+.phase-card .phase-row.fit { margin-top: 4px; padding-top: 10px; border-top: 1px dashed #e5e5e5; }
+html[data-theme="dark"] .phase-card .phase-row.fit { border-top-color: #2a3550; }
+.phase-card .ms-link { font-size: 12.5px; margin-top: 8px; display: inline-flex; align-items: center; gap: 4px; }
+.phase-card .ms-link::after { content: '↗'; font-size: 10px; opacity: 0.6; }
+
+.sources { border-top: 2px solid #0078D4; padding: 24px 0 0; margin: 32px 0 0; }
+.sources h3 { font-size: 14px; font-weight: 600; color: #0078D4; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 6px; }
+.sources > p { font-size: 13px; color: #616161; margin-bottom: 16px; }
+html[data-theme="dark"] .sources > p { color: #8896a8; }
+.sources-grid { display: flex; flex-wrap: wrap; gap: 6px 24px; }
+.sources-grid a { font-size: 12.5px; color: #0078D4; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 3px 0; transition: color .15s; }
+.sources-grid a:hover { color: #005a9e; text-decoration: underline; }
+.sources-grid a::after { content: '↗'; font-size: 10px; opacity: 0.6; }
+.sources .src-note { font-size: 11px; color: #999; margin-top: 14px; }
+
+.footer { border-top: 1px solid #e5e5e5; padding: 20px 24px; text-align: center; font-size: 13px; color: #767676; }
+.footer a { color: #2a446f; text-decoration: none; }
+.footer a:hover { text-decoration: underline; }
+
+@media (max-width: 700px) {
+  .hero h1 { font-size: 26px; }
+  .article { padding: 0 16px 32px; }
+  .a365-app { height: 820px; }
+}
+
+
+  :root{
+    /* Surfaces ,  Fluent neutral grey ramp w/ slight Security navy tint */
+    --a365-bg:#0F1419;
+    --a365-panel:#1B1F26;
+    --a365-panel-2:#161B22;
+    --a365-border:#3A3F4A;
+    --a365-text:#FFFFFF;
+    --a365-muted:#ADADAD;
+    --a365-inactive:#2D3340;
+    /* Brand ,  Communication Blue brand[100] for dark surfaces */
+    --a365-accent:#479EF5;
+    /* Pillar + role colors ,  Fluent Shared Colors, tint30/40 for dark */
+    --a365-build:#BDB1D6;     /* Violet tint30 */
+    --a365-admin:#FFD394;     /* Marigold tint30 */
+    --a365-sec:#E37D80;       /* Red tint30 */
+    --a365-comp:#9FD89F;      /* Green tint40 */
+    --a365-user:#6FC9CF;      /* Cyan tint30 */
+    --a365-observe:#6FC9CF;
+    --a365-govern:#FFD394;
+    --a365-secure:#E37D80;
+    /* Composites */
+    --a365-node-fill:#1B1F26;
+    --a365-lane-bg:rgba(27,31,38,.55);
+    --a365-arrow-dim:#616161;
+    --a365-pill-shadow:rgba(0,0,0,.28);
+  }
+  [data-theme="light"]{
+    --a365-bg:#FAFAFA;
+    --a365-panel:#FFFFFF;
+    --a365-panel-2:#F5F5F5;
+    --a365-border:#D1D1D1;
+    --a365-text:#242424;
+    --a365-muted:#616161;
+    --a365-inactive:#E0E0E0;
+    /* Brand ,  brand[80] is the canonical primary on light surfaces */
+    --a365-accent:#0F6CBD;
+    /* Shared color shade variants (≥4.5:1 on white) */
+    --a365-build:#5C2E91;     /* Purple primary */
+    --a365-admin:#BC8B00;     /* Marigold shade10 */
+    --a365-sec:#BC2F32;       /* Red shade10 */
+    --a365-comp:#0E700E;      /* Green shade10 */
+    --a365-user:#006E76;      /* Cyan shade20 */
+    --a365-observe:#006E76;
+    --a365-govern:#BC8B00;
+    --a365-secure:#BC2F32;
+    --a365-node-fill:#FFFFFF;
+    --a365-lane-bg:rgba(255,255,255,.65);
+    --a365-arrow-dim:#A8A8A8;
+    --a365-pill-shadow:rgba(0,0,0,.08);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+.a365-app{height:720px;width:100%;display:flex;flex-direction:column;background:var(--a365-bg);color:var(--a365-text);font-family:'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;overflow:hidden;border-radius:12px;border:1px solid var(--a365-border);box-shadow:0 4px 24px rgba(0,0,0,.12);transition:background .25s ease,color .25s ease}
+
+
+  /* Header */
+.a365-app .a365-header{padding:14px 28px;border-bottom:1px solid var(--a365-border);display:flex;align-items:center;justify-content:space-between;flex-shrink:0;background:var(--a365-bg);transition:background .25s,border-color .25s}
+  .brand{display:flex;align-items:center;gap:10px}
+  .brand iconify-icon{font-size:24px}
+  .brand h1{font-size:16px;font-weight:600;letter-spacing:.2px}
+  .brand .sub{color:var(--a365-muted);font-size:12px;margin-left:8px;font-weight:400}
+  .controls{display:flex;gap:8px;align-items:center}
+  .btn{background:var(--a365-panel);border:1px solid var(--a365-border);color:var(--a365-text);padding:6px 12px;border-radius:4px;font-size:12px;cursor:pointer;display:flex;align-items:center;gap:6px;font-family:inherit;transition:border-color .15s,color .15s,background .15s}
+  .btn:hover{border-color:var(--a365-accent);color:var(--a365-accent)}
+  .btn iconify-icon{font-size:14px}
+  .hint{color:var(--a365-muted);font-size:11px}
+
+  /* Main */
+.a365-app .a365-main{flex:1;display:grid;grid-template-columns:1fr 360px;min-height:0}
+
+  /* Stage area */
+  .stage{position:relative;padding:22px 22px 18px 18px;overflow:hidden;display:flex;flex-direction:column;min-height:0}
+
+  /* Pillar header strip ,  absolute-positioned cells aligned with bands below */
+  .pillars{position:relative;height:40px;margin-bottom:6px}
+  .pillar-caps-row{position:relative;min-height:36px;margin-bottom:8px}
+  .pillar-caps{position:absolute;top:0;display:flex;flex-wrap:wrap;justify-content:center;align-items:flex-start;gap:5px 6px;padding:6px 8px}
+  .pillar-caps .cap{font-size:12px;font-weight:600;letter-spacing:.1px;padding:4px 10px;border-radius:99px;background:var(--a365-panel);border:1px solid var(--a365-border);color:var(--a365-muted);line-height:1.3;box-shadow:0 1px 3px var(--a365-pill-shadow);max-width:100%;text-align:center;overflow-wrap:break-word;word-break:break-word;box-sizing:border-box;flex-shrink:1;min-width:0}
+  .pillar-caps.observe .cap{border-color:rgba(111,201,207,.4);color:var(--a365-observe)}
+  .pillar-caps.govern .cap{border-color:rgba(255,211,148,.4);color:var(--a365-govern)}
+  .pillar-caps.secure .cap{border-color:rgba(227,125,128,.4);color:var(--a365-secure)}
+  [data-theme="light"] .pillar-caps.observe .cap{border-color:rgba(0,110,118,.4)}
+  [data-theme="light"] .pillar-caps.govern .cap{border-color:rgba(188,139,0,.4)}
+  [data-theme="light"] .pillar-caps.secure .cap{border-color:rgba(188,47,50,.4)}
+  .pillar{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:8px 8px 0 0;border:1px solid var(--a365-border);border-bottom:none}
+  .pillar iconify-icon{font-size:20px}
+  .pillar.observe{color:var(--a365-observe);background:rgba(111,201,207,.08)}
+  .pillar.govern{color:var(--a365-govern);background:rgba(255,211,148,.08)}
+  .pillar.secure{color:var(--a365-secure);background:rgba(227,125,128,.08)}
+  [data-theme="light"] .pillar.observe{background:rgba(0,110,118,.08)}
+  [data-theme="light"] .pillar.govern{background:rgba(188,139,0,.08)}
+  [data-theme="light"] .pillar.secure{background:rgba(188,47,50,.08)}
+
+  /* Lanes container, 4 lanes, leaves a 64px bottom routing channel for loop-back arrows */
+  .lanes-wrap{position:relative;flex:1;min-height:0}
+  .pillar-bg{position:absolute;top:0;border-radius:0 0 8px 8px;pointer-events:none;z-index:0;height:calc(100% - 64px)}
+  .pillar-bg.observe{background:linear-gradient(180deg,rgba(111,201,207,.06),rgba(111,201,207,.01));border:1px solid rgba(111,201,207,.18);border-top:none}
+  .pillar-bg.govern{background:linear-gradient(180deg,rgba(255,211,148,.06),rgba(255,211,148,.01));border:1px solid rgba(255,211,148,.18);border-top:none}
+  .pillar-bg.secure{background:linear-gradient(180deg,rgba(227,125,128,.06),rgba(227,125,128,.01));border:1px solid rgba(227,125,128,.18);border-top:none}
+  [data-theme="light"] .pillar-bg.observe{background:linear-gradient(180deg,rgba(0,110,118,.07),rgba(0,110,118,.02));border-color:rgba(0,110,118,.22)}
+  [data-theme="light"] .pillar-bg.govern{background:linear-gradient(180deg,rgba(188,139,0,.07),rgba(188,139,0,.02));border-color:rgba(188,139,0,.22)}
+  [data-theme="light"] .pillar-bg.secure{background:linear-gradient(180deg,rgba(188,47,50,.07),rgba(188,47,50,.02));border-color:rgba(188,47,50,.22)}
+
+  .lanes{position:relative;height:calc(100% - 64px);display:grid;grid-template-rows:repeat(4,1fr);gap:8px;z-index:1}
+  .lane{position:relative;background:var(--a365-lane-bg);backdrop-filter:blur(2px);border:1px solid var(--a365-border);border-radius:8px;padding:8px 12px 8px 104px;display:flex;align-items:center;transition:background .25s,border-color .25s;overflow:visible}
+  .lane-label{position:absolute;left:6px;top:50%;transform:translateY(-50%);width:92px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center}
+  .lane-label iconify-icon.role-icon{font-size:26px}
+  .lane-label .role{font-size:13px;font-weight:700;line-height:1.15}
+  .lane[data-color="build"] .role,.lane[data-color="build"] .role-icon{color:var(--a365-build)}
+  .lane[data-color="admin"] .role,.lane[data-color="admin"] .role-icon{color:var(--a365-admin)}
+  .lane[data-color="sec"] .role,.lane[data-color="sec"] .role-icon{color:var(--a365-sec)}
+  .lane[data-color="comp"] .role,.lane[data-color="comp"] .role-icon{color:var(--a365-comp)}
+  .lane[data-color="user"] .role,.lane[data-color="user"] .role-icon{color:var(--a365-user)}
+  .lane[data-color="build"]{border-left:3px solid var(--a365-build)}
+  .lane[data-color="admin"]{border-left:3px solid var(--a365-admin)}
+  .lane[data-color="sec"]{border-left:3px solid var(--a365-sec)}
+  .lane[data-color="comp"]{border-left:3px solid var(--a365-comp)}
+  .lane[data-color="user"]{border-left:3px solid var(--a365-user)}
+
+  /* SVG overlay for arrows */
+  .arrows{position:absolute;inset:0;pointer-events:none;z-index:2}
+
+  /* Nodes */
+  .node{position:absolute;width:210px;height:108px;background:var(--a365-node-fill);border:1.5px solid var(--a365-inactive);border-radius:12px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;cursor:pointer;opacity:0;transform:scale(0.85);transition:opacity .35s ease,transform .35s ease,border-color .2s,box-shadow .2s,background .25s;z-index:3;padding:8px;box-shadow:0 2px 8px var(--a365-pill-shadow);pointer-events:none}
+  .node.visible{opacity:1;transform:scale(1);pointer-events:auto}
+  .node.next-hint{animation:pulse 1.6s ease-in-out infinite}
+  .node:hover{border-color:var(--a365-accent);box-shadow:0 0 0 3px rgba(71,158,245,.16)}
+  .node.active{border-color:var(--a365-accent);box-shadow:0 0 0 4px rgba(71,158,245,.22), 0 0 24px rgba(71,158,245,.30)}
+  [data-theme="light"] .node:hover{box-shadow:0 0 0 3px rgba(15,108,189,.16)}
+  [data-theme="light"] .node.active{box-shadow:0 0 0 4px rgba(15,108,189,.22), 0 0 24px rgba(15,108,189,.18)}
+  .node iconify-icon.main-icon{font-size:36px;color:var(--a365-text)}
+  .node .label{font-size:14px;text-align:center;line-height:1.2;font-weight:600}
+  .node .step{position:absolute;top:-12px;left:-12px;width:30px;height:30px;background:var(--a365-accent);color:#FFFFFF;border:2px solid var(--a365-bg);border-radius:50%;font-size:14px;font-weight:700;display:flex;align-items:center;justify-content:center;z-index:1}
+
+  /* Floating sub-capability chips with light connectors */
+  .subcaps{position:absolute;left:-14px;right:-14px;display:flex;flex-wrap:wrap;justify-content:center;gap:4px 5px;pointer-events:none;opacity:0;transition:opacity .35s ease .1s;z-index:2}
+  .subcaps.above{bottom:calc(100% + 14px)}
+  .subcaps.below{top:calc(100% + 14px)}
+  .node.visible .subcaps{opacity:1}
+  .cap{font-size:10px;font-weight:600;letter-spacing:.1px;padding:3px 7px;border-radius:99px;background:var(--a365-panel);border:1px solid var(--a365-border);color:var(--a365-muted);white-space:nowrap;position:relative;line-height:1.25;box-shadow:0 1px 3px var(--a365-pill-shadow)}
+  /* Connector line */
+  .subcaps.above .cap::after{content:'';position:absolute;top:100%;left:50%;width:1px;height:14px;background:linear-gradient(180deg,var(--a365-border),transparent)}
+  .subcaps.below .cap::after{content:'';position:absolute;bottom:100%;left:50%;width:1px;height:14px;background:linear-gradient(0deg,var(--a365-border),transparent)}
+  .node:hover .cap, .node.active .cap{border-color:var(--a365-accent);color:var(--a365-text)}
+  .node:hover .subcaps.above .cap::after, .node.active .subcaps.above .cap::after{background:linear-gradient(180deg,var(--a365-accent),transparent)}
+  .node:hover .subcaps.below .cap::after, .node.active .subcaps.below .cap::after{background:linear-gradient(0deg,var(--a365-accent),transparent)}
+
+  /* Builder node, label on top, sources grid below */
+  .node.builder{width:220px;height:140px;justify-content:flex-start;padding-top:10px;gap:6px}
+  .node.builder .src-grid{display:grid;grid-template-columns:repeat(5,32px);justify-content:center;gap:10px;margin-top:2px}
+  .node.builder .src-grid iconify-icon{font-size:32px;width:32px;height:32px;opacity:.95;color:var(--a365-text)}
+  .node.builder .label{font-size:14px;font-weight:600}
+
+  @keyframes pulse{
+    0%,100%{box-shadow:0 0 0 0 rgba(71,158,245,.55)}
+    50%{box-shadow:0 0 0 12px rgba(71,158,245,0)}
+  }
+
+  /* Detail side panel */
+.a365-app .a365-aside{background:var(--a365-panel);border-left:1px solid var(--a365-border);padding:14px 16px 12px;overflow-y:auto;display:flex;flex-direction:column;gap:8px;transition:background .25s,border-color .25s;min-height:0}
+  .a365-app .a365-aside .step-num{font-size:10px;color:var(--a365-muted);letter-spacing:1.5px;text-transform:uppercase}
+  .a365-app .a365-aside h2{font-size:16px;font-weight:600;display:flex;align-items:center;gap:9px;line-height:1.2}
+  .a365-app .a365-aside h2 iconify-icon{font-size:22px;flex-shrink:0;color:var(--a365-accent)}
+  .a365-app .a365-aside .role-badge{display:inline-flex;align-items:center;gap:6px;font-size:11px;padding:3px 9px;border-radius:99px;background:var(--a365-panel-2);border:1px solid var(--a365-border);width:fit-content}
+  .a365-app .a365-aside .role-badge iconify-icon{font-size:13px}
+  .a365-app .a365-aside .where{font-size:11px;color:var(--a365-muted);background:var(--a365-panel-2);padding:6px 9px;border-radius:4px;border:1px solid var(--a365-border);display:flex;align-items:center;gap:6px}
+  .a365-app .a365-aside .where iconify-icon{font-size:13px;color:var(--a365-accent)}
+  .a365-app .a365-aside p.desc{color:var(--a365-muted);font-size:12px;line-height:1.45;margin:0}
+  .a365-app .a365-aside .actions-title{font-size:10px;color:var(--a365-muted);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px;display:flex;align-items:center;gap:6px}
+  .a365-app .a365-aside .actions-title iconify-icon{font-size:12px;color:var(--a365-accent)}
+  .action-list{display:flex;flex-direction:column;gap:4px;flex:1;min-height:0;overflow-y:auto}
+  .action{display:flex;align-items:flex-start;gap:7px;background:var(--a365-panel-2);border:1px solid var(--a365-border);border-radius:4px;padding:5px 8px;cursor:pointer;transition:border-color .15s,background .15s}
+  .action:hover{border-color:var(--a365-accent)}
+  .action iconify-icon{font-size:14px;color:var(--a365-accent);margin-top:1px;flex-shrink:0}
+  .action-text{display:flex;flex-direction:column;gap:0;min-width:0}
+  .action-name{font-size:12px;font-weight:600;color:var(--a365-text);line-height:1.3}
+  .action-desc{font-size:10px;color:var(--a365-muted);line-height:1.3}
+
+  .a365-app .a365-aside .next-cta{margin-top:6px;padding-top:8px;border-top:1px solid var(--a365-border);display:flex;flex-direction:column;gap:6px;flex-shrink:0}
+  .a365-app .a365-aside .next-cta .next-label{font-size:10px;color:var(--a365-muted);letter-spacing:1.5px;text-transform:uppercase}
+  .a365-app .a365-aside .next-cta .next-btn{display:flex;align-items:center;justify-content:space-between;gap:8px;background:var(--a365-accent);color:#FFFFFF;border:none;border-radius:4px;padding:8px 12px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:transform .12s,box-shadow .15s,background .15s;width:100%;text-align:left}
+  .a365-app .a365-aside .next-cta .next-btn:hover{transform:translateY(-1px);box-shadow:0 4px 12px rgba(71,158,245,.30)}
+  .a365-app .a365-aside .next-cta .next-btn iconify-icon{font-size:16px}
+  [data-theme="light"] .a365-app .a365-aside .next-cta .next-btn:hover{box-shadow:0 4px 12px rgba(15,108,189,.30)}
+  .a365-app .a365-aside .next-cta .back-btn{background:transparent;border:1px solid var(--a365-border);color:var(--a365-muted);border-radius:4px;padding:6px 10px;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;display:inline-flex;align-items:center;gap:4px;transition:border-color .15s,color .15s}
+  .a365-app .a365-aside .next-cta .back-btn:hover{border-color:var(--a365-accent);color:var(--a365-accent)}
+  .a365-app .a365-aside .next-cta .back-btn iconify-icon{font-size:13px}
+  .a365-app .a365-aside .next-cta .cta-row{display:flex;gap:6px;align-items:stretch}
+  .a365-app .a365-aside .next-cta .cta-row .next-btn{flex:1}
+  .a365-app .a365-aside .next-cta .next-done{font-size:12px;color:var(--a365-muted);text-align:center;padding:8px;background:var(--a365-panel-2);border:1px solid var(--a365-border);border-radius:4px}
+
+  .placeholder{color:var(--a365-muted);font-size:13px;text-align:center;margin-top:60px;line-height:1.6}
+  .placeholder b{color:var(--a365-accent)}
+
+  /* Footer */
+.a365-app .a365-footer{padding:7px 28px;border-top:1px solid var(--a365-border);font-size:11px;color:var(--a365-muted);text-align:center;flex-shrink:0;background:var(--a365-bg);transition:background .25s,border-color .25s}
+.a365-app .a365-footer a{color:var(--a365-muted);text-decoration:none;border-bottom:1px dotted var(--a365-muted)}
+.a365-app .a365-footer a:hover{color:var(--a365-accent);border-color:var(--a365-accent)}
+
+
+
+/* ============================================================
+   ============== EDITORIAL OVERRIDES (draft) =================
+   Override the original chrome/prose styles to match the
+   homepage editorial design system (index.draft.html).
+   Interactive component styles (.a365-app, .pillar-*, .lane-*,
+   .phase-card, etc.) are intentionally left untouched.
+   ============================================================ */
+
+:root {
+  --bg:           oklch(0.985 0.005 80);
+  --bg-elev:      oklch(0.965 0.006 80);
+  --bg-sunk:      oklch(0.945 0.007 80);
+  --ink:          oklch(0.20 0.012 70);
+  --ink-soft:     oklch(0.32 0.012 70);
+  --muted:        oklch(0.46 0.012 70);
+  --muted-soft:   oklch(0.60 0.012 70);
+  --hairline:     oklch(0.88 0.008 70);
+  --hairline-soft:oklch(0.93 0.008 70);
+  --accent:       oklch(0.55 0.18 245);
+  --accent-soft:  oklch(0.55 0.18 245 / 0.12);
+  --accent-ink:   oklch(0.45 0.18 245);
+  --focus:        oklch(0.55 0.18 245 / 0.45);
+  --font-display: 'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --font-sans:    'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --font-mono:    'IBM Plex Mono', ui-monospace, 'Cascadia Code', Consolas, monospace;
+  --ease-out:     cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) {
+    --bg:           oklch(0.16 0.012 70);
+    --bg-elev:      oklch(0.20 0.012 70);
+    --bg-sunk:      oklch(0.13 0.012 70);
+    --ink:          oklch(0.94 0.008 80);
+    --ink-soft:     oklch(0.84 0.008 80);
+    --muted:        oklch(0.66 0.012 70);
+    --muted-soft:   oklch(0.52 0.012 70);
+    --hairline:     oklch(0.28 0.012 70);
+    --hairline-soft:oklch(0.23 0.012 70);
+    --accent:       oklch(0.75 0.15 235);
+    --accent-soft:  oklch(0.75 0.15 235 / 0.15);
+    --accent-ink:   oklch(0.82 0.13 235);
+    --focus:        oklch(0.75 0.15 235 / 0.55);
+  }
+}
+html[data-theme="dark"] {
+  --bg:           oklch(0.16 0.012 70);
+  --bg-elev:      oklch(0.20 0.012 70);
+  --bg-sunk:      oklch(0.13 0.012 70);
+  --ink:          oklch(0.94 0.008 80);
+  --ink-soft:     oklch(0.84 0.008 80);
+  --muted:        oklch(0.66 0.012 70);
+  --muted-soft:   oklch(0.52 0.012 70);
+  --hairline:     oklch(0.28 0.012 70);
+  --hairline-soft:oklch(0.23 0.012 70);
+  --accent:       oklch(0.75 0.15 235);
+  --accent-soft:  oklch(0.75 0.15 235 / 0.15);
+  --accent-ink:   oklch(0.82 0.13 235);
+  --focus:        oklch(0.75 0.15 235 / 0.55);
+}
+
+body {
+  font-family: var(--font-sans);
+  background: var(--bg);
+  color: var(--ink);
+  font-size: 16px;
+  line-height: 1.7;
+  min-height: 100dvh;
+  font-feature-settings: 'kern', 'liga', 'calt';
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+html[data-theme="dark"] body { background: var(--bg); color: var(--ink); }
+html[data-theme="dark"] .article p,
+html[data-theme="dark"] .article li { color: var(--ink-soft); }
+html[data-theme="dark"] .article h2,
+html[data-theme="dark"] .article h3 { color: var(--ink); }
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+.skip-link {
+  position: absolute; left: -9999px; top: 8px;
+  background: var(--ink); color: var(--bg);
+  padding: 8px 14px; border-radius: 4px;
+  font-size: 13px; font-weight: 500; z-index: 1000; text-decoration: none;
+}
+.skip-link:focus { left: 16px; }
+
+.shell { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+/* --- Masthead --- */
+header.masthead {
+  padding: 28px 0 0;
+  display: flex; align-items: center; justify-content: space-between; gap: 24px;
+}
+.wordmark {
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 19px;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  text-decoration: none;
+  display: inline-flex; align-items: baseline; gap: 4px;
+}
+.wordmark::after {
+  content: '';
+  display: inline-block;
+  width: 8px; height: 14px;
+  background: var(--accent);
+  transform: translateY(2px);
+}
+.masthead .theme-toggle {
+  background: transparent;
+  border: 1px solid var(--hairline);
+  color: var(--muted);
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  flex-shrink: 0;
+  padding: 0;
+  transition: color 240ms var(--ease-out), border-color 240ms var(--ease-out), background 240ms var(--ease-out);
+}
+.masthead .theme-toggle:hover { color: var(--ink); border-color: var(--muted); background: var(--bg-elev); }
+.masthead .theme-toggle svg { width: 16px; height: 16px; }
+.masthead .theme-toggle .icon-sun  { display: none; }
+.masthead .theme-toggle .icon-moon { display: block; }
+html[data-theme="dark"] .masthead .theme-toggle .icon-sun  { display: block; }
+html[data-theme="dark"] .masthead .theme-toggle .icon-moon { display: none; }
+@media (prefers-color-scheme: dark) {
+  html:not([data-theme="light"]) .masthead .theme-toggle .icon-sun  { display: block; }
+  html:not([data-theme="light"]) .masthead .theme-toggle .icon-moon { display: none; }
+}
+
+/* --- Editorial article header --- */
+.article-header {
+  padding: 56px 0 36px;
+  max-width: 760px;
+  margin: 0 auto;
+  border-bottom: 1px solid var(--hairline);
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px; font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.18em;
+  color: var(--muted);
+  margin-bottom: 28px;
+  display: flex; align-items: center; gap: 8px;
+}
+.eyebrow a { color: var(--muted); text-decoration: none; transition: color 220ms var(--ease-out); }
+.eyebrow a:hover { color: var(--accent); }
+.eyebrow .crumb-sep { opacity: 0.5; }
+
+.article-meta {
+  display: flex; align-items: center; gap: 12px;
+  font-family: var(--font-mono);
+  font-size: 12px; color: var(--muted);
+  margin-bottom: 14px;
+}
+.article-meta .sep {
+  display: inline-block; width: 4px; height: 4px;
+  border-radius: 50%; background: var(--muted); opacity: 0.5;
+}
+.article-meta .tag {
+  text-transform: uppercase; letter-spacing: 0.12em;
+  color: var(--accent);
+}
+
+h1.article-title {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 96, 'wght' 500;
+  font-size: clamp(30px, 4.5vw, 44px);
+  line-height: 1.15;
+  letter-spacing: -0.015em;
+  color: var(--ink);
+  margin-bottom: 18px;
+  font-weight: 500;
+}
+.article-dek {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 18, 'wght' 400;
+  font-style: italic;
+  font-size: clamp(17px, 1.8vw, 19px);
+  line-height: 1.5;
+  color: var(--muted);
+  max-width: 60ch;
+  margin-bottom: 32px;
+}
+
+.byline {
+  display: flex; align-items: center; gap: 14px;
+  flex-wrap: wrap;
+  padding-top: 4px;
+}
+.byline .avatar {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--accent-soft);
+  color: var(--accent);
+  display: inline-flex; align-items: center; justify-content: center;
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: 14px;
+  letter-spacing: -0.02em;
+  flex-shrink: 0;
+}
+.byline-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.byline-name { font-size: 14px; font-weight: 500; color: var(--ink); }
+.byline-role {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+/* --- Article body (replaces .article container) --- */
+article#main { display: block; }
+
+div.article {
+  max-width: 760px;
+  margin: 0 auto;
+  padding: 40px 0 64px;
+}
+.article h2 {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 48, 'wght' 500;
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+  font-weight: 500;
+  margin: 48px 0 16px;
+}
+.article h3 {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 24, 'wght' 500;
+  font-size: 19px;
+  line-height: 1.3;
+  color: var(--ink);
+  font-weight: 500;
+  margin: 32px 0 10px;
+}
+.article p {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  line-height: 1.72;
+  color: var(--ink-soft);
+  margin-bottom: 22px;
+  max-width: 64ch;
+}
+.article ul, .article ol {
+  font-family: var(--font-sans);
+  font-size: 17px;
+  color: var(--ink-soft);
+  line-height: 1.7;
+}
+.article li { color: var(--ink-soft); }
+.article a {
+  color: var(--accent);
+  text-decoration: none;
+  background-image: linear-gradient(var(--accent), var(--accent));
+  background-size: 100% 1px;
+  background-repeat: no-repeat;
+  background-position: 0 100%;
+  padding-bottom: 1px;
+  transition: opacity 220ms var(--ease-out);
+}
+.article a:hover { opacity: 0.75; text-decoration: none; }
+.article strong { font-weight: 600; color: var(--ink); }
+.article code {
+  font-family: var(--font-mono);
+  background: var(--bg-elev);
+  border: 1px solid var(--hairline);
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-size: 0.88em;
+  color: var(--ink);
+}
+html[data-theme="dark"] .article code { background: var(--bg-elev); color: var(--ink); }
+
+/* --- Section blocks (existing pattern) --- */
+.section-block { padding: 36px 0 28px; }
+.section-block + .section-block { border-top: 1px solid var(--hairline); }
+.section-head {
+  display: flex; align-items: baseline; gap: 14px;
+  margin-bottom: 6px;
+}
+.section-num {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  color: var(--accent);
+}
+.section-head h2 {
+  font-family: var(--font-display);
+  font-variation-settings: 'opsz' 48, 'wght' 500;
+  font-size: 26px;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+}
+html[data-theme="dark"] .section-head h2 { color: var(--ink); }
+.section-desc {
+  font-family: var(--font-display);
+  font-style: italic;
+  font-variation-settings: 'opsz' 18, 'wght' 400;
+  font-size: 16px;
+  color: var(--muted);
+  font-weight: 400;
+  margin-bottom: 18px;
+}
+html[data-theme="dark"] .section-desc { color: var(--muted); }
+
+/* --- Disclaimer callout --- */
+.disclaimer {
+  background: var(--accent-soft);
+  border-left: 3px solid var(--accent);
+  padding: 16px 20px;
+  margin: 24px 0;
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--ink-soft);
+  border-radius: 0 6px 6px 0;
+}
+.disclaimer p { margin-bottom: 0; max-width: none; font-size: 15px; }
+html[data-theme="dark"] .disclaimer { background: var(--accent-soft); border-left-color: var(--accent); }
+html[data-theme="dark"] .disclaimer p { color: var(--ink-soft); }
+
+/* --- Phase cards (themed for editorial palette) --- */
+.phase-card {
+  background: var(--bg-elev);
+  border: 1px solid var(--hairline);
+  border-radius: 10px;
+}
+.phase-card h3 { color: var(--ink); font-family: var(--font-display); font-weight: 500; }
+.phase-card .phase-meta {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.phase-card p, .phase-card li { color: var(--ink-soft); }
+.phase-card .phase-row strong { color: var(--accent); }
+html[data-theme="dark"] .phase-card { background: var(--bg-elev); border-color: var(--hairline); }
+html[data-theme="dark"] .phase-card h3 { color: var(--ink); }
+html[data-theme="dark"] .phase-card .phase-meta { color: var(--muted); }
+html[data-theme="dark"] .phase-card p,
+html[data-theme="dark"] .phase-card li { color: var(--ink-soft); }
+html[data-theme="dark"] .phase-card .phase-row strong { color: var(--accent); }
+
+/* --- Sources grid links --- */
+.sources-grid a { color: var(--accent); }
+.sources-grid a:hover { color: var(--accent-ink); }
+html[data-theme="dark"] .sources-grid a { color: var(--accent); }
+html[data-theme="dark"] .sources-grid a:hover { color: var(--accent-ink); }
+
+/* --- Footer --- */
+footer.site-footer {
+  border-top: 1px solid var(--hairline);
+  padding: 24px 0 40px;
+  display: flex; align-items: center; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--muted);
+}
+footer.site-footer a { color: var(--muted); text-decoration: none; }
+footer.site-footer a:hover { color: var(--accent); }
+html[data-theme="dark"] footer.site-footer { color: var(--muted); border-color: var(--hairline); }
+html[data-theme="dark"] footer.site-footer a { color: var(--muted); }
+
+/* --- Mobile --- */
+@media (max-width: 760px) {
+  .shell { padding: 0 20px; }
+  .article-header { padding: 40px 0 28px; }
+  h1.article-title { font-size: 28px; }
+  div.article { padding: 32px 0 56px; }
+}
+
+.primary-nav { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-left: auto; margin-right: 12px; font-family: var(--font-mono, 'IBM Plex Mono', monospace); font-size: 12px; }
+.primary-nav a { color: var(--muted, #767676); text-decoration: none; }
+.primary-nav a:hover, .primary-nav a:focus-visible { color: var(--accent, #2a446f); }
+.article-byline { font-family: var(--font-mono, 'IBM Plex Mono', monospace); font-size: 13px; color: var(--muted, #767676); margin: 8px 0 24px; line-height: 1.5; }
+.article-byline a { color: inherit; text-decoration: underline; text-decoration-color: var(--hairline, #e5e5e5); text-underline-offset: 3px; }
+.article-byline a:hover { color: var(--accent, #2a446f); text-decoration-color: currentColor; }
+@media (max-width: 760px) { .primary-nav { order: 3; width: 100%; margin: 8px 0 0; } }
+
+</style>
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "TechArticle",
+  "headline": "Microsoft Agent 365: How It Fits Into Your Operating Model",
+  "description": "A walkthrough of the Microsoft Agent 365 lifecycle showing who owns what at every step: Builder, AI/IT Admin, Security Admin, and Compliance.",
+  "image": "https://contosec.com/articles/agent-365/og-image.png",
+  "datePublished": "2026-05-01",
+  "dateModified": "2026-06-02",
+  "author": {
+    "@type": "Person",
+    "name": "Carlos Suarez",
+    "url": "https://www.linkedin.com/in/csuarezro"
+  },
+  "publisher": {
+    "@type": "Person",
+    "name": "Carlos Suarez"
+  },
+  "mainEntityOfPage": "https://contosec.com/articles/agent-365/",
+  "url": "https://contosec.com/articles/agent-365/",
+  "keywords": "Microsoft Agent 365, AI agents, operating model, Microsoft security, agent governance"
+}
+</script>
+</head>
+<body>
+<a href="#main" class="skip-link">Skip to content</a>
+
+<div class="shell">
+  <header class="masthead">
+    <a class="wordmark" href="/" aria-label="Contosec home">contosec</a>
+    <nav class="primary-nav" aria-label="Primary navigation">
+      <a href="/">Home</a>
+      <a href="/#articles">Articles</a>
+      <a href="/#projects">Projects</a>
+      <a href="/about/">About</a>
+    </nav>
+    <button id="articleTheme" class="theme-toggle" type="button" aria-label="Toggle color theme">
+      <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8z"/>
+      </svg>
+      <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+        <circle cx="12" cy="12" r="4"/>
+        <path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M4.93 19.07l1.41-1.41M17.66 6.34l1.41-1.41"/>
+      </svg>
+    </button>
+  </header>
+
+<article id="main">
+  <header class="article-header">
+    <div class="eyebrow">
+      <a href="/">contosec</a>
+      <span class="crumb-sep">/</span>
+      <span>Articles</span>
+    </div>
+
+    <div class="article-meta">
+      <time datetime="2026-05">May 2026</time>
+      <span class="sep" aria-hidden="true"></span>
+      <span class="tag">Agents · Operating Model</span>
+    </div>
+
+    <h1 class="article-title">Microsoft Agent 365: How It Fits Into Your Operating Model</h1>
+
+    <p class="article-dek">An interactive walkthrough of the Agent 365 lifecycle showing who does what at every step, from Builder to AI/IT Admin to Security Admin to Compliance, and how it lands in your existing operating model.</p>
+
+      <div class="article-byline">By <a href="/about/">Carlos Suarez</a> &middot; Published May 2026 &middot; Updated June 2 2026 &middot; 13 min read</div>
+
+    <div class="byline">
+      <div class="avatar" aria-hidden="true">CS</div>
+      <div class="byline-text">
+        <span class="byline-name"><a href="https://www.linkedin.com/in/csuarezro" target="_blank" rel="noopener">Carlos Suarez</a></span>
+        <span class="byline-role">Sr. Security Solution Engineer &middot; Microsoft</span>
+      </div>
+    </div>
+  </header>
+
+<div class="article">
+
+<div class="disclaimer"><p>The views and opinions expressed here are my own and do not represent Microsoft. This content is not official Microsoft documentation and is not supported by Microsoft.</p></div>
+
+<p>Microsoft Agent 365 is finally giving organizations a single place to govern the AI agents running across their environment, but the question I keep getting on customer calls is not really about features. It is about people. Who owns the agent once it is built? Who decides if it can run? Who watches it in production? Where does my SOC fit, where does my Compliance team fit, and what does my existing IT admin actually do differently? After many years of consulting, I noticed that the first thing customers need in these conversations is not more product detail. It is a simple place to start. A picture of who does what, where each team plugs in, and how Agent 365 connects to the operating model they already have. So I tried to build the simplest possible foundation framework I could and capture it in a single diagram. The way I found it works best in a meeting is to put that diagram on the screen first, then explain the why and the how. The operating model diagram in section 01 below is that picture. The walkthrough and the commentary that follow it are the explanation. It is not official Microsoft guidance, and it is not a one-size-fits-all blueprint. Adapt it to your organization.</p>
+
+<p>A quick scope note before getting into the picture. <strong>Microsoft Agent 365</strong> is the control plane Microsoft provides to <em>observe, govern, and secure</em> the AI agents running across your Microsoft estate (Microsoft 365 Copilot, Microsoft Foundry, Copilot Studio) and the third-party agent platforms you connect to it (AWS Bedrock, Google Vertex AI, and others). It is the layer that ties together the Microsoft 365 admin center, the Agent Registry, Microsoft Entra, Microsoft Defender, and Microsoft Purview into one coordinated experience for IT and security leaders. You have probably seen the three pillars by now in every Microsoft deck and blog since the launch, so I will not pretend they are mine. Observe, Govern, and Secure come straight from the product.</p>
+
+<div class="pillar-index">
+  <div class="pi-item" style="--pi-pillar:var(--pi-observe)">
+    <div class="pi-num">01</div>
+    <div class="pi-body">
+      <div class="pi-head"><span class="pi-title">Observe</span><span class="pi-eyebrow">Visibility layer</span></div>
+      <p class="pi-copy">The centralized registry, agent activity, health, and role-tailored insights so leaders can see what is running and catch risk early.</p>
+    </div>
+  </div>
+  <div class="pi-item" style="--pi-pillar:var(--pi-govern)">
+    <div class="pi-num">02</div>
+    <div class="pi-body">
+      <div class="pi-head"><span class="pi-title">Govern</span><span class="pi-eyebrow">Guardrails layer</span></div>
+      <p class="pi-copy">Lifecycle management, permissions, policies, and the reviews that keep agents aligned with your business and audit obligations.</p>
+    </div>
+  </div>
+  <div class="pi-item" style="--pi-pillar:var(--pi-secure)">
+    <div class="pi-num">03</div>
+    <div class="pi-body">
+      <div class="pi-head"><span class="pi-title">Secure</span><span class="pi-eyebrow">Protection layer</span></div>
+      <p class="pi-copy">Entra enforces identity and risk-based access for agents, Purview protects the data agents touch, and Defender provides continuous threat detection and response on agent behavior.</p>
+    </div>
+  </div>
+</div>
+
+<p>If you also need the deep dive on the identity primitive that powers the Secure pillar, I covered that separately in the <a href="https://contosec.com/articles/entra-agent-id/">Entra Agent ID article</a>. Agent 365 is the control plane. Agent ID is one of the building blocks inside it.</p>
+
+<p>With that product context in place, here is the framework I use in customer conversations. After the diagram I walk through why each piece is there, how it maps to teams you already have, and the one thing that is genuinely new.</p>
+
+<section class="section-block">
+  <div class="section-head"><span class="section-num">01</span><h2>The framework in one picture</h2></div>
+  <p>Read it left to right as one agent's lifecycle, and top to bottom as the teams that touch it. The four horizontal lanes are the <strong>roles</strong> (Builder, AI / IT Administrator, Security Administrator, Compliance / Data Officer). The three vertical bands are the <strong>control pillars</strong> (Observe, Govern, Secure). The boxes are lifecycle moments, the arrows are handoffs, and the dashed arrow at the end is the feedback loop that keeps the cycle alive. The boxes are orientative, not a strict count, some of them (especially the ongoing lifecycle actions) expand into many real tasks once you adapt this to your own organization.</p>
+</section>
+
+</div>
+
+<div class="diagram-wrap">
+<div class="a365-app inline-mode">
+
+<header class="a365-header">
+  <div class="brand">
+    <iconify-icon icon="logos:microsoft-icon"></iconify-icon>
+    <h2>Microsoft Agent 365: Agent Lifecycle Flow</h2>
+  </div>
+  <div class="controls">
+    <span class="hint">Click each step to advance →</span>
+    <button class="btn" id="themeToggle" title="Toggle light / dark mode">
+      <iconify-icon id="themeIcon" icon="fluent:weather-moon-24-regular"></iconify-icon>
+      <span id="themeLabel">Dark</span>
+    </button>
+    <button class="btn" id="reset"><iconify-icon icon="fluent:arrow-reset-24-regular"></iconify-icon>Restart</button>
+  </div>
+</header>
+
+<main class="a365-main">
+  <div class="stage">
+    <!-- Pillar header strip ,  absolute-positioned cells -->
+    <div class="pillars" id="pillarsHeader">
+      <div class="pillar observe" id="hdrObserve"><iconify-icon icon="fluent:eye-tracking-24-filled"></iconify-icon>Observe</div>
+      <div class="pillar govern" id="hdrGovern"><iconify-icon icon="fluent:person-shield-24-filled"></iconify-icon>Govern</div>
+      <div class="pillar secure" id="hdrSecure"><iconify-icon icon="fluent:shield-checkmark-24-filled"></iconify-icon>Secure</div>
+    </div>
+
+    <!-- Per-pillar capability chips (always visible) -->
+    <div class="pillar-caps-row" id="pillarCapsRow">
+      <div class="pillar-caps observe" id="capsObserve">
+        <span class="cap">Real-time visibility</span><span class="cap">Agent Registry</span><span class="cap">Registry sync</span><span class="cap">Agent Map</span>
+      </div>
+      <div class="pillar-caps govern" id="capsGovern">
+        <span class="cap">Lifecycle management</span><span class="cap">Access control</span><span class="cap">Compliance</span><span class="cap">Permissions</span><span class="cap">Policies</span><span class="cap">Reviews</span>
+      </div>
+      <div class="pillar-caps secure" id="capsSecure">
+        <span class="cap">Microsoft Entra</span><span class="cap">Microsoft Defender</span><span class="cap">Microsoft Purview</span><span class="cap">Risk-based access</span><span class="cap">Threat detection</span><span class="cap">Information protection</span><span class="cap">DLP</span><span class="cap">Risk safeguards</span>
+      </div>
+    </div>
+
+    <div class="lanes-wrap" id="lanesWrap">
+      <!-- Pillar background bands -->
+      <div class="pillar-bg observe" id="bgObserve"></div>
+      <div class="pillar-bg govern" id="bgGovern"></div>
+      <div class="pillar-bg secure" id="bgSecure"></div>
+
+      <div class="lanes" id="lanes">
+        <div class="lane" data-color="build">
+          <div class="lane-label">
+            <iconify-icon class="role-icon" icon="fluent:bot-sparkle-24-filled"></iconify-icon>
+            <div class="role">Builder</div>
+          </div>
+        </div>
+        <div class="lane" data-color="admin">
+          <div class="lane-label">
+            <iconify-icon class="role-icon" icon="fluent:person-shield-24-filled"></iconify-icon>
+            <div class="role">AI / IT<br>Admin</div>
+          </div>
+        </div>
+        <div class="lane" data-color="sec">
+          <div class="lane-label">
+            <iconify-icon class="role-icon" icon="fluent:shield-checkmark-24-filled"></iconify-icon>
+            <div class="role">Security<br>Admin</div>
+          </div>
+        </div>
+        <div class="lane" data-color="comp">
+          <div class="lane-label">
+            <iconify-icon class="role-icon" icon="fluent:scales-24-filled"></iconify-icon>
+            <div class="role">Compliance /<br>Data Officer</div>
+          </div>
+        </div>
+      </div>
+
+      <svg class="arrows" id="arrows" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#479EF5"/>
+          </marker>
+          <marker id="arrow-dim" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+            <path d="M0,0 L10,5 L0,10 z" fill="#616161"/>
+          </marker>
+        </defs>
+      </svg>
+    </div>
+  </div>
+
+  <aside id="detail" class="a365-aside">
+    <p class="placeholder">Click <b>Step 1</b> to start the flow.<br><br>Each step shows the persona, where they act, and the actions available, sourced from Microsoft Learn.</p>
+  </aside>
+</main>
+
+<script>
+/* ============================================================
+   FLOW: 7 steps across 4 lanes, 6 columns
+   Pillar layout (each pillar = 2 cols, equal width):
+     cols 0-1   : Observe   (Agent created → Registry → loop back to Agent Map)
+     cols 2-3   : Govern    (Pending request → Lifecycle actions)
+     cols 4-5   : Secure    (Defender XDR · Purview)
+   Lanes (4): Builder · AI / IT Admin · Security Admin · Compliance Admin
+   ============================================================ */
+const TOTAL_COLS = 6;
+const LABEL_COL_PX = 104;        // width of left label strip
+const STAGE_PAD_RIGHT = 18;
+const NODE_HALF = 105;           // half of node width
+
+const NODES = [
+  { id:'n1', lane:0, col:0, xOffset:-20, step:1, type:'builder', icon:'fluent:bot-sparkle-24-filled', label:'Agent created',
+    title:'Agent is created',
+    role:'Builder', roleIcon:'fluent:bot-sparkle-24-filled',
+    where:'Foundry · Copilot Studio · SDK · ZIP · partners · Bedrock · Vertex',
+    whereIcon:'fluent:apps-list-detail-24-regular',
+    desc:'A new agent is built from any supported source. Microsoft Agent 365 auto-discovers it into the Agent Registry, no manual onboarding required.',
+    actions:[
+      {n:'Create in Foundry', d:'Build with Microsoft Foundry Agents toolkit', i:'simple-icons:microsoftazure'},
+      {n:'Create in Copilot Studio', d:'Low-code agent maker', i:'logos:microsoft-icon'},
+      {n:'Build with SDK / CLI', d:'Agent 365 SDK and CLI for developers', i:'fluent:code-24-regular'},
+      {n:'Upload custom agent (ZIP)', d:'Publish a packaged agent to the tenant', i:'fluent:arrow-upload-24-regular'},
+      {n:'External / partner agent', d:'Connect agents from partners', i:'fluent:plug-connected-24-regular'},
+      {n:'Bedrock / Vertex AI sync', d:'Registry sync from AWS or Google Cloud', i:'fluent:cloud-sync-24-regular'}
+    ],
+    next:'Auto-discovered in the Registry (Observe)' },
+
+  { id:'n2', lane:1, col:1, xOffset:-10, step:2, icon:'fluent:database-search-24-filled', label:'Auto-discovered in Registry',
+    title:'Agent Registry · Auto-Discovery',
+    role:'AI / IT Administrator', roleIcon:'fluent:person-shield-24-filled',
+    where:'Microsoft 365 admin center → Agents → All agents → Registry',
+    whereIcon:'fluent:building-shield-24-regular',
+    desc:'The agent appears in the centralized registry with source, owner, and identity. Single pane of glass for every agent across the tenant.',
+    actions:[
+      {n:'View All agents', d:'Unified registry list across platforms', i:'fluent:apps-list-24-regular'},
+      {n:'Filter by platform / publisher / status', d:'Slice by Copilot Studio, Foundry, etc.', i:'fluent:filter-24-regular'},
+      {n:'Open agent details fly-out', d:'See metadata, permissions, owner, scope', i:'fluent:document-search-24-regular'},
+      {n:'Export to Excel', d:'Export the registry list', i:'fluent:document-table-24-regular'},
+      {n:'Manage pinned agents', d:'Control which agents are pinned for users', i:'fluent:pin-24-regular'}
+    ],
+    next:'A pending request appears for the admin (Govern)' },
+
+  { id:'n3', lane:1, col:2, xOffset:-15, step:3, icon:'fluent:clipboard-task-list-ltr-24-filled', label:'Pending request',
+    title:'Pending Request',
+    role:'AI / IT Administrator', roleIcon:'fluent:person-shield-24-filled',
+    where:'Agent 365 Overview → Pending Requests card → Manage requests',
+    whereIcon:'fluent:document-bullet-list-24-regular',
+    desc:'A request card surfaces in the admin overview. Only AI Administrator, IT Administrator, or Global Administrator can act on it. Read-only roles see it but cannot decide.',
+    actions:[
+      {n:'Manage agent activation requests', d:'Open the Requests tab', i:'fluent:clipboard-task-list-ltr-24-regular'},
+      {n:'Review agent details', d:'See requester, scope, permissions', i:'fluent:document-search-24-regular'},
+      {n:'Approve request and activate', d:'Make agent available to scope', i:'fluent:checkmark-circle-24-regular'},
+      {n:'Reject request', d:'Deny activation', i:'fluent:dismiss-circle-24-regular'},
+      {n:'Reject submission', d:'Prevent publish to org store', i:'fluent:prohibited-24-regular'}
+    ],
+    next:'Admin approves and runs lifecycle actions' },
+
+  { id:'n4', lane:1, col:3, xOffset:-15, step:4, icon:'fluent:checkmark-starburst-24-filled', label:'Lifecycle actions',
+    title:'Approve, Assign Owner & Lifecycle',
+    role:'AI / IT Administrator', roleIcon:'fluent:person-shield-24-filled',
+    where:'M365 admin center → Agent details panel',
+    whereIcon:'fluent:building-shield-24-regular',
+    desc:'Admin approves and runs all governance and lifecycle actions: install, block, delete, assign owner, publish to store, manage instances. The agent is now governed.',
+    actions:[
+      {n:'Activate agent', d:'Make available to users or groups', i:'fluent:rocket-24-regular'},
+      {n:'Install / Uninstall', d:'Deploy or remove for users', i:'fluent:apps-add-in-24-regular'},
+      {n:'Assign new owner', d:'Set accountable owner', i:'fluent:person-key-24-regular'},
+      {n:'Block / Unblock', d:'Restrict use across the org', i:'fluent:shield-prohibited-24-regular'},
+      {n:'Delete', d:'Permanently remove agent and files', i:'fluent:delete-24-regular'},
+      {n:'Publish to store', d:'Make available in Agent Store', i:'fluent:store-microsoft-24-regular'},
+      {n:'Update in store', d:'Push new ZIP package', i:'fluent:arrow-sync-24-regular'},
+      {n:'Pin for users', d:'Force-pin in host UI', i:'fluent:pin-24-regular'},
+      {n:'Manage instances', d:'Block or delete individual instances', i:'fluent:layer-24-regular'},
+      {n:'Apply policy template', d:'Enforce a security template', i:'fluent:document-shield-24-regular'}
+    ],
+    next:'Security & compliance controls activate in parallel (Secure)' },
+
+  { id:'n5', lane:2, col:4, xOffset:-10, step:5, icon:'fluent:shield-checkmark-24-filled', label:'Identity & Threat Protection',
+    title:'Microsoft Entra + Defender · Identity & Threat Protection',
+    role:'Security Administrator', roleIcon:'fluent:shield-checkmark-24-filled',
+    where:'Microsoft Entra · Conditional Access · Defender XDR',
+    whereIcon:'fluent:shield-task-24-regular',
+    desc:'Microsoft Entra enforces consistent risk-based access controls for agents (Conditional Access, Entra Agent ID, ID Protection) while Microsoft Defender adds continuous threat detection and real-time protection against unsafe behaviors and malicious activity. Risky agents feed the Agents at Risk card on the Agent 365 overview.',
+    actions:[
+      {n:'Apply Conditional Access', d:'Gate agent sign-ins with CA policies', i:'fluent:shield-keyhole-24-regular'},
+      {n:'Manage Entra Agent ID', d:'Lifecycle of the agent workload identity', i:'fluent:person-key-24-regular'},
+      {n:'Review Risky Agents report', d:'Entra ID Protection risk signals', i:'fluent:warning-24-regular'},
+      {n:'Confirm compromise', d:'Mark the agent as compromised', i:'fluent:bug-prohibited-24-regular'},
+      {n:'Confirm safe / Dismiss', d:'Clear false positive', i:'fluent:checkmark-shield-24-regular'},
+      {n:'Reset agent secret', d:'Rotate credentials', i:'fluent:key-reset-24-regular'},
+      {n:'Disable agent identity', d:'Block the agent from authenticating', i:'fluent:plug-disconnected-24-regular'},
+      {n:'Investigate in Defender XDR', d:'Open the incident, hunt across signals', i:'fluent:search-info-24-regular'},
+      {n:'Real-time runtime protection', d:'Defender for Cloud Apps blocks unsafe agent behavior', i:'fluent:shield-prohibited-24-regular'}
+    ],
+    next:'Data protection also applies in parallel' },
+
+  { id:'n6', lane:3, col:4, xOffset:-10, step:6, icon:'fluent:document-lock-24-filled', label:'DLP & Information Protection',
+    title:'Microsoft Purview · DLP & Information Protection',
+    role:'Compliance / Data Officer', roleIcon:'fluent:scales-24-filled',
+    where:'Microsoft Purview portal · DSPM for AI',
+    whereIcon:'fluent:shield-keyhole-24-regular',
+    desc:'Purview applies DLP, sensitivity labels, and information protection so the agent only reads or shares authorized data. DSPM for AI provides deep visibility into data risks across agent interactions.',
+    actions:[
+      {n:'Apply DLP policy', d:'Block sensitive data exfiltration', i:'fluent:shield-error-24-regular'},
+      {n:'Apply sensitivity labels', d:'Govern label inheritance', i:'fluent:tag-24-regular'},
+      {n:'DSPM for AI', d:'Monitor agent data interactions', i:'fluent:data-pie-24-regular'},
+      {n:'Encrypt agent outputs', d:'Inherit MIP encryption rules', i:'fluent:lock-closed-24-regular'},
+      {n:'Configure adaptive protection', d:'Tighten DLP for risky users/agents', i:'fluent:shield-keyhole-24-regular'}
+    ],
+    next:'Insider Risk and Audit cover behavioral and forensic compliance' },
+
+  { id:'n7', lane:3, col:5, xOffset:-15, step:7, icon:'fluent:person-warning-24-filled', label:'Insider Risk & Audit',
+    title:'Microsoft Purview · Insider Risk & Audit',
+    role:'Compliance / Data Officer', roleIcon:'fluent:scales-24-filled',
+    where:'Microsoft Purview portal · Insider Risk Management · Audit · eDiscovery',
+    whereIcon:'fluent:history-24-regular',
+    desc:'Purview Insider Risk detects risky agent-driven behavior, Communication Compliance reviews prompts and responses, Audit captures every agent action, and eDiscovery holds and collects agent interactions for forensics or litigation.',
+    actions:[
+      {n:'Insider Risk policies', d:'Detect risky agent-driven behavior', i:'fluent:person-warning-24-regular'},
+      {n:'Communication Compliance', d:'Review prompts and responses', i:'fluent:chat-warning-24-regular'},
+      {n:'Audit agent activity', d:'Search audit log for agent actions', i:'fluent:history-24-regular'},
+      {n:'eDiscovery on agent data', d:'Hold and collect agent interactions', i:'fluent:search-24-regular'},
+      {n:'Review compliance alerts', d:'Triage agent-related signals', i:'fluent:alert-urgent-24-regular'}
+    ],
+    next:'All telemetry rolls up to Agent Map (Observe loop)' },
+
+  { id:'n8', lane:1, col:0, xOffset:-20, step:8, icon:'fluent:eye-tracking-24-filled', label:'Observe · Agent Map',
+    title:'Observe · Agent Map & Risk Insights',
+    role:'AI / IT Administrator', roleIcon:'fluent:person-shield-24-filled',
+    where:'Agent 365 Overview · Agent Map · Agents at risk card',
+    whereIcon:'fluent:data-trending-24-regular',
+    desc:'Usage, risk, and exception signals roll up into the Agent 365 Overview. Admin sees adoption, agents at risk, agents without owners, and agents with exceptions, then takes corrective action.',
+    actions:[
+      {n:'Open Agent 365 Overview', d:'Top governance cards & insights', i:'fluent:data-pie-24-regular'},
+      {n:'Open Agent Map', d:'Visual map of agents and relationships', i:'fluent:map-24-regular'},
+      {n:'Manage agent risks', d:'Filter Registry by risk', i:'fluent:warning-24-regular'},
+      {n:'Manage ownerless agents', d:'Triage and assign owners', i:'fluent:person-question-mark-24-regular'},
+      {n:'Manage exceptions', d:'Investigate failing agents', i:'fluent:error-circle-24-regular'},
+      {n:'Cross-cloud Registry sync', d:'Bedrock & Vertex AI inventory', i:'fluent:cloud-sync-24-regular'}
+    ],
+    next:'Lifecycle complete, feedback loop continues' }
+];
+
+const EDGES = [
+  ['n1','n2'], ['n2','n3'], ['n3','n4'],
+  ['n4','n5'], ['n5','n6'], ['n6','n7'],   // linear chain through Secure pillar
+  ['n7','n8','dim'],                        // dashed feedback: Insider Risk & Audit -> Agent Map
+  ['n8','n2','dim']                         // dashed feedback loop within Observe
+];
+
+const SOURCE_ICONS = [
+  'simple-icons:microsoftazure','logos:microsoft-icon','fluent:bot-24-filled',
+  'fluent:store-microsoft-24-regular','fluent:document-24-regular',
+  'fluent:share-24-regular','fluent:code-24-regular','fluent:ghost-24-regular',
+  'simple-icons:amazonaws','simple-icons:googlecloud'
+];
+
+/* ============================================================
+   THEME
+   ============================================================ */
+function applyTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  const icon = document.getElementById('themeIcon');
+  const label = document.getElementById('themeLabel');
+  if(theme === 'light'){
+    icon.setAttribute('icon','fluent:weather-sunny-24-regular');
+    label.textContent = 'Light';
+  } else {
+    icon.setAttribute('icon','fluent:weather-moon-24-regular');
+    label.textContent = 'Dark';
+  }
+  // arrow colors depend on theme ,  must mirror --accent / --arrow-dim CSS vars
+  const arrowColor = theme === 'light' ? '#0F6CBD' : '#479EF5';
+  const dimColor = theme === 'light' ? '#A8A8A8' : '#616161';
+  document.querySelectorAll('#arrows marker#arrow path').forEach(p=>p.setAttribute('fill', arrowColor));
+  document.querySelectorAll('#arrows marker#arrow-dim path').forEach(p=>p.setAttribute('fill', dimColor));
+  // restyle existing arrows
+  document.querySelectorAll('#arrows path.edge').forEach(p=>{
+    if(p.getAttribute('marker-end')==='url(#arrow)'){
+      p.setAttribute('stroke', arrowColor);
+    } else {
+      p.setAttribute('stroke', dimColor);
+    }
+  });
+}
+function initTheme(){
+  const saved = localStorage.getItem('theme');
+  if(saved){ applyTheme(saved); return; }
+  const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+  applyTheme(prefersLight ? 'light' : 'dark');
+}
+document.addEventListener('DOMContentLoaded', ()=>{
+  initTheme();
+  document.getElementById('themeToggle').addEventListener('click', ()=>{
+    const current = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = current === 'light' ? 'dark' : 'light';
+    localStorage.setItem('theme', next);
+    applyTheme(next);
+  });
+  // listen for OS theme changes
+  if(window.matchMedia){
+    const mq = window.matchMedia('(prefers-color-scheme: light)');
+    mq.addEventListener && mq.addEventListener('change', e=>{
+      if(!localStorage.getItem('theme')) applyTheme(e.matches ? 'light' : 'dark');
+    });
+  }
+});
+
+/* ============================================================
+   RENDER
+   ============================================================ */
+const lanesEl = document.getElementById('lanes');
+const lanesWrap = document.getElementById('lanesWrap');
+const arrowsEl = document.getElementById('arrows');
+const detailEl = document.getElementById('detail');
+const pillarsHeaderEl = document.getElementById('pillarsHeader');
+
+const isInline = !!document.querySelector('.a365-app.inline-mode');
+function nodeHalf(){
+  // Measure actual rendered node width so inline-mode (with narrower nodes) positions correctly.
+  const sample = document.querySelector('.node');
+  if(sample){ const w = sample.getBoundingClientRect().width; if(w > 0) return w / 2; }
+  return NODE_HALF;
+}
+function labelColPx(){
+  // In inline mode the lane label strip is narrower; measure CSS padding-left of a lane.
+  const lane = document.querySelector('.lane');
+  if(lane){ const p = parseFloat(getComputedStyle(lane).paddingLeft); if(!isNaN(p) && p > 0) return p; }
+  return LABEL_COL_PX;
+}
+function colWidth(){
+  const stageW = lanesEl.clientWidth;
+  const usable = stageW - labelColPx() - STAGE_PAD_RIGHT;
+  return usable / TOTAL_COLS;
+}
+function colCenter(col){
+  return labelColPx() + colWidth() * (col + 0.5);
+}
+function nodePosition(col){ return colCenter(col) - nodeHalf(); }
+
+function positionPillarBands(){
+  const cw = colWidth();
+  const GAP = 6;
+  // Each pillar is exactly 2 columns wide (equal widths)
+  const ranges = {
+    observe: { left: labelColPx() + cw * 0, right: labelColPx() + cw * 2 - GAP },
+    govern:  { left: labelColPx() + cw * 2, right: labelColPx() + cw * 4 - GAP },
+    secure:  { left: labelColPx() + cw * 4, right: labelColPx() + cw * 6 - GAP }
+  };
+  ['observe','govern','secure'].forEach(key=>{
+    const r = ranges[key];
+    const cap = key.charAt(0).toUpperCase() + key.slice(1);
+    const band = document.getElementById('bg' + cap);
+    const hdr  = document.getElementById('hdr' + cap);
+    const caps = document.getElementById('caps' + cap);
+    band.style.left = r.left + 'px';
+    band.style.width = (r.right - r.left) + 'px';
+    hdr.style.left = r.left + 'px';
+    hdr.style.width = (r.right - r.left) + 'px';
+    if(caps){ caps.style.left = r.left + 'px'; caps.style.width = (r.right - r.left) + 'px'; }
+  });
+  const row = document.getElementById('pillarCapsRow');
+  if(row){
+    const heights = ['Observe','Govern','Secure'].map(c => document.getElementById('caps' + c).offsetHeight);
+    row.style.height = Math.max(...heights, 36) + 'px';
+  }
+}
+
+function buildNodes(){
+  document.querySelectorAll('.node').forEach(n=>n.remove());
+  NODES.forEach(n=>{
+    const lane = lanesEl.querySelectorAll('.lane')[n.lane];
+    const node = document.createElement('div');
+    node.className = 'node' + (n.type==='builder' ? ' builder' : '');
+    node.id = n.id;
+    node.dataset.id = n.id;
+    const inlineMode = document.querySelector('.a365-app.inline-mode');
+    const xo = inlineMode ? (n.xOffset || 0) : 0;
+    node.style.left = (nodePosition(n.col) + xo) + 'px';
+    node.style.top = '50%';
+    node.style.transform = 'translateY(-50%) scale(0.85)';
+
+    let inner;
+    if(n.type==='builder'){
+      inner = `<div class="step">${n.step}</div>
+        <div class="label">${n.label}</div>
+        <div class="src-grid">${SOURCE_ICONS.map(i=>`<iconify-icon icon="${i}"></iconify-icon>`).join('')}</div>`;
+    } else {
+      inner = `<div class="step">${n.step}</div>
+        <iconify-icon icon="${n.icon}" class="main-icon"></iconify-icon>
+        <div class="label">${n.label}</div>`;
+    }
+    if(n.subs && n.subs.length){
+      const pos = n.chipsPos === 'below' ? 'below' : 'above';
+      inner += `<div class="subcaps ${pos}">${n.subs.map(s=>`<span class="cap">${s}</span>`).join('')}</div>`;
+    }
+    node.innerHTML = inner;
+    node.addEventListener('click', ()=>activate(n.id));
+    lane.appendChild(node);
+  });
+  drawArrows();
+}
+
+function drawArrows(){
+  arrowsEl.querySelectorAll('path.edge, text.edge-label').forEach(p=>p.remove());
+  const W = lanesWrap.clientWidth;
+  const H = lanesWrap.clientHeight;
+  arrowsEl.setAttribute('viewBox', `0 0 ${W} ${H}`);
+  arrowsEl.setAttribute('width', W);
+  arrowsEl.setAttribute('height', H);
+  const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const dimColor = theme === 'light' ? '#A8A8A8' : '#616161';
+
+  // Compute node geometry in coords relative to lanesWrap
+  const wrapTop = lanesWrap.getBoundingClientRect().top;
+  const wrapLeft = lanesWrap.getBoundingClientRect().left;
+  const pos = {};
+  NODES.forEach(n=>{
+    const el = document.getElementById(n.id);
+    if(!el) return;
+    const r = el.getBoundingClientRect();
+    const x = r.left - wrapLeft;
+    const y = r.top - wrapTop;
+    const w = r.width;
+    const h = r.height;
+    pos[n.id] = { x, y, w, h, cx: x + w/2, cy: y + h/2, top: y, bottom: y + h, left: x, right: x + w };
+  });
+
+  // Bottom routing channel center: vertically centered in the strip below lanes
+  const lanesBottom = lanesEl.offsetTop + lanesEl.offsetHeight;
+  const channelY = lanesBottom + (H - lanesBottom) / 2;
+
+  // Helper: build orthogonal path with sharp corners
+  function orthoForward(a, b){
+    // Going right; a is to the left of b
+    const x1 = a.right;
+    const x2 = b.left;
+    const y1 = a.cy;
+    const y2 = b.cy;
+    if(Math.abs(y1 - y2) < 2){
+      // Same lane, straight horizontal
+      return `M ${x1} ${y1} L ${x2} ${y2}`;
+    }
+    // If boxes overlap horizontally (e.g., same column, stacked vertically),
+    // exit bottom of a and enter top of b straight down to avoid a Z-loop.
+    if(x2 < x1){
+      const cx = (a.cx + b.cx) / 2;
+      return `M ${a.cx} ${a.bottom} V ${b.top}`;
+    }
+    // Cross-lane: exit right, horizontal to midX, vertical to target row, horizontal to enter target
+    const midX = x1 + (x2 - x1) / 2;
+    return `M ${x1} ${y1} H ${midX} V ${y2} H ${x2}`;
+  }
+
+  function orthoLoopBack(a, b){
+    // Going left/back via bottom channel
+    // Exit LEFT side of a, run a short stub left, drop to channel, run to b's column, rise to b's bottom.
+    // Exiting from the left (not bottom-center) prevents the loop arrow from visually overlapping
+    // any incoming vertical arrow at the top of a (e.g., n5->n6 followed by n6->n7).
+    const stub = 24;
+    const x1 = a.left;
+    const x2 = b.cx;
+    const y1 = a.cy;
+    const y2 = b.bottom;
+    const dropX = a.left - stub;
+    return `M ${x1} ${y1} H ${dropX} V ${channelY} H ${x2} V ${y2}`;
+  }
+
+  function orthoFeedbackUnder(a, b){
+    // Dashed feedback: exit BOTTOM of a, drop to channel, run to b's column, rise to b's bottom.
+    const x1 = a.cx;
+    const x2 = b.cx;
+    const y1 = a.bottom;
+    const y2 = b.bottom;
+    return `M ${x1} ${y1} V ${channelY} H ${x2} V ${y2}`;
+  }
+
+  function orthoSameLaneFeedback(a, b){
+    // Same-lane dashed feedback: horizontal connection from right side of a to left side of b.
+    // Assumes a is to the left of b (and they're in the same row).
+    return `M ${a.right} ${a.cy} L ${b.left} ${b.cy}`;
+  }
+
+  function orthoEnterTop(a, b){
+    // Forward arrow that enters the TOP of b (instead of the side).
+    // Exit the right of a, run horizontal to b.cx, then drop straight down into top of b.
+    const x1 = a.right;
+    const y1 = a.cy;
+    return `M ${x1} ${y1} H ${b.cx} V ${b.top}`;
+  }
+
+  EDGES.forEach(([from, to, mod])=>{
+    const a = pos[from];
+    const b = pos[to];
+    if(!a || !b) return;
+
+    let d;
+    if(from === 'n1' && to === 'n2'){
+      d = orthoEnterTop(a, b);
+    } else if(mod === 'dim' && Math.abs(a.cy - b.cy) < 4){
+      // same-lane dashed feedback: horizontal connection
+      d = orthoSameLaneFeedback(a, b);
+    } else if(mod === 'dim'){
+      // cross-lane dashed feedback: under via bottom channel, exits/enters from bottom
+      d = orthoFeedbackUnder(a, b);
+    } else if(b.cx < a.cx){
+      d = orthoLoopBack(a, b);
+    } else {
+      d = orthoForward(a, b);
+    }
+
+    const p = document.createElementNS('http://www.w3.org/2000/svg','path');
+    p.setAttribute('d', d);
+    p.classList.add('edge');
+    p.dataset.from = from;
+    p.dataset.to = to;
+    p.setAttribute('fill','none');
+    p.setAttribute('stroke-linejoin','round');
+    p.setAttribute('stroke-linecap','round');
+    if(mod === 'dim'){
+      p.setAttribute('stroke', dimColor);
+      p.setAttribute('stroke-width','1.4');
+      p.setAttribute('stroke-dasharray','5 5');
+      p.setAttribute('marker-end','url(#arrow-dim)');
+    } else {
+      p.setAttribute('stroke', dimColor);
+      p.setAttribute('stroke-width','1.8');
+      p.setAttribute('marker-end','url(#arrow-dim)');
+    }
+    p.style.opacity = '0';
+    p.style.transition = 'opacity .35s ease, stroke .25s ease';
+    arrowsEl.appendChild(p);
+
+    // Add "feedback" label only for short same-lane dashed loops
+    if(mod === 'dim' && Math.abs(a.cy - b.cy) < 4){
+      const labelX = (a.right + b.left) / 2;
+      const labelY = a.cy - 6;
+      const t = document.createElementNS('http://www.w3.org/2000/svg','text');
+      t.setAttribute('x', labelX);
+      t.setAttribute('y', labelY);
+      t.setAttribute('text-anchor','middle');
+      t.setAttribute('font-size','10');
+      t.setAttribute('font-family','"IBM Plex Mono", ui-monospace, monospace');
+      t.setAttribute('font-weight','600');
+      t.setAttribute('letter-spacing','1');
+      t.setAttribute('fill', dimColor);
+      t.style.textTransform = 'uppercase';
+      t.textContent = 'FEEDBACK';
+      t.dataset.from = from;
+      t.dataset.to = to;
+      t.classList.add('edge-label');
+      t.style.opacity = '0';
+      t.style.transition = 'opacity .35s ease, fill .25s ease';
+      arrowsEl.appendChild(t);
+    }
+  });
+}
+
+/* ============================================================
+   STATE
+   ============================================================ */
+let revealed = new Set();
+let activeId = null;
+
+function reveal(id){
+  if(revealed.has(id)) return;
+  revealed.add(id);
+  const el = document.getElementById(id);
+  if(el) el.classList.add('visible');
+  const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const arrowColor = theme === 'light' ? '#0F6CBD' : '#479EF5';
+  arrowsEl.querySelectorAll(`path.edge[data-to="${id}"]`).forEach(p=>{
+    if(revealed.has(p.dataset.from) && p.dataset.to === id){
+      const isDim = EDGES.find(e=>e[0]===p.dataset.from && e[1]===p.dataset.to && e[2]==='dim');
+      if(!isDim){
+        p.style.opacity = '1';
+        p.setAttribute('stroke', arrowColor);
+        p.setAttribute('marker-end','url(#arrow)');
+      } else {
+        p.style.opacity = '1';
+      }
+    }
+  });
+  arrowsEl.querySelectorAll(`path.edge[data-from="${id}"]`).forEach(p=>{
+    if(revealed.has(p.dataset.to)){
+      const isDim = EDGES.find(e=>e[0]===p.dataset.from && e[1]===p.dataset.to && e[2]==='dim');
+      if(!isDim){
+        p.style.opacity = '1';
+        p.setAttribute('stroke', arrowColor);
+        p.setAttribute('marker-end','url(#arrow)');
+      } else {
+        p.style.opacity = '1';
+      }
+    }
+  });
+  arrowsEl.querySelectorAll('text.edge-label').forEach(t=>{
+    if(revealed.has(t.dataset.from) && revealed.has(t.dataset.to)){
+      t.style.opacity = '1';
+    }
+  });
+}
+
+function rewindTo(step){
+  NODES.forEach(n=>{
+    if(n.step > step){
+      revealed.delete(n.id);
+      const el = document.getElementById(n.id);
+      if(el) el.classList.remove('visible','active','next-hint');
+    }
+  });
+  arrowsEl.querySelectorAll('path.edge').forEach(p=>{
+    if(!revealed.has(p.dataset.from) || !revealed.has(p.dataset.to)){
+      p.style.opacity = '0';
+      p.removeAttribute('marker-end');
+    }
+  });
+  arrowsEl.querySelectorAll('text.edge-label').forEach(t=>{
+    if(!revealed.has(t.dataset.from) || !revealed.has(t.dataset.to)){
+      t.style.opacity = '0';
+    }
+  });
+}
+
+function activate(id){
+  const node = NODES.find(n=>n.id===id);
+  if(!node) return;
+  rewindTo(node.step);
+  reveal(id);
+  document.querySelectorAll('.node.active').forEach(n=>n.classList.remove('active'));
+  document.querySelectorAll('.node.next-hint').forEach(n=>n.classList.remove('next-hint'));
+  const el = document.getElementById(id);
+  if(el) el.classList.add('active');
+  activeId = id;
+  renderDetail(node);
+}
+
+function nextNodeFor(id){
+  const cur = NODES.find(n=>n.id===id);
+  if(!cur) return null;
+  const next = NODES.find(n=>n.step === cur.step + 1);
+  return next ? next.id : null;
+}
+
+function advance(){
+  if(!activeId) return;
+  const nextId = nextNodeFor(activeId);
+  if(!nextId) return;
+  activate(nextId);
+}
+
+function renderDetail(n){
+  const actionsHtml = (n.actions || []).map(a=>`
+    <div class="action">
+      <iconify-icon icon="${a.i}"></iconify-icon>
+      <div class="action-text">
+        <div class="action-name">${a.n}</div>
+        <div class="action-desc">${a.d}</div>
+      </div>
+    </div>`).join('');
+
+  const nextId = nextNodeFor(n.id);
+  const nextNode = nextId ? NODES.find(x=>x.id===nextId) : null;
+  const prevId = prevNodeFor(n.id);
+  const backBtnHtml = prevId
+    ? `<button class="back-btn" id="backBtn"><iconify-icon icon="fluent:arrow-left-24-regular"></iconify-icon>Back</button>`
+    : '';
+  const nextHtml = nextNode
+    ? `<div class="next-cta">
+         <div class="next-label">Next step</div>
+         <div class="cta-row">
+           ${backBtnHtml}
+           <button class="next-btn" id="nextBtn">
+             <span>Step ${nextNode.step}: ${nextNode.title}</span>
+             <iconify-icon icon="fluent:arrow-right-24-filled"></iconify-icon>
+           </button>
+         </div>
+       </div>`
+    : `<div class="next-cta">
+         <div class="cta-row">
+           ${backBtnHtml}
+           <div class="next-done" style="flex:1">Lifecycle complete. Click <b>Restart</b> to start over.</div>
+         </div>
+       </div>`;
+
+  detailEl.innerHTML = `
+    <div class="step-num">Step ${n.step} of ${NODES.length}</div>
+    <h2><iconify-icon icon="${n.icon}"></iconify-icon>${n.title}</h2>
+    <div class="role-badge"><iconify-icon icon="${n.roleIcon}"></iconify-icon>${n.role}</div>
+    <div class="where"><iconify-icon icon="${n.whereIcon}"></iconify-icon>${n.where}</div>
+    <p class="desc">${n.desc}</p>
+    <div class="actions-title"><iconify-icon icon="fluent:cursor-click-24-regular"></iconify-icon>Actions</div>
+    <div class="action-list">${actionsHtml}</div>
+    ${nextHtml}
+  `;
+  const btn = document.getElementById('nextBtn');
+  if(btn) btn.addEventListener('click', advance);
+  const back = document.getElementById('backBtn');
+  if(back) back.addEventListener('click', goBack);
+}
+
+function prevNodeFor(id){
+  const cur = NODES.find(n=>n.id===id);
+  if(!cur || cur.step <= 1) return null;
+  const prev = NODES.find(n=>n.step === cur.step - 1);
+  return prev ? prev.id : null;
+}
+
+function goBack(){
+  if(!activeId) return;
+  const prevId = prevNodeFor(activeId);
+  if(!prevId) return;
+  activate(prevId);
+}
+
+function reset(){
+  revealed.clear();
+  activeId = null;
+  const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const dimColor = theme === 'light' ? '#A8A8A8' : '#616161';
+  document.querySelectorAll('.node').forEach(n=>{
+    n.classList.remove('visible','active','next-hint');
+  });
+  arrowsEl.querySelectorAll('path.edge').forEach(p=>{
+    p.style.opacity = '0';
+    p.setAttribute('stroke', dimColor);
+    p.setAttribute('marker-end','url(#arrow-dim)');
+  });
+  arrowsEl.querySelectorAll('text.edge-label').forEach(t=>{
+    t.style.opacity = '0';
+    t.setAttribute('fill', dimColor);
+  });
+  const first = document.getElementById('n1');
+  if(first){
+    first.classList.add('visible','next-hint');
+    revealed.add('n1');
+  }
+  detailEl.innerHTML = `<p class="placeholder">Click <b>Step 1</b> to start the flow.<br><br>Each step shows the persona, where they act, and the actions available, sourced from Microsoft Learn.</p>`;
+}
+
+function relayout(){
+  positionPillarBands();
+  const inlineMode = document.querySelector('.a365-app.inline-mode');
+  // reposition existing nodes without rebuilding
+  NODES.forEach(n=>{
+    const el = document.getElementById(n.id);
+    const xo = inlineMode ? (n.xOffset || 0) : 0;
+    if(el) el.style.left = (nodePosition(n.col) + xo) + 'px';
+  });
+  drawArrows();
+  // re-apply visible state to revealed arrows/nodes
+  revealed.forEach(id=>{
+    const el = document.getElementById(id);
+    if(el) el.classList.add('visible');
+  });
+  const theme = document.documentElement.getAttribute('data-theme') || 'dark';
+  const arrowColor = theme === 'light' ? '#0F6CBD' : '#479EF5';
+  arrowsEl.querySelectorAll('path.edge').forEach(p=>{
+    if(revealed.has(p.dataset.from) && revealed.has(p.dataset.to)){
+      const isDim = EDGES.find(e=>e[0]===p.dataset.from && e[1]===p.dataset.to && e[2]==='dim');
+      p.style.opacity = '1';
+      if(!isDim){
+        p.setAttribute('stroke', arrowColor);
+        p.setAttribute('marker-end','url(#arrow)');
+      }
+    }
+  });
+  if(activeId){
+    const el = document.getElementById(activeId);
+    if(el) el.classList.add('active');
+  } else {
+    const first = document.getElementById('n1');
+    if(first) first.classList.add('next-hint');
+  }
+}
+
+function init(){
+  positionPillarBands();
+  buildNodes();
+  reset();
+}
+
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{
+    init();
+    // Inline article view: reveal all 8 steps so the diagram reads as a complete static picture.
+    const inlineApp = document.querySelector('.a365-app.inline-mode');
+    if(inlineApp){
+      setTimeout(()=>{
+        try {
+          NODES.forEach(n => reveal(n.id));
+          if(typeof relayout === 'function') relayout();
+          // Inline mode: no active/pulse state, this is a static picture
+          document.querySelectorAll('.a365-app.inline-mode .node.next-hint, .a365-app.inline-mode .node.active')
+            .forEach(n => n.classList.remove('next-hint','active'));
+        } catch(err){}
+      }, 80);
+    }
+  }, 50);
+});
+
+// resize / zoom handling: ResizeObserver fires on layout changes including browser zoom
+let _resizeTimer;
+function scheduleRelayout(){
+  clearTimeout(_resizeTimer);
+  _resizeTimer = setTimeout(relayout, 60);
+}
+window.addEventListener('resize', scheduleRelayout);
+if(window.ResizeObserver){
+  const ro = new ResizeObserver(scheduleRelayout);
+  ro.observe(lanesEl);
+}
+if(window.visualViewport){
+  window.visualViewport.addEventListener('resize', scheduleRelayout);
+}
+
+document.getElementById('reset').addEventListener('click', reset);
+
+// Keyboard navigation: ArrowLeft = Back, ArrowRight = Next
+document.addEventListener('keydown', (e)=>{
+  if(e.target && (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA')) return;
+  if(e.key === 'ArrowRight'){ e.preventDefault(); if(activeId) advance(); else activate('n1'); }
+  else if(e.key === 'ArrowLeft'){ e.preventDefault(); if(activeId) goBack(); }
+});
+</script>
+
+
+</div>
+</div>
+<div class="diagram-aftermath">
+  <p class="diagram-caption">The static picture is the map. If you want the step-by-step version with the actions, the admin surfaces where each one happens, and the related Microsoft Learn references, use the interactive walkthrough.</p>
+  <div class="picture-cta-row">
+    <a class="picture-cta" href="walkthrough.html" target="_blank" rel="noopener">
+      <iconify-icon icon="fluent:cursor-click-24-regular"></iconify-icon>
+      Open the interactive walkthrough
+      <span class="arrow">↗</span>
+    </a>
+  </div>
+</div>
+
+<div class="article">
+
+<p>The reason I keep coming back to this framework in customer meetings is that it changes the conversation from "what do we have to build" to "who already does this work." The honest answer for most organizations is that the roles already exist in some form. There are people building. There is somebody running the tenant. There is an <strong>IAM team</strong> that owns Entra and Conditional Access. There is a <strong>SOC</strong> that triages incidents in Defender XDR. There is somebody owning Purview, audit, and eDiscovery. What Agent 365 does is hand each of those teams one more thing to look at inside the tools they already use, and connect those tools to each other through the registry. There is no new platform to stand up and no new team to staff.</p>
+
+<p>That said, this framework is intentionally generic. Every organization is different. In some companies the AI / IT Admin and the IAM team are the same person. In others the SOC and the IAM team report into completely different parts of security, and the Compliance Officer reports up through Legal rather than IT, so the approval queue and the policy ownership have to route differently. In regulated environments there may be a separate risk function that wants a seat at the Govern step. The point of the diagram is not to dictate the structure. The point is to give you a baseline picture you can put in front of your own teams and then redraw together. Ask each lane "who in our org is this?" and "do we want it to be?" The answers will not always match the labels I used, and that is exactly the conversation worth having.</p>
+
+<p>If I had to point to the one thing that is genuinely new for most organizations, it would be the <strong>approval queue</strong> behavior in the Govern pillar. Whoever ends up owning that queue (call them the AI / IT Admin, call them whatever fits your structure) becomes the choke point that determines whether agents enter production with intent or by accident. Get that one decision right and the rest of the framework starts to take care of itself.</p>
+
+<section class="section-block">
+  <div class="section-head"><span class="section-num">02</span><h2>Walking the lifecycle</h2></div>
+  <p>The diagram tells the story of one agent moving through the lifecycle. The clearest way to read it is to follow that story in three movements, one for each pillar. The first movement is about <em>seeing</em> the agent. The second is about <em>deciding</em> what happens to it. The third is about <em>protecting</em> it once it runs. Everything ends in a feedback loop that brings the story back to the beginning. The steps you see are orientative, not exhaustive. Some of them (lifecycle actions especially) expand into many real-world tasks once you take this into your own operating model. Treat the diagram as a map, not a checklist.</p>
+
+  <h3>Observe: the agent appears and gets catalogued</h3>
+  <p>Everything starts with the <strong>Builder</strong>. A developer publishes an agent from Microsoft Foundry, a business user puts something together in Copilot Studio, somebody uploads a packaged ZIP, or a sync brings in an agent from AWS Bedrock or Google Vertex AI. From the Builder's point of view nothing changes about how they work. They use the tool they already use, click publish, and they are done. What is new is what happens on the other side. The agent is immediately picked up by the <strong>Agent Registry</strong> inside the Microsoft 365 admin center, with its source, its owner, and its identity attached. This is the single pane of glass for every agent in the tenant, and it shows up without the Builder having to file a ticket or fill out a form. The <strong>AI / IT Administrator</strong> sees the new agent the moment it exists.</p>
+  <p>If you map this to your existing operating model, the Agent Registry slots next to your existing app inventory. The same person who today reviews new SaaS apps in your tenant is usually the right person to review new agents. The cadence is where agents diverge from apps. Manual approval per agent does not scale, so lean on <strong>Agent Management Rules</strong> to handle the long tail in bulk (ownerless, low-risk, policy-clean) and keep the AI / IT Admin's time for the exceptions.</p>
+
+  <h3>Govern: someone has to say yes</h3>
+  <p>An agent that has been discovered is not an agent that has been allowed. The next two steps live in the <strong>Govern</strong> pillar and they are where most of the policy conversation actually happens. The new agent lands in a <strong>Pending</strong> queue and cannot move data in production until somebody approves it. Only the <strong>AI / IT Administrator</strong> (or Global Administrator as the backstop) can act on that queue, which is the deliberate control point you want. From there the same admin decides to install (approve), block, or delete the agent, and assigns a named business owner. That owner is who you call when something goes wrong and who is accountable for the agent's behavior. The lifecycle actions never end. Retiring an agent later, transferring its ownership, changing its scope, all of that comes back through the same admin and the same surface.</p>
+  <p>If you already approve new SaaS apps or new Teams apps in your tenant, you already have the workflow. Reuse it. The first addition worth making to your SOP is the line that says "assign a named owner before approving." Without that line, agents drift, and a year from now nobody remembers which team owns what. The second addition only applies if the agent is third-party (synced from AWS Bedrock, Google Vertex AI, or another platform): confirm someone has provisioned an <strong>Entra Agent ID</strong> for it before approving. Native Microsoft agents have this provisioned automatically at publish time. Third-party agents do not, and an approved agent without an identity loses every downstream control. I cover the why and how of this in the Secure section below.</p>
+
+  <h3>Secure: identity, threat protection, and data protection</h3>
+  <p>Secure is the part of the picture where the Microsoft story actually separates from the rest of the industry. The Secure pillar is not three different vendors that you have to integrate yourself. Entra, Defender, and Purview are <strong>one platform</strong>: the identity signal from Entra feeds the threat detection in Defender, the data classification from Purview feeds both Conditional Access and DLP, and the agent registry from Agent 365 ties all of it back to a single principal that every tool already understands. If you tried to build the same picture with point products from different vendors (an identity provider over here, an XDR over there, a separate DLP and a separate AI posture tool), you would spend the next eighteen months stitching connectors and reconciling identifiers. With Agent 365 it is wired up out of the box, which is the part most customers ask me to confirm when they see the diagram for the first time.</p>
+  <p>Once an agent is approved, it starts to look exactly like any other identity in the tenant. The <strong>Security Administrator</strong> lane in the diagram is intentionally one box, but in most real organizations that lane is two separate teams. The <strong>IAM / Identity team</strong> owns <strong>Microsoft Entra</strong>, which means they own the agent as an identity primitive: <strong>Entra Agent ID</strong> issues each agent a first-class principal, <strong>Conditional Access</strong> policies decide where and when the agent can authenticate, and <strong>Entra ID Governance</strong> handles access reviews and lifecycle. The same team that today owns Conditional Access for users owns it for agents tomorrow. In parallel, the <strong>SOC</strong> works the agent through <strong>Microsoft Defender XDR</strong>. Agent-related alerts and incidents land in the same queue the SOC already triages for users and devices, with the same severity, ownership, and response playbooks. There is no new console, no new on-call rotation, and no separate ticketing path. If you already have a Tier 1 / Tier 2 triage model in Defender, agents slot into it.</p>
+  <p>One important note for organizations bringing in third-party agents, and this is the deeper version of the SOP item I flagged under Govern. For native Microsoft agents (Microsoft 365 Copilot, Microsoft Foundry, Copilot Studio), the Entra Agent ID is provisioned for you as part of the publish flow. For third-party agents synced into the registry from platforms like AWS Bedrock or Google Vertex AI, that step is not automatic. Registry sync brings the agent into view inside the Agent Registry, but the agent does not get an Entra Agent ID until it is integrated through the <strong>Agent 365 SDK</strong> and configured against Entra (the sidecar pattern for Bedrock, federation patterns for others). The practical implication is the SOP control I mentioned earlier: before the AI / IT Admin approves a third-party agent, confirm that the Entra Agent ID has been provisioned. You want every approved agent to have a real identity before it starts authenticating and acting on data, otherwise everything downstream (Conditional Access, Defender signals, Purview audit) loses the principal it is supposed to enforce against.</p>
+  <p>In parallel, the <strong>Compliance or Data Officer</strong> takes over the data side of the agent through <strong>Microsoft Purview</strong>. A lot of what you already have keeps working. Agents run in the user's context, so the SharePoint, Exchange, and Teams DLP policies that already block a user from sharing sensitive content also apply when an agent acts on that user's behalf. Sensitivity labels with encryption are honored automatically, which means an agent cannot read content the user is not allowed to decrypt. The sensitive info types and trainable classifiers your team already maintains are the same primitives you reuse for agent-scoped policies. What is new is an additional layer on top of all of that. <strong>DLP for agents</strong> uses a dedicated <em>Microsoft 365 Copilot</em> location in Purview DLP so you can govern what an agent is allowed to process and what it can return in a response based on label, even when the user technically has access. <strong>DSPM for AI</strong> is its own surface in Purview that gives you the visibility into which agents are touching labeled content and how often. <strong>Insider Risk Management</strong> brings in a new <em>Risky Agents</em> policy template that watches for risky prompts, sensitive outputs, and risky data access by agents on Copilot Studio, Microsoft Foundry, and Agent 365. The honest framing for the Data Officer is this. Your existing controls do inherit, but the new agent-scoped surfaces (Copilot DLP location, DSPM for AI, Risky Agents IRM template) are where you tune the policies that are specific to AI. The good news is they live in the same Purview portal, the same audit log, and the same eDiscovery flow the team already uses for users. If your IRM program exists, agents are a new signal source inside it. If it does not exist, this is a good reason to start.</p>
+
+
+  <h3>Back to Observe: closing the loop</h3>
+  <p>The final step in the diagram is the <strong>Agent Map and Risk Insights</strong> view, which is the closing-the-loop dashboard. The AI / IT Administrator monitors it, the Security Admin and Compliance Officer act on what shows up there, and findings can move an agent right back into the Govern flow, into a tighter policy, or in the worst case into a Block or Delete action. The dashed arrow in the diagram that goes from step 8 back to step 2 is intentional. Discovery never stops. New agents keep landing in the registry while older approved agents keep generating new risk insights. The lifecycle is a loop, not a one-time onboarding checklist. The practical implication is small but worth being explicit about. The cadence I recommend is <strong>quarterly for high-risk agents, annual for the rest</strong>. Inventory itself should run on automated scanning, not a calendar review. Name the AI / IT Admin as the standing owner of that queue, and let the rules do the day-to-day work.</p>
+</section>
+
+</div></article>
+
+  <footer class="site-footer">
+    <span>© <span id="year"></span> Contosec</span>
+  </footer>
+</div>
+
+<script>document.getElementById('year').textContent = new Date().getFullYear();</script>
+<script>
+(function(){
+  const KEY = 'theme';
+  function setTheme(t){
+    document.documentElement.setAttribute('data-theme', t);
+    try { localStorage.setItem(KEY, t); } catch(e){}
+    const btn = document.getElementById('articleTheme');
+    if(btn){
+      btn.querySelector('.theme-label').textContent = t === 'light' ? 'Dark' : 'Light';
+      btn.querySelector('iconify-icon').setAttribute('icon', t === 'light' ? 'fluent:weather-moon-24-regular' : 'fluent:weather-sunny-24-regular');
+    }
+  }
+  function initArticleTheme(){
+    let saved;
+    try { saved = localStorage.getItem(KEY); } catch(e){}
+    if(!saved){
+      const prefersLight = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;
+      saved = prefersLight ? 'light' : 'dark';
+    }
+    setTheme(saved);
+  }
+  document.addEventListener('DOMContentLoaded', function(){
+    initArticleTheme();
+    const btn = document.getElementById('articleTheme');
+    btn.addEventListener('click', function(){
+      const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+      const next = cur === 'light' ? 'dark' : 'light';
+      setTheme(next);
+      // Sync the in-diagram toggle so its label/icon updates too
+      const inner = document.getElementById('themeToggle');
+      if(inner){
+        const lbl = inner.querySelector('#themeLabel');
+        const ico = inner.querySelector('#themeIcon');
+        if(lbl) lbl.textContent = next === 'light' ? 'Dark' : 'Light';
+        if(ico) ico.setAttribute('icon', next === 'light' ? 'fluent:weather-moon-24-regular' : 'fluent:weather-sunny-24-regular');
+      }
+      // Trigger diagram's arrow-color refresh (its applyTheme reads attribute already set)
+      window.dispatchEvent(new Event('a365-theme-changed'));
+    });
+  });
+  // Hook for diagram script
+  window.addEventListener('a365-theme-changed', function(){
+    if(typeof window.__a365_applyTheme === 'function'){
+      window.__a365_applyTheme(document.documentElement.getAttribute('data-theme'));
+    }
+  });
+})();
+</script>
+
+</body>
+</html>
