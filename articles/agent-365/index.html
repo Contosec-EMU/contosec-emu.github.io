@@ -12,7 +12,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap">
 <title>Microsoft Agent 365: How It Fits Into Your Operating Model</title>
-<meta name="description" content="A walkthrough of the Microsoft Agent 365 lifecycle showing who owns what at every step: Builder, AI/IT Admin, Security Admin, and Compliance.">
+<meta name="description" content="A walkthrough of the Microsoft Agent 365 lifecycle showing how Builders, AI/IT Administrators, Security, Compliance, and Business Leadership operate agents continuously.">
 <meta property="og:title" content="Microsoft Agent 365: How It Fits Into Your Operating Model">
 <meta property="og:description" content="An interactive walkthrough of the Microsoft Agent 365 lifecycle showing who does what at every step and how it lands in your operating model.">
 <meta property="og:type" content="article">
@@ -87,17 +87,31 @@ html[data-theme="dark"] .section-desc { color: #4ec3a0; }
 
 .diagram-wrap { max-width: 1080px; margin: 24px auto 8px; padding: 0 24px; }
 .article:has(+ .diagram-wrap) { padding-bottom: 0; }
+.diagram-wrap.legacy-diagram { display: none; }
+.loop-overview-frame { width: 100%; height: 675px; display: block; border: 1px solid #3a3f4a; border-radius: 10px; background: #0f1419; }
+@media (min-width: 1101px) {
+  .diagram-wrap {
+    width: min(1248px, calc(100vw - 48px));
+    max-width: none;
+    box-sizing: border-box;
+    margin-left: 50%;
+    transform: translateX(-50%);
+  }
+}
+@media (max-width: 700px) {
+  .loop-overview-frame { height: 1160px; }
+}
 
 .pillar-index {
   --pi-text:#1a1a1a; --pi-muted:#555; --pi-rule:rgba(0,0,0,.10);
-  --pi-observe:#006E76; --pi-govern:#8A6500; --pi-secure:#BC2F32;
+  --pi-observe:#006E76; --pi-govern:#8A6500; --pi-secure:#BC2F32; --pi-value:#5C2E91;
   max-width: 760px; margin: 10px auto 24px;
   font-family: inherit;
 }
 .pillar-index * { font-family: inherit; }
 html[data-theme="dark"] .pillar-index {
   --pi-text:#f5f5f5; --pi-muted:#c8c8c8; --pi-rule:rgba(255,255,255,.14);
-  --pi-observe:#6FC9CF; --pi-govern:#FFD394; --pi-secure:#E37D80;
+  --pi-observe:#6FC9CF; --pi-govern:#FFD394; --pi-secure:#E37D80; --pi-value:#B4A0FF;
 }
 .pi-item { position:relative; display:grid; grid-template-columns: 3.4rem 1fr; gap: .9rem; padding: .65rem 0; border-top: 1px solid var(--pi-rule); align-items:baseline; }
 .pi-item:last-child { border-bottom: 1px solid var(--pi-rule); }
@@ -110,7 +124,7 @@ html[data-theme="dark"] .pillar-index {
 @media (max-width: 680px) { .pi-item { grid-template-columns: 1fr; gap: .25rem; } }
 
 /* Inline-mode picture treatment: make the diagram look like a static full picture, not an interactive widget */
-.a365-app.inline-mode { height: 580px !important; font-size: 13px; }
+.a365-app.inline-mode { height: 680px !important; font-size: 13px; }
 .a365-app.inline-mode .a365-main { grid-template-columns: 1fr !important; }
 .a365-app.inline-mode .a365-aside { display: none !important; }
 .a365-app.inline-mode .controls .hint,
@@ -137,6 +151,12 @@ html[data-theme="dark"] .pillar-index {
 .a365-app.inline-mode .lane-label iconify-icon.role-icon { font-size: 20px !important; }
 .a365-app.inline-mode .lane { padding-left: 90px !important; }
 .a365-app.inline-mode .stage { padding: 14px 14px 12px 12px !important; }
+@media (max-width: 1100px) {
+  .a365-app.inline-mode .stage { overflow-x: auto; }
+  .a365-app.inline-mode .stage > .pillars,
+  .a365-app.inline-mode .stage > .pillar-caps-row,
+  .a365-app.inline-mode .stage > .lanes-wrap { min-width: 980px; }
+}
 
 /* CTA row under the picture */
 .picture-cta-row { display: flex; justify-content: center; margin: 14px 0 8px; }
@@ -163,9 +183,11 @@ html[data-theme="dark"] .picture-cta:hover { background: #62B0FA; }
 .phase-card.observe { --phase-accent: #006E76; }
 .phase-card.govern  { --phase-accent: #BC8B00; }
 .phase-card.secure  { --phase-accent: #BC2F32; }
+.phase-card.value   { --phase-accent: #5C2E91; }
 html[data-theme="dark"] .phase-card.observe { --phase-accent: #6FC9CF; }
 html[data-theme="dark"] .phase-card.govern  { --phase-accent: #FFD394; }
 html[data-theme="dark"] .phase-card.secure  { --phase-accent: #E37D80; }
+html[data-theme="dark"] .phase-card.value   { --phase-accent: #B4A0FF; }
 .phase-card .phase-num {
   font-size: 11px; font-weight: 700; text-transform: uppercase;
   letter-spacing: 0.08em; color: var(--phase-accent); margin-bottom: 2px;
@@ -217,10 +239,12 @@ html[data-theme="dark"] .sources > p { color: #8896a8; }
     --a365-admin:#FFD394;     /* Marigold tint30 */
     --a365-sec:#E37D80;       /* Red tint30 */
     --a365-comp:#9FD89F;      /* Green tint40 */
+    --a365-lead:#B4A0FF;      /* Green tint40 */
     --a365-user:#6FC9CF;      /* Cyan tint30 */
     --a365-observe:#6FC9CF;
     --a365-govern:#FFD394;
     --a365-secure:#E37D80;
+    --a365-value:#B4A0FF;
     /* Composites */
     --a365-node-fill:#1B1F26;
     --a365-lane-bg:rgba(27,31,38,.55);
@@ -242,10 +266,12 @@ html[data-theme="dark"] .sources > p { color: #8896a8; }
     --a365-admin:#BC8B00;     /* Marigold shade10 */
     --a365-sec:#BC2F32;       /* Red shade10 */
     --a365-comp:#0E700E;      /* Green shade10 */
+    --a365-lead:#5C2E91;      /* Green shade10 */
     --a365-user:#006E76;      /* Cyan shade20 */
     --a365-observe:#006E76;
     --a365-govern:#BC8B00;
     --a365-secure:#BC2F32;
+    --a365-value:#5C2E91;
     --a365-node-fill:#FFFFFF;
     --a365-lane-bg:rgba(255,255,255,.65);
     --a365-arrow-dim:#A8A8A8;
@@ -281,17 +307,21 @@ html[data-theme="dark"] .sources > p { color: #8896a8; }
   .pillar-caps.observe .cap{border-color:rgba(111,201,207,.4);color:var(--a365-observe)}
   .pillar-caps.govern .cap{border-color:rgba(255,211,148,.4);color:var(--a365-govern)}
   .pillar-caps.secure .cap{border-color:rgba(227,125,128,.4);color:var(--a365-secure)}
+  .pillar-caps.value .cap{border-color:rgba(180,160,255,.4);color:var(--a365-value)}
   [data-theme="light"] .pillar-caps.observe .cap{border-color:rgba(0,110,118,.4)}
   [data-theme="light"] .pillar-caps.govern .cap{border-color:rgba(188,139,0,.4)}
   [data-theme="light"] .pillar-caps.secure .cap{border-color:rgba(188,47,50,.4)}
+  [data-theme="light"] .pillar-caps.value .cap{border-color:rgba(92,46,145,.4)}
   .pillar{position:absolute;top:0;bottom:0;display:flex;align-items:center;justify-content:center;gap:8px;font-size:14px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;border-radius:8px 8px 0 0;border:1px solid var(--a365-border);border-bottom:none}
   .pillar iconify-icon{font-size:20px}
   .pillar.observe{color:var(--a365-observe);background:rgba(111,201,207,.08)}
   .pillar.govern{color:var(--a365-govern);background:rgba(255,211,148,.08)}
   .pillar.secure{color:var(--a365-secure);background:rgba(227,125,128,.08)}
+  .pillar.value{color:var(--a365-value);background:rgba(180,160,255,.08)}
   [data-theme="light"] .pillar.observe{background:rgba(0,110,118,.08)}
   [data-theme="light"] .pillar.govern{background:rgba(188,139,0,.08)}
   [data-theme="light"] .pillar.secure{background:rgba(188,47,50,.08)}
+  [data-theme="light"] .pillar.value{background:rgba(92,46,145,.08)}
 
   /* Lanes container, 4 lanes, leaves a 64px bottom routing channel for loop-back arrows */
   .lanes-wrap{position:relative;flex:1;min-height:0}
@@ -299,11 +329,13 @@ html[data-theme="dark"] .sources > p { color: #8896a8; }
   .pillar-bg.observe{background:linear-gradient(180deg,rgba(111,201,207,.06),rgba(111,201,207,.01));border:1px solid rgba(111,201,207,.18);border-top:none}
   .pillar-bg.govern{background:linear-gradient(180deg,rgba(255,211,148,.06),rgba(255,211,148,.01));border:1px solid rgba(255,211,148,.18);border-top:none}
   .pillar-bg.secure{background:linear-gradient(180deg,rgba(227,125,128,.06),rgba(227,125,128,.01));border:1px solid rgba(227,125,128,.18);border-top:none}
+  .pillar-bg.value{background:linear-gradient(180deg,rgba(180,160,255,.06),rgba(180,160,255,.01));border:1px solid rgba(180,160,255,.18);border-top:none}
   [data-theme="light"] .pillar-bg.observe{background:linear-gradient(180deg,rgba(0,110,118,.07),rgba(0,110,118,.02));border-color:rgba(0,110,118,.22)}
   [data-theme="light"] .pillar-bg.govern{background:linear-gradient(180deg,rgba(188,139,0,.07),rgba(188,139,0,.02));border-color:rgba(188,139,0,.22)}
   [data-theme="light"] .pillar-bg.secure{background:linear-gradient(180deg,rgba(188,47,50,.07),rgba(188,47,50,.02));border-color:rgba(188,47,50,.22)}
+  [data-theme="light"] .pillar-bg.value{background:linear-gradient(180deg,rgba(92,46,145,.07),rgba(92,46,145,.02));border-color:rgba(92,46,145,.22)}
 
-  .lanes{position:relative;height:calc(100% - 64px);display:grid;grid-template-rows:repeat(4,1fr);gap:8px;z-index:1}
+  .lanes{position:relative;height:calc(100% - 64px);display:grid;grid-template-rows:repeat(5,1fr);gap:8px;z-index:1}
   .lane{position:relative;background:var(--a365-lane-bg);backdrop-filter:blur(2px);border:1px solid var(--a365-border);border-radius:8px;padding:8px 12px 8px 104px;display:flex;align-items:center;transition:background .25s,border-color .25s;overflow:visible}
   .lane-label{position:absolute;left:6px;top:50%;transform:translateY(-50%);width:92px;display:flex;flex-direction:column;align-items:center;gap:3px;text-align:center}
   .lane-label iconify-icon.role-icon{font-size:26px}
@@ -312,11 +344,13 @@ html[data-theme="dark"] .sources > p { color: #8896a8; }
   .lane[data-color="admin"] .role,.lane[data-color="admin"] .role-icon{color:var(--a365-admin)}
   .lane[data-color="sec"] .role,.lane[data-color="sec"] .role-icon{color:var(--a365-sec)}
   .lane[data-color="comp"] .role,.lane[data-color="comp"] .role-icon{color:var(--a365-comp)}
+  .lane[data-color="lead"] .role,.lane[data-color="lead"] .role-icon{color:var(--a365-lead)}
   .lane[data-color="user"] .role,.lane[data-color="user"] .role-icon{color:var(--a365-user)}
   .lane[data-color="build"]{border-left:3px solid var(--a365-build)}
   .lane[data-color="admin"]{border-left:3px solid var(--a365-admin)}
   .lane[data-color="sec"]{border-left:3px solid var(--a365-sec)}
   .lane[data-color="comp"]{border-left:3px solid var(--a365-comp)}
+  .lane[data-color="lead"]{border-left:3px solid var(--a365-lead)}
   .lane[data-color="user"]{border-left:3px solid var(--a365-user)}
 
   /* SVG overlay for arrows */
@@ -803,10 +837,10 @@ html[data-theme="dark"] footer.site-footer a { color: var(--muted); }
   "@context": "https://schema.org",
   "@type": "TechArticle",
   "headline": "Microsoft Agent 365: How It Fits Into Your Operating Model",
-  "description": "A walkthrough of the Microsoft Agent 365 lifecycle showing who owns what at every step: Builder, AI/IT Admin, Security Admin, and Compliance.",
+  "description": "A static operating-model overview for Microsoft Agent 365 showing ownership across builders, administrators, security, compliance, and business leadership.",
   "image": "https://contosec.com/articles/agent-365/og-image.png",
   "datePublished": "2026-05-01",
-  "dateModified": "2026-06-02",
+  "dateModified": "2026-11-24",
   "author": {
     "@type": "Person",
     "name": "Carlos Suarez",
@@ -861,9 +895,9 @@ html[data-theme="dark"] footer.site-footer a { color: var(--muted); }
 
     <h1 class="article-title">Microsoft Agent 365: How It Fits Into Your Operating Model</h1>
 
-    <p class="article-dek">An interactive walkthrough of the Agent 365 lifecycle showing who does what at every step, from Builder to AI/IT Admin to Security Admin to Compliance, and how it lands in your existing operating model.</p>
+    <p class="article-dek">An interactive walkthrough of the Agent 365 lifecycle showing how Builders, AI/IT Administrators, Security, Compliance, and Business Leadership establish agents and operate them as a continuous loop.</p>
 
-      <div class="article-byline">By <a href="/about/">Carlos Suarez</a> &middot; Published May 2026 &middot; Updated June 2 2026 &middot; 13 min read</div>
+      <div class="article-byline">By <a href="/about/">Carlos Suarez</a> &middot; Published May 2026 &middot; Updated November 24 2026 &middot; 13 min read</div>
 
     <div class="byline">
       <div class="avatar" aria-hidden="true">CS</div>
@@ -880,44 +914,55 @@ html[data-theme="dark"] footer.site-footer a { color: var(--muted); }
 
 <p>Microsoft Agent 365 is finally giving organizations a single place to govern the AI agents running across their environment, but the question I keep getting on customer calls is not really about features. It is about people. Who owns the agent once it is built? Who decides if it can run? Who watches it in production? Where does my SOC fit, where does my Compliance team fit, and what does my existing IT admin actually do differently? After many years of consulting, I noticed that the first thing customers need in these conversations is not more product detail. It is a simple place to start. A picture of who does what, where each team plugs in, and how Agent 365 connects to the operating model they already have. So I tried to build the simplest possible foundation framework I could and capture it in a single diagram. The way I found it works best in a meeting is to put that diagram on the screen first, then explain the why and the how. The operating model diagram in section 01 below is that picture. The walkthrough and the commentary that follow it are the explanation. It is not official Microsoft guidance, and it is not a one-size-fits-all blueprint. Adapt it to your organization.</p>
 
-<p>A quick scope note before getting into the picture. <strong>Microsoft Agent 365</strong> is the control plane Microsoft provides to <em>observe, govern, and secure</em> the AI agents running across your Microsoft estate (Microsoft 365 Copilot, Microsoft Foundry, Copilot Studio) and the third-party agent platforms you connect to it (AWS Bedrock, Google Vertex AI, and others). It is the layer that ties together the Microsoft 365 admin center, the Agent Registry, Microsoft Entra, Microsoft Defender, and Microsoft Purview into one coordinated experience for IT and security leaders. You have probably seen the three pillars by now in every Microsoft deck and blog since the launch, so I will not pretend they are mine. Observe, Govern, and Secure come straight from the product.</p>
+<p>A quick scope note before getting into the picture. <strong>Microsoft Agent 365</strong> is the observability platform for the AI agents running across your Microsoft estate (Microsoft 365 Copilot, Microsoft Foundry, Copilot Studio) and the third-party agent platforms you connect to it (AWS Bedrock, Google Vertex AI, and others). It is the layer that ties together the Microsoft 365 admin center, the Agent Registry, Microsoft Entra, Microsoft Defender, and Microsoft Purview into one coordinated experience for IT and security leaders. Agent 365 is organized around four pillars, all built on shared observability: <strong>Management, Governance, Security, and Business Value</strong>.</p>
 
 <div class="pillar-index">
   <div class="pi-item" style="--pi-pillar:var(--pi-observe)">
     <div class="pi-num">01</div>
     <div class="pi-body">
-      <div class="pi-head"><span class="pi-title">Observe</span><span class="pi-eyebrow">Visibility layer</span></div>
-      <p class="pi-copy">The centralized registry, agent activity, health, and role-tailored insights so leaders can see what is running and catch risk early.</p>
+      <div class="pi-head"><span class="pi-title">Management</span><span class="pi-eyebrow">Inventory and operations</span></div>
+      <p class="pi-copy">The centralized registry, activation, deployment, lifecycle administration, health, and operational telemetry needed to run the agent estate.</p>
     </div>
   </div>
   <div class="pi-item" style="--pi-pillar:var(--pi-govern)">
     <div class="pi-num">02</div>
     <div class="pi-body">
-      <div class="pi-head"><span class="pi-title">Govern</span><span class="pi-eyebrow">Guardrails layer</span></div>
-      <p class="pi-copy">Lifecycle management, permissions, policies, and the reviews that keep agents aligned with your business and audit obligations.</p>
+      <div class="pi-head"><span class="pi-title">Governance</span><span class="pi-eyebrow">Guardrails layer</span></div>
+      <p class="pi-copy">Permissions, policies, and approval gates that keep agents inside their intended purpose and operating boundaries.</p>
     </div>
   </div>
   <div class="pi-item" style="--pi-pillar:var(--pi-secure)">
     <div class="pi-num">03</div>
     <div class="pi-body">
-      <div class="pi-head"><span class="pi-title">Secure</span><span class="pi-eyebrow">Protection layer</span></div>
-      <p class="pi-copy">Entra enforces identity and risk-based access for agents, Purview protects the data agents touch, and Defender provides continuous threat detection and response on agent behavior.</p>
+      <div class="pi-head"><span class="pi-title">Security</span><span class="pi-eyebrow">Protection and assurance</span></div>
+      <p class="pi-copy">Identity, threat protection, data protection, audit, assurance, and forensic controls across the agent lifecycle.</p>
+    </div>
+  </div>
+  <div class="pi-item" style="--pi-pillar:var(--pi-value)">
+    <div class="pi-num">04</div>
+    <div class="pi-body">
+      <div class="pi-head"><span class="pi-title">Business Value</span><span class="pi-eyebrow">Leadership decisions</span></div>
+      <p class="pi-copy">Business leaders align agents to KPIs and decide where to invest, scale, redesign, or retire based on operational evidence and business results.</p>
     </div>
   </div>
 </div>
 
-<p>If you also need the deep dive on the identity primitive that powers the Secure pillar, I covered that separately in the <a href="https://contosec.com/articles/entra-agent-id/">Entra Agent ID article</a>. Agent 365 is the control plane. Agent ID is one of the building blocks inside it.</p>
+<p>If you also need the deep dive on the identity primitive that supports the Security pillar, I covered that separately in the <a href="https://contosec.com/articles/entra-agent-id/">Entra Agent ID article</a>. Agent 365 is the control plane. Agent ID is one of the building blocks inside it.</p>
 
 <p>With that product context in place, here is the framework I use in customer conversations. After the diagram I walk through why each piece is there, how it maps to teams you already have, and the one thing that is genuinely new.</p>
 
 <section class="section-block">
   <div class="section-head"><span class="section-num">01</span><h2>The framework in one picture</h2></div>
-  <p>Read it left to right as one agent's lifecycle, and top to bottom as the teams that touch it. The four horizontal lanes are the <strong>roles</strong> (Builder, AI / IT Administrator, Security Administrator, Compliance / Data Officer). The three vertical bands are the <strong>control pillars</strong> (Observe, Govern, Secure). The boxes are lifecycle moments, the arrows are handoffs, and the dashed arrow at the end is the feedback loop that keeps the cycle alive. The boxes are orientative, not a strict count, some of them (especially the ongoing lifecycle actions) expand into many real tasks once you adapt this to your own organization.</p>
+  <p>Read activities 1–4 as the ordered onboarding path that establishes, reviews, and activates an agent. Activities 5–8 form the continuous operating loop; monitoring and data governance can run in parallel, assurance recurs, and business decisions feed the next operating cycle. The five horizontal lanes are the <strong>roles</strong> (Builder, AI / IT Administrator, Security Administrator, Compliance / Data Officer, Business Leadership). The four vertical bands are the Agent 365 <strong>pillars</strong> (Management, Governance, Security, Business Value). Security is a cross-cutting control layer across the entire lifecycle, not a phase that begins after approval.</p>
 </section>
 
 </div>
 
 <div class="diagram-wrap">
+  <iframe class="loop-overview-frame" src="walkthrough.html?mode=overview&amp;embed=1&amp;v=article1" title="Microsoft Agent 365 continuous operating model overview" loading="eager"></iframe>
+</div>
+
+<div class="diagram-wrap legacy-diagram" aria-hidden="true">
 <div class="a365-app inline-mode">
 
 <header class="a365-header">
@@ -939,29 +984,34 @@ html[data-theme="dark"] footer.site-footer a { color: var(--muted); }
   <div class="stage">
     <!-- Pillar header strip ,  absolute-positioned cells -->
     <div class="pillars" id="pillarsHeader">
-      <div class="pillar observe" id="hdrObserve"><iconify-icon icon="fluent:eye-tracking-24-filled"></iconify-icon>Observe</div>
-      <div class="pillar govern" id="hdrGovern"><iconify-icon icon="fluent:person-shield-24-filled"></iconify-icon>Govern</div>
-      <div class="pillar secure" id="hdrSecure"><iconify-icon icon="fluent:shield-checkmark-24-filled"></iconify-icon>Secure</div>
+      <div class="pillar observe" id="hdrManagement"><iconify-icon icon="fluent:settings-24-filled"></iconify-icon>Management</div>
+      <div class="pillar govern" id="hdrGovern"><iconify-icon icon="fluent:person-shield-24-filled"></iconify-icon>Governance</div>
+      <div class="pillar secure" id="hdrSecure"><iconify-icon icon="fluent:shield-checkmark-24-filled"></iconify-icon>Security</div>
+      <div class="pillar value" id="hdrValue"><iconify-icon icon="fluent:target-arrow-24-filled"></iconify-icon>Business Value</div>
     </div>
 
     <!-- Per-pillar capability chips (always visible) -->
     <div class="pillar-caps-row" id="pillarCapsRow">
-      <div class="pillar-caps observe" id="capsObserve">
-        <span class="cap">Real-time visibility</span><span class="cap">Agent Registry</span><span class="cap">Registry sync</span><span class="cap">Agent Map</span>
+      <div class="pillar-caps observe" id="capsManagement">
+        <span class="cap">Inventory</span><span class="cap">Activation</span><span class="cap">Deployment</span><span class="cap">Operational telemetry</span>
       </div>
       <div class="pillar-caps govern" id="capsGovern">
         <span class="cap">Lifecycle management</span><span class="cap">Access control</span><span class="cap">Compliance</span><span class="cap">Permissions</span><span class="cap">Policies</span><span class="cap">Reviews</span>
       </div>
       <div class="pillar-caps secure" id="capsSecure">
-        <span class="cap">Microsoft Entra</span><span class="cap">Microsoft Defender</span><span class="cap">Microsoft Purview</span><span class="cap">Risk-based access</span><span class="cap">Threat detection</span><span class="cap">Information protection</span><span class="cap">DLP</span><span class="cap">Risk safeguards</span>
+        <span class="cap">Microsoft Entra</span><span class="cap">Microsoft Defender</span><span class="cap">Microsoft Purview</span><span class="cap">Identity</span><span class="cap">Threat detection</span><span class="cap">Information protection</span><span class="cap">DLP</span><span class="cap">Audit & assurance</span>
+      </div>
+      <div class="pillar-caps value" id="capsValue">
+        <span class="cap">KPI alignment</span><span class="cap">Value realization</span><span class="cap">Scale</span><span class="cap">Redesign or retire</span>
       </div>
     </div>
 
     <div class="lanes-wrap" id="lanesWrap">
       <!-- Pillar background bands -->
-      <div class="pillar-bg observe" id="bgObserve"></div>
+      <div class="pillar-bg observe" id="bgManagement"></div>
       <div class="pillar-bg govern" id="bgGovern"></div>
       <div class="pillar-bg secure" id="bgSecure"></div>
+      <div class="pillar-bg value" id="bgValue"></div>
 
       <div class="lanes" id="lanes">
         <div class="lane" data-color="build">
@@ -988,6 +1038,12 @@ html[data-theme="dark"] footer.site-footer a { color: var(--muted); }
             <div class="role">Compliance /<br>Data Officer</div>
           </div>
         </div>
+        <div class="lane" data-color="lead">
+          <div class="lane-label">
+            <iconify-icon class="role-icon" icon="fluent:people-team-24-filled"></iconify-icon>
+            <div class="role">Business<br>Leadership</div>
+          </div>
+        </div>
       </div>
 
       <svg class="arrows" id="arrows" xmlns="http://www.w3.org/2000/svg">
@@ -1010,14 +1066,15 @@ html[data-theme="dark"] footer.site-footer a { color: var(--muted); }
 
 <script>
 /* ============================================================
-   FLOW: 7 steps across 4 lanes, 6 columns
-   Pillar layout (each pillar = 2 cols, equal width):
-     cols 0-1   : Observe   (Agent created → Registry → loop back to Agent Map)
-     cols 2-3   : Govern    (Pending request → Lifecycle actions)
-     cols 4-5   : Secure    (Defender XDR · Purview)
-   Lanes (4): Builder · AI / IT Admin · Security Admin · Compliance Admin
+   FLOW: 8 steps across 5 lanes, 8 columns
+   Outcome layout (each outcome = 2 cols, equal width):
+     cols 0-1   : Management
+     cols 2-3   : Governance
+     cols 4-5   : Security
+     cols 6-7   : Business Value
+   Lanes (5): Builder · AI / IT Admin · Security Admin · Compliance Admin · Business Leadership
    ============================================================ */
-const TOTAL_COLS = 6;
+const TOTAL_COLS = 8;
 const LABEL_COL_PX = 104;        // width of left label strip
 const STAGE_PAD_RIGHT = 18;
 const NODE_HALF = 105;           // half of node width
@@ -1037,7 +1094,7 @@ const NODES = [
       {n:'External / partner agent', d:'Connect agents from partners', i:'fluent:plug-connected-24-regular'},
       {n:'Bedrock / Vertex AI sync', d:'Registry sync from AWS or Google Cloud', i:'fluent:cloud-sync-24-regular'}
     ],
-    next:'Auto-discovered in the Registry (Observe)' },
+    next:'Auto-discovered in the Registry (Management)' },
 
   { id:'n2', lane:1, col:1, xOffset:-10, step:2, icon:'fluent:database-search-24-filled', label:'Auto-discovered in Registry',
     title:'Agent Registry · Auto-Discovery',
@@ -1123,8 +1180,8 @@ const NODES = [
     ],
     next:'Insider Risk and Audit cover behavioral and forensic compliance' },
 
-  { id:'n7', lane:3, col:5, xOffset:-15, step:7, icon:'fluent:person-warning-24-filled', label:'Insider Risk & Audit',
-    title:'Microsoft Purview · Insider Risk & Audit',
+  { id:'n7', lane:3, col:5, xOffset:-15, step:7, icon:'fluent:person-warning-24-filled', label:'Telemetry, Audit & Assurance',
+    title:'Telemetry, Audit & Assurance',
     role:'Compliance / Data Officer', roleIcon:'fluent:scales-24-filled',
     where:'Microsoft Purview portal · Insider Risk Management · Audit · eDiscovery',
     whereIcon:'fluent:history-24-regular',
@@ -1136,30 +1193,30 @@ const NODES = [
       {n:'eDiscovery on agent data', d:'Hold and collect agent interactions', i:'fluent:search-24-regular'},
       {n:'Review compliance alerts', d:'Triage agent-related signals', i:'fluent:alert-urgent-24-regular'}
     ],
-    next:'All telemetry rolls up to Agent Map (Observe loop)' },
+    next:'Operational signals inform leadership’s business-value decisions' },
 
-  { id:'n8', lane:1, col:0, xOffset:-20, step:8, icon:'fluent:eye-tracking-24-filled', label:'Observe · Agent Map',
-    title:'Observe · Agent Map & Risk Insights',
-    role:'AI / IT Administrator', roleIcon:'fluent:person-shield-24-filled',
-    where:'Agent 365 Overview · Agent Map · Agents at risk card',
+  { id:'n8', lane:4, col:7, xOffset:0, step:8, icon:'fluent:data-trending-24-regular', label:'Business Value Decisions',
+    title:'Business Value & Portfolio Decisions',
+    role:'Business Leadership', roleIcon:'fluent:people-team-24-filled',
+    where:'Agent 365 usage signals · business KPI reviews · portfolio governance',
     whereIcon:'fluent:data-trending-24-regular',
-    desc:'Usage, risk, and exception signals roll up into the Agent 365 Overview. Admin sees adoption, agents at risk, agents without owners, and agents with exceptions, then takes corrective action.',
+    desc:'AI and IT administrators provide usage, adoption, risk, and exception signals. Business leaders remain accountable for connecting those operational signals to business KPIs, deciding where to invest, and feeding scale, redesign, or retirement decisions back into management.',
     actions:[
-      {n:'Open Agent 365 Overview', d:'Top governance cards & insights', i:'fluent:data-pie-24-regular'},
-      {n:'Open Agent Map', d:'Visual map of agents and relationships', i:'fluent:map-24-regular'},
-      {n:'Manage agent risks', d:'Filter Registry by risk', i:'fluent:warning-24-regular'},
-      {n:'Manage ownerless agents', d:'Triage and assign owners', i:'fluent:person-question-mark-24-regular'},
-      {n:'Manage exceptions', d:'Investigate failing agents', i:'fluent:error-circle-24-regular'},
-      {n:'Cross-cloud Registry sync', d:'Bedrock & Vertex AI inventory', i:'fluent:cloud-sync-24-regular'}
+      {n:'Review usage and adoption', d:'Use admin-provided signals as operational evidence', i:'fluent:data-pie-24-regular'},
+      {n:'Connect to business KPIs', d:'Measure outcomes in the systems that own the KPI', i:'fluent:target-arrow-24-regular'},
+      {n:'Validate accountable owner', d:'Confirm an executive sponsor and business owner', i:'fluent:people-team-24-regular'},
+      {n:'Prioritize investment', d:'Scale agents with demonstrated value', i:'fluent:arrow-trending-24-regular'},
+      {n:'Redesign or retire', d:'Act when value, adoption, or risk is unacceptable', i:'fluent:arrow-exit-20-regular'},
+      {n:'Feed portfolio decisions back', d:'Turn outcome reviews into lifecycle actions', i:'fluent:arrow-sync-24-regular'}
     ],
     next:'Lifecycle complete, feedback loop continues' }
 ];
 
 const EDGES = [
   ['n1','n2'], ['n2','n3'], ['n3','n4'],
-  ['n4','n5'], ['n5','n6'], ['n6','n7'],   // linear chain through Secure pillar
-  ['n7','n8','dim'],                        // dashed feedback: Insider Risk & Audit -> Agent Map
-  ['n8','n2','dim']                         // dashed feedback loop within Observe
+  ['n4','n5'], ['n5','n6'], ['n6','n7'],
+  ['n7','n8'],
+  ['n8','n2','dim']
 ];
 
 const SOURCE_ICONS = [
@@ -1257,11 +1314,12 @@ function positionPillarBands(){
   const GAP = 6;
   // Each pillar is exactly 2 columns wide (equal widths)
   const ranges = {
-    observe: { left: labelColPx() + cw * 0, right: labelColPx() + cw * 2 - GAP },
-    govern:  { left: labelColPx() + cw * 2, right: labelColPx() + cw * 4 - GAP },
-    secure:  { left: labelColPx() + cw * 4, right: labelColPx() + cw * 6 - GAP }
+    management: { left: labelColPx() + cw * 0, right: labelColPx() + cw * 2 - GAP },
+    govern:     { left: labelColPx() + cw * 2, right: labelColPx() + cw * 4 - GAP },
+    secure:     { left: labelColPx() + cw * 4, right: labelColPx() + cw * 6 - GAP },
+    value:      { left: labelColPx() + cw * 6, right: labelColPx() + cw * 8 - GAP }
   };
-  ['observe','govern','secure'].forEach(key=>{
+  ['management','govern','secure','value'].forEach(key=>{
     const r = ranges[key];
     const cap = key.charAt(0).toUpperCase() + key.slice(1);
     const band = document.getElementById('bg' + cap);
@@ -1275,7 +1333,7 @@ function positionPillarBands(){
   });
   const row = document.getElementById('pillarCapsRow');
   if(row){
-    const heights = ['Observe','Govern','Secure'].map(c => document.getElementById('caps' + c).offsetHeight);
+    const heights = ['Management','Govern','Secure','Value'].map(c => document.getElementById('caps' + c).offsetHeight);
     row.style.height = Math.max(...heights, 36) + 'px';
   }
 }
@@ -1741,9 +1799,9 @@ document.addEventListener('keydown', (e)=>{
 </div>
 </div>
 <div class="diagram-aftermath">
-  <p class="diagram-caption">The static picture is the map. If you want the step-by-step version with the actions, the admin surfaces where each one happens, and the related Microsoft Learn references, use the interactive walkthrough.</p>
+  <p class="diagram-caption">The overview shows the complete operating model. Use the guided walkthrough to reveal each activity in order, inspect its owner and actions, and then continue through the recurring operating loop.</p>
   <div class="picture-cta-row">
-    <a class="picture-cta" href="walkthrough.html" target="_blank" rel="noopener">
+    <a class="picture-cta" href="walkthrough.html?mode=tour&amp;v=article1" target="_blank" rel="noopener">
       <iconify-icon icon="fluent:cursor-click-24-regular"></iconify-icon>
       Open the interactive walkthrough
       <span class="arrow">↗</span>
@@ -1753,33 +1811,33 @@ document.addEventListener('keydown', (e)=>{
 
 <div class="article">
 
-<p>The reason I keep coming back to this framework in customer meetings is that it changes the conversation from "what do we have to build" to "who already does this work." The honest answer for most organizations is that the roles already exist in some form. There are people building. There is somebody running the tenant. There is an <strong>IAM team</strong> that owns Entra and Conditional Access. There is a <strong>SOC</strong> that triages incidents in Defender XDR. There is somebody owning Purview, audit, and eDiscovery. What Agent 365 does is hand each of those teams one more thing to look at inside the tools they already use, and connect those tools to each other through the registry. There is no new platform to stand up and no new team to staff.</p>
+<p>The reason I keep coming back to this framework in customer meetings is that it changes the conversation from "what do we have to build" to "who already does this work." The honest answer for most organizations is that the roles already exist in some form. There are people building. There is somebody running the tenant. There is an <strong>IAM team</strong> that owns Entra and Conditional Access. There is a <strong>SOC</strong> that triages incidents in Defender XDR. There is somebody owning Purview, audit, and eDiscovery. And there are business leaders accountable for whether an investment produces a meaningful outcome. Agent 365 gives the operational teams connected evidence inside tools they already use; leadership uses that evidence alongside business KPIs to make portfolio decisions.</p>
 
-<p>That said, this framework is intentionally generic. Every organization is different. In some companies the AI / IT Admin and the IAM team are the same person. In others the SOC and the IAM team report into completely different parts of security, and the Compliance Officer reports up through Legal rather than IT, so the approval queue and the policy ownership have to route differently. In regulated environments there may be a separate risk function that wants a seat at the Govern step. The point of the diagram is not to dictate the structure. The point is to give you a baseline picture you can put in front of your own teams and then redraw together. Ask each lane "who in our org is this?" and "do we want it to be?" The answers will not always match the labels I used, and that is exactly the conversation worth having.</p>
+<p>That said, this framework is intentionally generic. Every organization is different. In some companies the AI / IT Admin and the IAM team are the same person. In others the SOC and the IAM team report into completely different parts of security, and the Compliance Officer reports up through Legal rather than IT, so the approval queue and policy ownership route differently. Business Leadership might be an executive sponsor, a business-unit leader, or a portfolio council. The point of the diagram is not to dictate the structure. The point is to give you a baseline picture you can put in front of your own teams and then redraw together. Ask each lane "who in our org is this?" and "do we want it to be?" The answers will not always match the labels I used, and that is exactly the conversation worth having.</p>
 
-<p>If I had to point to the one thing that is genuinely new for most organizations, it would be the <strong>approval queue</strong> behavior in the Govern pillar. Whoever ends up owning that queue (call them the AI / IT Admin, call them whatever fits your structure) becomes the choke point that determines whether agents enter production with intent or by accident. Get that one decision right and the rest of the framework starts to take care of itself.</p>
+<p>If I had to point to the one thing that is genuinely new for most organizations, it would be the <strong>approval queue</strong> behavior in the Governance pillar. Whoever ends up owning that queue (call them the AI / IT Admin, call them whatever fits your structure) becomes the choke point that determines whether agents enter production with intent or by accident. Get that one decision right and the rest of the framework starts to take care of itself.</p>
 
 <section class="section-block">
   <div class="section-head"><span class="section-num">02</span><h2>Walking the lifecycle</h2></div>
-  <p>The diagram tells the story of one agent moving through the lifecycle. The clearest way to read it is to follow that story in three movements, one for each pillar. The first movement is about <em>seeing</em> the agent. The second is about <em>deciding</em> what happens to it. The third is about <em>protecting</em> it once it runs. Everything ends in a feedback loop that brings the story back to the beginning. The steps you see are orientative, not exhaustive. Some of them (lifecycle actions especially) expand into many real-world tasks once you take this into your own operating model. Treat the diagram as a map, not a checklist.</p>
+  <p>The diagram tells the story of one agent moving across the four Agent 365 pillars. Activities 1–4 establish the agent through an ordered onboarding path. Activities 5–8 are not a finish line; they are a recurring operating loop in which monitoring and data governance can proceed in parallel, assurance is revisited, and Business Leadership decides what happens next. Management makes the estate visible and operable. Governance decides whether and how an agent may run. Security protects identity, behavior, data, and evidence throughout. Business Value turns operational evidence and business results into investment, scaling, redesign, retraining, tighter controls, or retirement decisions.</p>
 
-  <h3>Observe: the agent appears and gets catalogued</h3>
+  <h3>Management: the agent appears and gets catalogued</h3>
   <p>Everything starts with the <strong>Builder</strong>. A developer publishes an agent from Microsoft Foundry, a business user puts something together in Copilot Studio, somebody uploads a packaged ZIP, or a sync brings in an agent from AWS Bedrock or Google Vertex AI. From the Builder's point of view nothing changes about how they work. They use the tool they already use, click publish, and they are done. What is new is what happens on the other side. The agent is immediately picked up by the <strong>Agent Registry</strong> inside the Microsoft 365 admin center, with its source, its owner, and its identity attached. This is the single pane of glass for every agent in the tenant, and it shows up without the Builder having to file a ticket or fill out a form. The <strong>AI / IT Administrator</strong> sees the new agent the moment it exists.</p>
   <p>If you map this to your existing operating model, the Agent Registry slots next to your existing app inventory. The same person who today reviews new SaaS apps in your tenant is usually the right person to review new agents. The cadence is where agents diverge from apps. Manual approval per agent does not scale, so lean on <strong>Agent Management Rules</strong> to handle the long tail in bulk (ownerless, low-risk, policy-clean) and keep the AI / IT Admin's time for the exceptions.</p>
 
-  <h3>Govern: someone has to say yes</h3>
-  <p>An agent that has been discovered is not an agent that has been allowed. The next two steps live in the <strong>Govern</strong> pillar and they are where most of the policy conversation actually happens. The new agent lands in a <strong>Pending</strong> queue and cannot move data in production until somebody approves it. Only the <strong>AI / IT Administrator</strong> (or Global Administrator as the backstop) can act on that queue, which is the deliberate control point you want. From there the same admin decides to install (approve), block, or delete the agent, and assigns a named business owner. That owner is who you call when something goes wrong and who is accountable for the agent's behavior. The lifecycle actions never end. Retiring an agent later, transferring its ownership, changing its scope, all of that comes back through the same admin and the same surface.</p>
+  <h3>Governance: someone has to say yes</h3>
+  <p>An agent that has been discovered is not an agent that has been allowed. The next two steps live in the <strong>Governance</strong> pillar and they are where most of the policy conversation actually happens. The new agent lands in a <strong>Pending</strong> queue and cannot move data in production until somebody approves it. Only the <strong>AI / IT Administrator</strong> (or Global Administrator as the backstop) can act on that queue, which is the deliberate control point you want. From there the same admin decides to install (approve), block, or delete the agent, and assigns a named business owner. That owner is who you call when something goes wrong and who is accountable for the agent's behavior. The lifecycle actions never end. Retiring an agent later, transferring its ownership, changing its scope, all of that comes back through the same admin and the same surface.</p>
   <p>If you already approve new SaaS apps or new Teams apps in your tenant, you already have the workflow. Reuse it. The first addition worth making to your SOP is the line that says "assign a named owner before approving." Without that line, agents drift, and a year from now nobody remembers which team owns what. The second addition only applies if the agent is third-party (synced from AWS Bedrock, Google Vertex AI, or another platform): confirm someone has provisioned an <strong>Entra Agent ID</strong> for it before approving. Native Microsoft agents have this provisioned automatically at publish time. Third-party agents do not, and an approved agent without an identity loses every downstream control. I cover the why and how of this in the Secure section below.</p>
 
-  <h3>Secure: identity, threat protection, and data protection</h3>
-  <p>Secure is the part of the picture where the Microsoft story actually separates from the rest of the industry. The Secure pillar is not three different vendors that you have to integrate yourself. Entra, Defender, and Purview are <strong>one platform</strong>: the identity signal from Entra feeds the threat detection in Defender, the data classification from Purview feeds both Conditional Access and DLP, and the agent registry from Agent 365 ties all of it back to a single principal that every tool already understands. If you tried to build the same picture with point products from different vendors (an identity provider over here, an XDR over there, a separate DLP and a separate AI posture tool), you would spend the next eighteen months stitching connectors and reconciling identifiers. With Agent 365 it is wired up out of the box, which is the part most customers ask me to confirm when they see the diagram for the first time.</p>
-  <p>Once an agent is approved, it starts to look exactly like any other identity in the tenant. The <strong>Security Administrator</strong> lane in the diagram is intentionally one box, but in most real organizations that lane is two separate teams. The <strong>IAM / Identity team</strong> owns <strong>Microsoft Entra</strong>, which means they own the agent as an identity primitive: <strong>Entra Agent ID</strong> issues each agent a first-class principal, <strong>Conditional Access</strong> policies decide where and when the agent can authenticate, and <strong>Entra ID Governance</strong> handles access reviews and lifecycle. The same team that today owns Conditional Access for users owns it for agents tomorrow. In parallel, the <strong>SOC</strong> works the agent through <strong>Microsoft Defender XDR</strong>. Agent-related alerts and incidents land in the same queue the SOC already triages for users and devices, with the same severity, ownership, and response playbooks. There is no new console, no new on-call rotation, and no separate ticketing path. If you already have a Tier 1 / Tier 2 triage model in Defender, agents slot into it.</p>
+  <h3>Security: identity, threat protection, data protection, and assurance</h3>
+  <p>Security is the part of the picture where the Microsoft story actually separates from the rest of the industry. The Security pillar is not three different vendors that you have to integrate yourself. Entra, Defender, and Purview are <strong>one platform</strong>: the identity signal from Entra feeds the threat detection in Defender, the data classification from Purview feeds both Conditional Access and DLP, and the agent registry from Agent 365 ties all of it back to a single principal that every tool already understands. If you tried to build the same picture with point products from different vendors (an identity provider over here, an XDR over there, a separate DLP and a separate AI posture tool), you would spend the next eighteen months stitching connectors and reconciling identifiers. With Agent 365 it is wired up out of the box, which is the part most customers ask me to confirm when they see the diagram for the first time.</p>
+  <p>Security does not wait for approval to begin. Identity, policy, and data controls shape what can be approved in the first place, then remain active while the agent operates. After activation, the agent starts to look exactly like any other identity in the tenant. The <strong>Security Administrator</strong> lane in the diagram is intentionally one box, but in most real organizations that lane is two separate teams. The <strong>IAM / Identity team</strong> owns <strong>Microsoft Entra</strong>, which means they own the agent as an identity primitive: <strong>Entra Agent ID</strong> issues each agent a first-class principal, <strong>Conditional Access</strong> policies decide where and when the agent can authenticate, and <strong>Entra ID Governance</strong> handles access reviews and lifecycle. The same team that today owns Conditional Access for users owns it for agents tomorrow. In parallel, the <strong>SOC</strong> works the agent through <strong>Microsoft Defender XDR</strong>. Agent-related alerts and incidents land in the same queue the SOC already triages for users and devices, with the same severity, ownership, and response playbooks. There is no new console, no new on-call rotation, and no separate ticketing path. If you already have a Tier 1 / Tier 2 triage model in Defender, agents slot into it.</p>
   <p>One important note for organizations bringing in third-party agents, and this is the deeper version of the SOP item I flagged under Govern. For native Microsoft agents (Microsoft 365 Copilot, Microsoft Foundry, Copilot Studio), the Entra Agent ID is provisioned for you as part of the publish flow. For third-party agents synced into the registry from platforms like AWS Bedrock or Google Vertex AI, that step is not automatic. Registry sync brings the agent into view inside the Agent Registry, but the agent does not get an Entra Agent ID until it is integrated through the <strong>Agent 365 SDK</strong> and configured against Entra (the sidecar pattern for Bedrock, federation patterns for others). The practical implication is the SOP control I mentioned earlier: before the AI / IT Admin approves a third-party agent, confirm that the Entra Agent ID has been provisioned. You want every approved agent to have a real identity before it starts authenticating and acting on data, otherwise everything downstream (Conditional Access, Defender signals, Purview audit) loses the principal it is supposed to enforce against.</p>
   <p>In parallel, the <strong>Compliance or Data Officer</strong> takes over the data side of the agent through <strong>Microsoft Purview</strong>. A lot of what you already have keeps working. Agents run in the user's context, so the SharePoint, Exchange, and Teams DLP policies that already block a user from sharing sensitive content also apply when an agent acts on that user's behalf. Sensitivity labels with encryption are honored automatically, which means an agent cannot read content the user is not allowed to decrypt. The sensitive info types and trainable classifiers your team already maintains are the same primitives you reuse for agent-scoped policies. What is new is an additional layer on top of all of that. <strong>DLP for agents</strong> uses a dedicated <em>Microsoft 365 Copilot</em> location in Purview DLP so you can govern what an agent is allowed to process and what it can return in a response based on label, even when the user technically has access. <strong>DSPM for AI</strong> is its own surface in Purview that gives you the visibility into which agents are touching labeled content and how often. <strong>Insider Risk Management</strong> brings in a new <em>Risky Agents</em> policy template that watches for risky prompts, sensitive outputs, and risky data access by agents on Copilot Studio, Microsoft Foundry, and Agent 365. The honest framing for the Data Officer is this. Your existing controls do inherit, but the new agent-scoped surfaces (Copilot DLP location, DSPM for AI, Risky Agents IRM template) are where you tune the policies that are specific to AI. The good news is they live in the same Purview portal, the same audit log, and the same eDiscovery flow the team already uses for users. If your IRM program exists, agents are a new signal source inside it. If it does not exist, this is a good reason to start.</p>
 
 
-  <h3>Back to Observe: closing the loop</h3>
-  <p>The final step in the diagram is the <strong>Agent Map and Risk Insights</strong> view, which is the closing-the-loop dashboard. The AI / IT Administrator monitors it, the Security Admin and Compliance Officer act on what shows up there, and findings can move an agent right back into the Govern flow, into a tighter policy, or in the worst case into a Block or Delete action. The dashed arrow in the diagram that goes from step 8 back to step 2 is intentional. Discovery never stops. New agents keep landing in the registry while older approved agents keep generating new risk insights. The lifecycle is a loop, not a one-time onboarding checklist. The practical implication is small but worth being explicit about. The cadence I recommend is <strong>quarterly for high-risk agents, annual for the rest</strong>. Inventory itself should run on automated scanning, not a calendar review. Name the AI / IT Admin as the standing owner of that queue, and let the rules do the day-to-day work.</p>
+  <h3>Business Value: leadership closes the loop</h3>
+  <p>Activity 8 is a recurring decision point owned by <strong>Business Leadership</strong>, not the AI / IT Administrator. Administrators provide inventory, health, usage, risk, cost, and exception telemetry. Security and Compliance add control findings and assurance evidence. Leadership combines those inputs with business KPIs to decide where to invest, scale, redesign, retrain, tighten controls, pause, or retire. The default loop continues from activity 8 back to activity 5 for the next operating cycle; material changes can also return the agent to earlier governance gates. Agent 365 supplies operational evidence, but business owners remain accountable for defining and proving the outcome.</p>
 </section>
 
 </div></article>
@@ -1798,8 +1856,9 @@ document.addEventListener('keydown', (e)=>{
     try { localStorage.setItem(KEY, t); } catch(e){}
     const btn = document.getElementById('articleTheme');
     if(btn){
-      btn.querySelector('.theme-label').textContent = t === 'light' ? 'Dark' : 'Light';
-      btn.querySelector('iconify-icon').setAttribute('icon', t === 'light' ? 'fluent:weather-moon-24-regular' : 'fluent:weather-sunny-24-regular');
+      const nextTheme = t === 'light' ? 'dark' : 'light';
+      btn.setAttribute('aria-label', `Switch to ${nextTheme} theme`);
+      btn.setAttribute('title', `Switch to ${nextTheme} theme`);
     }
   }
   function initArticleTheme(){
